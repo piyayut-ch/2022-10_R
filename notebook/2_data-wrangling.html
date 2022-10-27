@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.658">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Piyayut Chitchumnong">
+<meta name="dcterms.date" content="2022-10-12">
+
+<title>Data Wrangling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="2_data-wrangling_files/libs/clipboard/clipboard.min.js"></script>
+<script src="2_data-wrangling_files/libs/quarto-html/quarto.js"></script>
+<script src="2_data-wrangling_files/libs/quarto-html/popper.min.js"></script>
+<script src="2_data-wrangling_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="2_data-wrangling_files/libs/quarto-html/anchor.min.js"></script>
+<link href="2_data-wrangling_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="2_data-wrangling_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="2_data-wrangling_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="2_data-wrangling_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="2_data-wrangling_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#tidy-data-concept" id="toc-tidy-data-concept" class="nav-link" data-scroll-target="#tidy-data-concept">Tidy Data Concept</a></li>
+  <li><a href="#basic-operations" id="toc-basic-operations" class="nav-link" data-scroll-target="#basic-operations">Basic operations</a></li>
+  </ul></li>
+  <li><a href="#install-and-load-packages" id="toc-install-and-load-packages" class="nav-link" data-scroll-target="#install-and-load-packages">Install and load packages</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul class="collapse">
+  <li><a href="#baci" id="toc-baci" class="nav-link" data-scroll-target="#baci">BACI</a></li>
+  <li><a href="#country-data" id="toc-country-data" class="nav-link" data-scroll-target="#country-data">Country Data</a></li>
+  <li><a href="#country-codes" id="toc-country-codes" class="nav-link" data-scroll-target="#country-codes">Country Codes</a></li>
+  <li><a href="#product-codes" id="toc-product-codes" class="nav-link" data-scroll-target="#product-codes">Product Codes</a></li>
+  </ul></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data">Importing data</a>
+  <ul class="collapse">
+  <li><a href="#path" id="toc-path" class="nav-link" data-scroll-target="#path">path</a></li>
+  <li><a href="#csv" id="toc-csv" class="nav-link" data-scroll-target="#csv">csv</a></li>
+  <li><a href="#excel" id="toc-excel" class="nav-link" data-scroll-target="#excel">excel</a></li>
+  <li><a href="#rds" id="toc-rds" class="nav-link" data-scroll-target="#rds">rds</a></li>
+  </ul></li>
+  <li><a href="#selecting-variables" id="toc-selecting-variables" class="nav-link" data-scroll-target="#selecting-variables">Selecting variables</a></li>
+  <li><a href="#filtering-rows" id="toc-filtering-rows" class="nav-link" data-scroll-target="#filtering-rows">Filtering rows</a></li>
+  <li><a href="#adding-new-variables" id="toc-adding-new-variables" class="nav-link" data-scroll-target="#adding-new-variables">Adding new variables</a></li>
+  <li><a href="#arranging-rows-by-variables" id="toc-arranging-rows-by-variables" class="nav-link" data-scroll-target="#arranging-rows-by-variables">Arranging rows by variables</a></li>
+  <li><a href="#summarizing-and-grouping" id="toc-summarizing-and-grouping" class="nav-link" data-scroll-target="#summarizing-and-grouping">Summarizing and Grouping</a></li>
+  <li><a href="#reshaping-table" id="toc-reshaping-table" class="nav-link" data-scroll-target="#reshaping-table">Reshaping table</a>
+  <ul class="collapse">
+  <li><a href="#pivot-wider" id="toc-pivot-wider" class="nav-link" data-scroll-target="#pivot-wider">Pivot wider</a></li>
+  <li><a href="#pivot-longer" id="toc-pivot-longer" class="nav-link" data-scroll-target="#pivot-longer">Pivot longer</a></li>
+  </ul></li>
+  <li><a href="#join-multiple-tables" id="toc-join-multiple-tables" class="nav-link" data-scroll-target="#join-multiple-tables">Join multiple tables</a></li>
+  <li><a href="#saving-data" id="toc-saving-data" class="nav-link" data-scroll-target="#saving-data">Saving data</a></li>
+  <li><a href="#miscellaneous" id="toc-miscellaneous" class="nav-link" data-scroll-target="#miscellaneous">Miscellaneous</a>
+  <ul class="collapse">
+  <li><a href="#tibble" id="toc-tibble" class="nav-link" data-scroll-target="#tibble">tibble</a></li>
+  <li><a href="#useful-commands" id="toc-useful-commands" class="nav-link" data-scroll-target="#useful-commands">Useful commands</a></li>
+  <li><a href="#cheatsheet" id="toc-cheatsheet" class="nav-link" data-scroll-target="#cheatsheet">cheatsheet</a></li>
+  </ul></li>
+  <li><a href="#put-it-all-together" id="toc-put-it-all-together" class="nav-link" data-scroll-target="#put-it-all-together">Put it all together</a>
+  <ul class="collapse">
+  <li><a href="#computing-export-share" id="toc-computing-export-share" class="nav-link" data-scroll-target="#computing-export-share">Computing export share</a></li>
+  <li><a href="#combining-baci-data-from-20112020" id="toc-combining-baci-data-from-20112020" class="nav-link" data-scroll-target="#combining-baci-data-from-20112020">Combining BACI data from 2011:2020</a></li>
+  <li><a href="#adding-descriptions-of-exporters-importers-and-product-to-baci-data" id="toc-adding-descriptions-of-exporters-importers-and-product-to-baci-data" class="nav-link" data-scroll-target="#adding-descriptions-of-exporters-importers-and-product-to-baci-data">Adding descriptions of exporters, importers, and product to BACI data</a></li>
+  <li><a href="#saving-data-for-further-analysis" id="toc-saving-data-for-further-analysis" class="nav-link" data-scroll-target="#saving-data-for-further-analysis">Saving data for further analysis</a></li>
+  </ul></li>
+  <li><a href="#further-topics" id="toc-further-topics" class="nav-link" data-scroll-target="#further-topics">Further Topics</a>
+  <ul class="collapse">
+  <li><a href="#link" id="toc-link" class="nav-link" data-scroll-target="#link">link</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Wrangling</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    Piyayut Chitchumnong 
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            <a href="https://nabc.go.th">National Agricultural Big Data Center</a>
+          </p>
+      </div>
+    </div>
+
+<div class="quarto-title-meta">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 12, 2022</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>The objective of this section is to introduce basic data wrangling/manipulation/preparation using <code>R</code>.</p>
+<p>Data wrangling is a step that prepare data for further analysis including</p>
+<ul>
+<li><strong>import</strong> data: read data from various sources/formats into R session.</li>
+<li><strong>tidy</strong> data: reshape data/ cleaning data</li>
+<li><strong>transform</strong> data: create new variables/ feature engineering</li>
+</ul>
+<p><img src="https://d33wubrfki0l68.cloudfront.net/571b056757d68e6df81a3e3853f54d3c76ad6efc/32d37/diagrams/data-science.png" class="img-fluid"></p>
+<section id="tidy-data-concept" class="level2">
+<h2 class="anchored" data-anchor-id="tidy-data-concept">Tidy Data Concept</h2>
+<blockquote class="blockquote">
+<p>Tidy data is a way to describe data that’s organized with a particular structure – a rectangular structure, where each variable has its own column, and each observation has its own row (Wickham 2014). <img src="https://www.openscapes.org/img/blog/tidydata/tidydata_1.jpg" class="img-fluid"></p>
+</blockquote>
+<p>Depending on our task/question, we should transform our data into tidy data.</p>
+</section>
+<section id="basic-operations" class="level2">
+<h2 class="anchored" data-anchor-id="basic-operations">Basic operations</h2>
+<ul>
+<li>Importing data</li>
+<li>Selecting variables</li>
+<li>Filtering rows</li>
+<li>Adding new variables</li>
+<li>Arranging rows by variable</li>
+<li>Summarizing and Grouping</li>
+<li>Reshaping table</li>
+<li>Joining multiple tables</li>
+<li>Saving data to computers</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="install-and-load-packages" class="level1">
+<h1>Install and load packages</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ ggplot2 3.3.6     ✔ purrr   0.3.4</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ tibble  3.1.8     ✔ dplyr   1.0.9</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ tidyr   1.2.0     ✔ stringr 1.4.0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ readr   2.1.2     ✔ forcats 0.5.1</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✖ dplyr::filter() masks stats::filter()</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✖ dplyr::lag()    masks stats::lag()</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; here() starts at C:/Users/piyayut.chi/github/workshop/2022-10_R</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(writexl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="data" class="level1">
+<h1>Data</h1>
+<p>One of the important step to conduct a data analytics or machine learning project is to understand the data. We use data from <a href="http://www.cepii.fr/CEPII/en">CEPII</a> including</p>
+<p><strong>Main Data:</strong></p>
+<ul>
+<li><code>BACI</code>: bilateral trade flows</li>
+<li><code>country_data</code>: country basic data i.e.&nbsp;population and gdp drived from Gravity data set</li>
+</ul>
+<p><strong>Reference Data:</strong> Used for augmenting the main data with additional data i.e.&nbsp;country name or product sector.</p>
+<ul>
+<li><code>country_codes</code>: country codes and names</li>
+<li><code>product_codes</code>: product codes based on HS92 system.</li>
+</ul>
+<section id="baci" class="level2">
+<h2 class="anchored" data-anchor-id="baci">BACI</h2>
+<p>CEPII’s BACI dataset is downloaded from <a href="http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8" class="uri">http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8</a>.</p>
+<p><strong>Description:</strong> BACI provides data on bilateral trade flows for 200 countries at the product level (5000 products). Products correspond to the “Harmonized System” nomenclature (6 digit code).</p>
+<p>Please see the <a href="http://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html">documentation</a></p>
+<p><strong>Data Dictionary:</strong></p>
+<ul>
+<li><code>t</code> : Year</li>
+<li><code>i</code> : Exporter (ISO 3-digit country code)</li>
+<li><code>j</code> : Importer (ISO 3-digit country code)</li>
+<li><code>k</code> : Product category (HS92 2/4/6-digit code)</li>
+<li><code>v</code> : Value of the trade flow (in thousands current USD)</li>
+<li><code>q</code> : Quantity (in metric tons)</li>
+</ul>
+<p><strong>Note:</strong> The full dataset of HS92 is from 1995-2020 at 6-digit code. To keep files size managable, I use only data from 2016-2020 at 2 digit.</p>
+<div class="cell">
+<pre><code>#&gt; # A tibble: 895,929 × 6
+#&gt;        t     i     j k          v       q
+#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+#&gt;  1  2019     4    24 48     1.60    1    
+#&gt;  2  2019     4    24 84     1.11    0.021
+#&gt;  3  2019     4    28 62     0.483   0.011
+#&gt;  4  2019     4    31 07     6.07   22.0  
+#&gt;  5  2019     4    31 08     9.41   38.2  
+#&gt;  6  2019     4    31 09     2.66    0.003
+#&gt;  7  2019     4    31 20     0.082   0.096
+#&gt;  8  2019     4    31 22     0.559   1.06 
+#&gt;  9  2019     4    31 25    27.4   111.   
+#&gt; 10  2019     4    31 39     1.77    0.285
+#&gt; # … with 895,919 more rows</code></pre>
+</div>
+</section>
+<section id="country-data" class="level2">
+<h2 class="anchored" data-anchor-id="country-data">Country Data</h2>
+<p>Country data contains basic data i.e.&nbsp;population and GDP from 2000-2019. It is derived from CEPII’s Gravity dataset which is downloaded from <a href="http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8" class="uri">http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8</a>. Please see the <a href="http://www.cepii.fr/DATA_DOWNLOAD/gravity/doc/Gravity_documentation.pdf">documentation</a>.</p>
+<p><strong>Data Dictionary:</strong></p>
+<ul>
+<li><code>year</code> : Year</li>
+<li><code>iso3</code> : Country code (ISO 3-digit country code)</li>
+<li><code>pop</code> : Population (in thousands)</li>
+<li><code>gdp</code> : GDP (current thousands US$)</li>
+<li><code>gdpcap</code> : GDP per capita (current thousands US$)</li>
+</ul>
+<div class="cell">
+<pre><code>#&gt; # A tibble: 4,960 × 5
+#&gt;     year iso3    pop      gdp gdpcap
+#&gt;    &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+#&gt;  1  2000 ABW    90.9 1873453.   20.6
+#&gt;  2  2001 ABW    92.9 1920263.   20.7
+#&gt;  3  2002 ABW    95.0 1941095.   20.4
+#&gt;  4  2003 ABW    97.0 2021302.   20.8
+#&gt;  5  2004 ABW    98.7 2228279.   22.6
+#&gt;  6  2005 ABW   100.  2331006.   23.3
+#&gt;  7  2006 ABW   101.  2421475.   24.0
+#&gt;  8  2007 ABW   101.  2623726.   25.9
+#&gt;  9  2008 ABW   101.  2791961.   27.5
+#&gt; 10  2009 ABW   101.  2498933.   24.6
+#&gt; # … with 4,950 more rows</code></pre>
+</div>
+</section>
+<section id="country-codes" class="level2">
+<h2 class="anchored" data-anchor-id="country-codes">Country Codes</h2>
+<p>Country codes is a table that provides additional details about countries including code, name and region. Since there are many code standards/system, we use <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes">ISO 3166</a> which has three code i.e.&nbsp;numeric, two-alphabetic and three-alphabetic. Codes are very helpful when linking tables because tables could use different coding system.</p>
+<p><strong>Data Dictionary:</strong></p>
+<ul>
+<li><code>iso3n</code> : ISO 3-digit numric country code</li>
+<li><code>country_name_abbreviation</code> : country name short</li>
+<li><code>country_name_full</code> : country name full</li>
+<li><code>iso2c</code> : ISO 2-digit alphabetic country code</li>
+<li><code>iso3c</code> : ISO 3-digit alphabetic country code</li>
+</ul>
+<div class="cell">
+<pre><code>#&gt; # A tibble: 238 × 5
+#&gt;    iso3n country_name        iso2c iso3c region       
+#&gt;    &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        
+#&gt;  1     4 Afghanistan         AF    AFG   Asia         
+#&gt;  2     8 Albania             AL    ALB   Europe       
+#&gt;  3    12 Algeria             DZ    DZA   Africa       
+#&gt;  4    16 American Samoa      AS    ASM   Other        
+#&gt;  5    20 Andorra             AD    AND   Europe       
+#&gt;  6    24 Angola              AO    AGO   Africa       
+#&gt;  7    28 Antigua and Barbuda AG    ATG   North America
+#&gt;  8    31 Azerbaijan          AZ    AZE   Asia         
+#&gt;  9    32 Argentina           AR    ARG   South America
+#&gt; 10    36 Australia           AU    AUS   Oceania      
+#&gt; # … with 228 more rows</code></pre>
+</div>
+</section>
+<section id="product-codes" class="level2">
+<h2 class="anchored" data-anchor-id="product-codes">Product Codes</h2>
+<p>Product codes is a table that provides additional details about products using the Harmonized System (HS). The Harmonized System is an international nomenclature for the classification of products for customs purposes. At the international level, HS classifying goods is a six-digit code system where each country can have their own codes called tariff line. HS code has been update regulary i.e.&nbsp;<code>HS92</code>, <code>HS96</code>, <code>HS02</code>, <code>HS07</code>, <code>HS12</code>, <code>HS17</code> and <code>HS22</code>. We use <code>HS92</code> and also add product name and its sector as the one used by <a href="https://atlas.cid.harvard.edu/explore">The Atlas of Economic Complexity</a>.</p>
+<p><strong>Data Dictionary:</strong></p>
+<ul>
+<li><code>hs_product_2digit_code</code>: HS92 product code at 2 digit code</li>
+<li><code>hs_product_2digit_name</code>: HS92 product description at 2 digit code</li>
+<li><code>sector</code>: sectors as classified by The Atlas of Economic Complexity</li>
+</ul>
+<div class="cell">
+<pre><code>#&gt; # A tibble: 102 × 4
+#&gt;    product_id hs_product_2digit_code hs_product_2digit_name sector     
+#&gt;         &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;                  &lt;chr&gt;      
+#&gt;  1        100 01                     Live animals           Agriculture
+#&gt;  2        101 02                     Meat                   Agriculture
+#&gt;  3        102 03                     Fish                   Agriculture
+#&gt;  4        103 04                     Diary products         Agriculture
+#&gt;  5        104 05                     Animal products        Agriculture
+#&gt;  6        105 06                     Plants                 Agriculture
+#&gt;  7        106 07                     Vegetables             Agriculture
+#&gt;  8        107 08                     Fruits and nuts        Agriculture
+#&gt;  9        108 09                     Coffee, tea and spices Agriculture
+#&gt; 10        109 10                     Cereals                Agriculture
+#&gt; # … with 92 more rows</code></pre>
+</div>
+<hr>
+</section>
+</section>
+<section id="importing-data" class="level1">
+<h1>Importing data</h1>
+<section id="path" class="level2">
+<h2 class="anchored" data-anchor-id="path">path</h2>
+<ul>
+<li>Path is file location in our computer.</li>
+<li>We can specify a path with two approachs
+<ul>
+<li>absolute path which is full path i.e.&nbsp;“C:/Users/Acer/Google Drive/workshop/2022-10_R”</li>
+<li>relative path which is path the relative to working directory</li>
+</ul></li>
+<li>We can get working directory via <code>getwd()</code></li>
+<li>Package <code>here</code> help path management
+<ul>
+<li><code>here::here</code> will set working directory to the directory that a file <code>.here</code> is located.</li>
+<li>file <code>.here</code> is an empty file for placeholder. We can create it using <code>here::set_here()</code></li>
+</ul></li>
+<li>If we use Rstudio and Rproject which we do. Rproject will always set project folder as working directory.</li>
+</ul>
+</section>
+<section id="csv" class="level2">
+<h2 class="anchored" data-anchor-id="csv">csv</h2>
+<p>CSV is a text file that each columns are seperated by commas stored in <code>.csv</code> file extension. Aside from <code>csv</code>, there are similar text file that store spreadsheet data but used different seperator or fixed width to determine column by position. There is a csv file named <code>country_codes.csv</code> in folder <code>data</code>.</p>
+<p>We use function <code>read_csv</code> from <code>readr</code> package which is loaded when we load <code>tidyverse</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>country_codes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">"data/country_codes.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>country_codes</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 238 × 5</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    iso3n country_name        iso2c iso3c region       </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4 Afghanistan         AF    AFG   Asia         </span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     8 Albania             AL    ALB   Europe       </span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3    12 Algeria             DZ    DZA   Africa       </span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4    16 American Samoa      AS    ASM   Other        </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5    20 Andorra             AD    AND   Europe       </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6    24 Angola              AO    AGO   Africa       </span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7    28 Antigua and Barbuda AG    ATG   North America</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8    31 Azerbaijan          AZ    AZE   Asia         </span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9    32 Argentina           AR    ARG   South America</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10    36 Australia           AU    AUS   Oceania      </span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 228 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="excel" class="level2">
+<h2 class="anchored" data-anchor-id="excel">excel</h2>
+<ul>
+<li>MS exel is a spreadsheet software. It is very popular and widely used.</li>
+<li>It comes with two file extension which are <code>.xls</code> (2003 and before) and <code>.xlsx</code> (2007 onwards).</li>
+<li>File excel is very flexible
+<ul>
+<li>It can holds data and also graphic i.e.&nbsp;graph.</li>
+<li>It can have many tables and also have many tabs.</li>
+</ul></li>
+<li>R packages that can handle MS excel are
+<ul>
+<li><code>readxl</code>: for read/import excel files support xls and xlsx.</li>
+<li><code>writexl</code>: for write/export data into xlsx format.</li>
+<li><code>openxlsx</code>: for read/write excel, support only xlsx but can insert graphic and custom table format. Advanced users should check this out.</li>
+</ul></li>
+</ul>
+<p><strong>excel_sheets</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sheets <span class="ot">&lt;-</span> <span class="fu">excel_sheets</span>(<span class="fu">here</span>(<span class="st">"data/baci_meta.xlsx"</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sheets</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "country_codes"        "product_codes_2digit" "product_codes_4digit"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] "product_codes_6digit"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We see that there are 4 sheets:</p>
+<ul>
+<li><code>country_codes</code></li>
+<li><code>product_codes_hs92_2digit</code></li>
+<li><code>product_codes_hs92_4digit</code></li>
+<li><code>product_codes_hs92_6digit</code></li>
+</ul>
+<p>This tutorial will use only <code>country_codes</code> and <code>product_codes_hs92_2digit</code>.</p>
+<p><strong>read_excel</strong> check <code>help(read_excel)</code> for full explanation. Unlike csv file, we need to specify sheet either index or name. If not specified, the first sheet will be loaded by default.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sheet name</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>country_codes <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">here</span>(<span class="st">"data/baci_meta.xlsx"</span>), <span class="st">"country_codes"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sheet number</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>product_codes <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">here</span>(<span class="st">"data/baci_meta.xlsx"</span>), <span class="dv">2</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>product_codes</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 102 × 4</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    product_id hs_product_2digit_code hs_product_2digit_name sector     </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;                  &lt;chr&gt;      </span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1        100 01                     Live animals           Agriculture</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2        101 02                     Meat                   Agriculture</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3        102 03                     Fish                   Agriculture</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4        103 04                     Diary products         Agriculture</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5        104 05                     Animal products        Agriculture</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6        105 06                     Plants                 Agriculture</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7        106 07                     Vegetables             Agriculture</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8        107 08                     Fruits and nuts        Agriculture</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9        108 09                     Coffee, tea and spices Agriculture</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        109 10                     Cereals                Agriculture</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 92 more rows</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># country data using default: sheet = 1</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>country_data <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">here</span>(<span class="st">"data/country_data.xlsx"</span>))</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>country_data</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4,960 × 5</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     year iso3    pop      gdp gdpcap</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2000 ABW    90.9 1873453.   20.6</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2001 ABW    92.9 1920263.   20.7</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2002 ABW    95.0 1941095.   20.4</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2003 ABW    97.0 2021302.   20.8</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2004 ABW    98.7 2228279.   22.6</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2005 ABW   100.  2331006.   23.3</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2006 ABW   101.  2421475.   24.0</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2007 ABW   101.  2623726.   25.9</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2008 ABW   101.  2791961.   27.5</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2009 ABW   101.  2498933.   24.6</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 4,950 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="rds" class="level2">
+<h2 class="anchored" data-anchor-id="rds">rds</h2>
+<ul>
+<li><code>rds</code> is a file format that stores R object including <code>data.frame</code> and others.</li>
+<li><code>readRDS</code> for import rds into R session.</li>
+<li><code>saveRDS</code> for export/save an object into a rds file.</li>
+<li>Note file rds will keep class and attribute of the object. This means that when we save a <code>data.frame</code> into <code>rds</code>, data types also be saved and can be restored using <code>readRDS</code>.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="st">"data/baci_hs92_2019_2digit.rds"</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>baci_2019</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 895,929 × 6</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i     j k          v       q</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2019     4    24 48     1.60    1    </span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2019     4    24 84     1.11    0.021</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2019     4    28 62     0.483   0.011</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2019     4    31 07     6.07   22.0  </span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2019     4    31 08     9.41   38.2  </span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2019     4    31 09     2.66    0.003</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2019     4    31 20     0.082   0.096</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2019     4    31 22     0.559   1.06 </span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2019     4    31 25    27.4   111.   </span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2019     4    31 39     1.77    0.285</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 895,919 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+<section id="selecting-variables" class="level1">
+<h1>Selecting variables</h1>
+<p>In real data wrangling work, we often get a table that contains too many variables. It is helpful to select some variables for further uses.</p>
+<p>We use <code>select</code> from <code>dplyr</code> package.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    column_x, <span class="co"># select</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">new_column_y =</span> column_y, ... <span class="co"># select with rename</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> We select year, product, orgin country and trade value from <code>baci_2020</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">select</span>(t, i, k, <span class="at">value =</span> v)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 895,929 × 4</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i k      value</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2019     4 48     1.60 </span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2019     4 84     1.11 </span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2019     4 62     0.483</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2019     4 07     6.07 </span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2019     4 08     9.41 </span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2019     4 09     2.66 </span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2019     4 20     0.082</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2019     4 22     0.559</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2019     4 25    27.4  </span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2019     4 39     1.77 </span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 895,919 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Excercise:</strong> Select year, destination country and trade volume from <code>baci_2020</code> dataset where rename q.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">select</span>(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="filtering-rows" class="level1">
+<h1>Filtering rows</h1>
+<p>We often interest in a subset of the data. There are many ways to filter data i.e.&nbsp;by index of rows. But one common way is to filter by conditions.</p>
+<p>We use <code>filter</code> from <code>dplyr</code> package.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">logical_expression</span>(column_x) <span class="co">#i.e. column_x &gt; 10</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Get cereal (<code>k == "10"</code>) export flow of Thailand (<code>i == 764</code>).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">filter</span>(i <span class="sc">==</span> <span class="dv">764</span> <span class="sc">&amp;</span> k <span class="sc">==</span> <span class="st">"10"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 174 × 6</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i     j k              v         q</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2019   764     8 10        35.6       42.9 </span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2019   764    12 10     16050.     24223.  </span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2019   764    16 10        46.4       47.6 </span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2019   764    24 10    194831.    282029.  </span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2019   764    28 10         0.422      1.99</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2019   764    31 10       939.      1909.  </span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2019   764    32 10        51.6       60.8 </span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2019   764    36 10     68991.     80063.  </span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2019   764    40 10       779.      1018.  </span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2019   764    44 10       112.       135.  </span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 164 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Excercise:</strong> Get Vegetables and Fruit import flow of India.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">filter</span>(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="adding-new-variables" class="level1">
+<h1>Adding new variables</h1>
+<p>When we analyze data, we usually have to compute new variable(s) using original variables.</p>
+<p>We use <code>mutate</code> from <code>dplyr</code> package. It can use to make multiple variables in single function call.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">new_x =</span> expression,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Compute unit price by dividing value by quantity</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">unitprice =</span> v <span class="sc">/</span> q)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 895,929 × 7</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i     j k          v       q unitprice</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2019     4    24 48     1.60    1         1.60 </span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2019     4    24 84     1.11    0.021    53.0  </span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2019     4    28 62     0.483   0.011    43.9  </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2019     4    31 07     6.07   22.0       0.276</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2019     4    31 08     9.41   38.2       0.246</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2019     4    31 09     2.66    0.003   886.   </span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2019     4    31 20     0.082   0.096     0.854</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2019     4    31 22     0.559   1.06      0.530</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2019     4    31 25    27.4   111.        0.247</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2019     4    31 39     1.77    0.285     6.21 </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 895,919 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Excercise:</strong> Change unit of the unit price to US dollar per ton</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">mutate</span>(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="arranging-rows-by-variables" class="level1">
+<h1>Arranging rows by variables</h1>
+<p>Often, we have to sort or rearrange rows by values of particular columns to help us better understanding of data. We can sort from lower to larger (ascending) or the opposite (descending). Also multiple columns can be sorted.</p>
+<p>We use <code>arrange</code> from <code>dplyr</code> package. Default mode of sorting is ascending, if we want to sort descending, use <code>desc(variable)</code> syntax.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(column1, <span class="fu">desc</span>(column2),)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Sort <code>baci_2019</code> by country code ascending and export value descending.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">arrange</span>(i, <span class="fu">desc</span>(v))</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 895,929 × 6</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i     j k           v         q</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2019     4   784 71    976462.      22.5</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2019     4   699 08    273212.   54075. </span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2019     4   699 13    242662.    3338. </span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2019     4   586 08    172720.  253819. </span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2019     4   586 07    152581.  483541. </span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2019     4   586 27     80579. 1257448. </span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2019     4   586 52     80547.   66152. </span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2019     4   586 25     65047.  840893. </span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2019     4   699 09     40024.    3900. </span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2019     4   699 07     32648.   55953. </span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 895,919 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Excercise:</strong> Sort <code>country_data</code> by year ascending and population descending.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>country_data <span class="sc">|&gt;</span> <span class="fu">arrange</span>(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="summarizing-and-grouping" class="level1">
+<h1>Summarizing and Grouping</h1>
+<p>As data is huge, we need a way or a measure that let us have a better understanding about data. One way is to condense information into some sort of summary statistics i.e.&nbsp;average, min, max, sum, count, etc. These operations are basically reduce the number of rows. In addition, We can summaize data by group (categorial data). In this tutorial, we will show how to do it with group(s).</p>
+<p>We use <code>group_by</code> from <code>dplyr</code> package before use <code>summarize</code> function. The result is grouped dataframe. I normally <code>ungroup</code> it to normal dataframe.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(column1, column2, ...) <span class="sc">|&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">new_x =</span> <span class="fu">FUN</span>(column_x)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Find total export value by exporters and products.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(i, k) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">v =</span> <span class="fu">sum</span>(v)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by 'i'. You can override using the `.groups`</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument.</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 19,287 × 3</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        i k             v</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4 01       622.  </span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4 02        94.6 </span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     4 03         9.18</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4 04       105.  </span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4 05      6860.  </span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     4 06       994.  </span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4 07    187129.  </span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4 08    555855.  </span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     4 09     60194.  </span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4 10      3586.  </span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 19,277 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Exercise:</strong> Use <code>country_data</code>, find total population by year.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>country_data <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(...) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="reshaping-table" class="level1">
+<h1>Reshaping table</h1>
+<p>Reshaping is used we want to change the way data is presenting. There are <code>wide</code> format and <code>long</code> format.</p>
+<ul>
+<li><code>wide</code> format is a format that have more columns but less rows. Good for making report orpresenting data.</li>
+<li><code>long</code> format is a format that have less columns but more rows. Good for data management and data warehousing.</li>
+</ul>
+<p>We can convert back and forth as needed. For <code>excel</code> user, it is the famous pivot-table function.</p>
+<p><img src="https://raw.githubusercontent.com/gadenbuie/tidyexplain/main/images/static/png/original-dfs-tidy.png" class="img-fluid"></p>
+<section id="pivot-wider" class="level2">
+<h2 class="anchored" data-anchor-id="pivot-wider">Pivot wider</h2>
+<p>Convert from long format to wide format.</p>
+<p>We use <code>pivot_wider</code> from <code>tidyr</code> package.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">id_cols =</span> <span class="fu">c</span>(<span class="st">"column1"</span>, <span class="st">"column2"</span>, ...),</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> <span class="fu">c</span>(<span class="st">"column1"</span>, <span class="st">"column2"</span>, ...),</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(<span class="st">"column1"</span>, <span class="st">"column2"</span>, ...),</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Make a report of each country of population by years where we want each year to be a column. We can achieve this by pivot <code>country_data</code> to wide format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>country_data <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">id_cols =</span> <span class="st">"iso3"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> <span class="st">"year"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="st">"pop"</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 248 × 21</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    iso3   `2000`  `2001` `2002` `2003` `2004` `2005` `2006` `2007` `2008` `2009`</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 ABW      90.9    92.9 9.50e1 9.70e1 9.87e1 1.00e2 1.01e2 1.01e2 1.01e2 1.01e2</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 AFG   20595.  21348.  2.22e4 2.31e4 2.40e4 2.49e4 2.56e4 2.63e4 2.70e4 2.77e4</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 AGO   13925.  14385.  1.49e4 1.54e4 1.60e4 1.65e4 1.71e4 1.77e4 1.83e4 1.89e4</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 AIA      11.4    11.8 1.21e1 1.24e1 1.28e1 1.31e1 1.34e1 1.38e1 1.41e1 1.4 e1</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 ALB    3089.   3064.  3.05e3 3.03e3 3.01e3 2.99e3 2.97e3 2.94e3 2.91e3 2.88e3</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 AND      65.4    68   7.16e1 7.56e1 7.91e1 8.12e1 8.19e1 8.13e1 8.00e1 7.87e1</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 ANT     301.    305.  3.09e2 3.13e2 3.17e2 3.20e2 3.23e2 3.25e2 3.27e2 3.28e2</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 ARE    3026.   3132.  3.22e3 3.37e3 3.66e3 4.15e3 4.88e3 5.80e3 6.80e3 7.72e3</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 ARG   36903.  37273.  3.76e4 3.80e4 3.83e4 3.86e4 3.90e4 3.93e4 3.97e4 4.00e4</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 ARM    3076.   3060.  3.05e3 3.04e3 3.03e3 3.01e3 3.00e3 2.99e3 2.98e3 2.97e3</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 238 more rows, and 10 more variables: `2010` &lt;dbl&gt;, `2011` &lt;dbl&gt;,</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   `2012` &lt;dbl&gt;, `2013` &lt;dbl&gt;, `2014` &lt;dbl&gt;, `2015` &lt;dbl&gt;, `2016` &lt;dbl&gt;,</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   `2017` &lt;dbl&gt;, `2018` &lt;dbl&gt;, `2019` &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Exercise:</strong> Use <code>baci_2019</code>, make a matrix of trade value where rows are exporters and columns are importers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(...) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(...) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">id_cols =</span> ...,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> ...,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> ...</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># or</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">id_cols =</span> ...,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> ...,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> ...,</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fn =</span> ...</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="pivot-longer" class="level2">
+<h2 class="anchored" data-anchor-id="pivot-longer">Pivot longer</h2>
+<p>Convert from wide format to long format.</p>
+<p>We use <code>pivot_longer</code> from <code>tidyr</code> package.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"column1"</span>, <span class="st">"column2"</span>, ...),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"column"</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"column"</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Normalize <code>country_data</code> table by moving measurment variables including <code>pop</code>, <code>gdp</code> and <code>gdpcap</code> columns into longer format where there is a column to store the variable name and a column store their value. We can achieve this by pivot <code>country_data</code> to long format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>country_data <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"pop"</span>, <span class="st">"gdp"</span>, <span class="st">"gdpcap"</span>), </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to  =</span> <span class="st">"variable"</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 14,880 × 4</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     year iso3  variable     value</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2000 ABW   pop           90.9</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2000 ABW   gdp      1873453. </span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2000 ABW   gdpcap        20.6</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2001 ABW   pop           92.9</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2001 ABW   gdp      1920263. </span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2001 ABW   gdpcap        20.7</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2002 ABW   pop           95.0</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2002 ABW   gdp      1941095. </span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2002 ABW   gdpcap        20.4</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2003 ABW   pop           97.0</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 14,870 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Exercise:</strong> Use <code>baci_2019</code> and pivot longer trade value and quantity</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> ...,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> ...,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> ...</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+<section id="join-multiple-tables" class="level1">
+<h1>Join multiple tables</h1>
+<p>We join tables together to enrich data i.e.&nbsp;adding new variables from other table or adding metadata from reference tables.</p>
+<p>Like SQL-join, there are many types of join.</p>
+<ul>
+<li>left_join<br>
+</li>
+<li>right_join<br>
+</li>
+<li>inner_join<br>
+</li>
+<li>full_join<br>
+</li>
+<li>semi_join<br>
+</li>
+<li>anti_join<br>
+<img src="http://www2.stat.duke.edu/~cr173/Sta323_Sp18/slides/imgs/join_venn.png" class="img-fluid"></li>
+</ul>
+<p>In this tutorial, we illustrate left-join where the left table rows are preserved and add only matched data from right table.</p>
+<p><strong>Syntax:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    df2,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"df1_column"</span> <span class="ot">=</span> <span class="st">"df2_column"</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># where df1_column and df2_column are key to join both table together</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Add country name to <code>baci_2019</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    country_codes,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"i"</span> <span class="ot">=</span> <span class="st">"iso3n"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 895,929 × 10</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i     j k          v       q country_name iso2c iso3c region</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; </span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2019     4    24 48     1.60    1     Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2019     4    24 84     1.11    0.021 Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2019     4    28 62     0.483   0.011 Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2019     4    31 07     6.07   22.0   Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2019     4    31 08     9.41   38.2   Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2019     4    31 09     2.66    0.003 Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2019     4    31 20     0.082   0.096 Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2019     4    31 22     0.559   1.06  Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2019     4    31 25    27.4   111.    Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2019     4    31 39     1.77    0.285 Afghanistan  AF    AFG   Asia  </span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 895,919 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Exercise:</strong> Add product description to <code>baci_2019</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    ...,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> ...</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="saving-data" class="level1">
+<h1>Saving data</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># csv</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>baci <span class="sc">|&gt;</span> <span class="fu">write_csv</span>(<span class="fu">here</span>(<span class="st">"output/baci.csv"</span>))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># excel</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># baci |&gt; write_xlsx(here("output/baci.xlsx")) # number of rows is too large</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>country_data <span class="sc">|&gt;</span> <span class="fu">write_xlsx</span>(<span class="fu">here</span>(<span class="st">"output/country_data.xlsx"</span>))</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># RDS</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>baci <span class="sc">|&gt;</span> <span class="fu">saveRDS</span>(<span class="fu">here</span>(<span class="st">"output/baci.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="miscellaneous" class="level1">
+<h1>Miscellaneous</h1>
+<section id="tibble" class="level2">
+<h2 class="anchored" data-anchor-id="tibble">tibble</h2>
+<p><code>tibble</code> is an enhanced <code>data.frame</code> where it has better print resultt (preview data with key metadata i.e.&nbsp;dimension, data types).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tibble</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>iris_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(iris)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># class</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(iris)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "data.frame"</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(iris_tibble)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "tbl_df"     "tbl"        "data.frame"</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co"># preview</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>iris</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Sepal.Length Sepal.Width Petal.Length Petal.Width    Species</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1            5.1         3.5          1.4         0.2     setosa</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2            4.9         3.0          1.4         0.2     setosa</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3            4.7         3.2          1.3         0.2     setosa</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4            4.6         3.1          1.5         0.2     setosa</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5            5.0         3.6          1.4         0.2     setosa</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6            5.4         3.9          1.7         0.4     setosa</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7            4.6         3.4          1.4         0.3     setosa</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8            5.0         3.4          1.5         0.2     setosa</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9            4.4         2.9          1.4         0.2     setosa</span></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10           4.9         3.1          1.5         0.1     setosa</span></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11           5.4         3.7          1.5         0.2     setosa</span></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12           4.8         3.4          1.6         0.2     setosa</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13           4.8         3.0          1.4         0.1     setosa</span></span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14           4.3         3.0          1.1         0.1     setosa</span></span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15           5.8         4.0          1.2         0.2     setosa</span></span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16           5.7         4.4          1.5         0.4     setosa</span></span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17           5.4         3.9          1.3         0.4     setosa</span></span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18           5.1         3.5          1.4         0.3     setosa</span></span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19           5.7         3.8          1.7         0.3     setosa</span></span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20           5.1         3.8          1.5         0.3     setosa</span></span>
+<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21           5.4         3.4          1.7         0.2     setosa</span></span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22           5.1         3.7          1.5         0.4     setosa</span></span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23           4.6         3.6          1.0         0.2     setosa</span></span>
+<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24           5.1         3.3          1.7         0.5     setosa</span></span>
+<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25           4.8         3.4          1.9         0.2     setosa</span></span>
+<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 26           5.0         3.0          1.6         0.2     setosa</span></span>
+<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 27           5.0         3.4          1.6         0.4     setosa</span></span>
+<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 28           5.2         3.5          1.5         0.2     setosa</span></span>
+<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 29           5.2         3.4          1.4         0.2     setosa</span></span>
+<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30           4.7         3.2          1.6         0.2     setosa</span></span>
+<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 31           4.8         3.1          1.6         0.2     setosa</span></span>
+<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 32           5.4         3.4          1.5         0.4     setosa</span></span>
+<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33           5.2         4.1          1.5         0.1     setosa</span></span>
+<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34           5.5         4.2          1.4         0.2     setosa</span></span>
+<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35           4.9         3.1          1.5         0.2     setosa</span></span>
+<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 36           5.0         3.2          1.2         0.2     setosa</span></span>
+<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 37           5.5         3.5          1.3         0.2     setosa</span></span>
+<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38           4.9         3.6          1.4         0.1     setosa</span></span>
+<span id="cb35-51"><a href="#cb35-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39           4.4         3.0          1.3         0.2     setosa</span></span>
+<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40           5.1         3.4          1.5         0.2     setosa</span></span>
+<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 41           5.0         3.5          1.3         0.3     setosa</span></span>
+<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 42           4.5         2.3          1.3         0.3     setosa</span></span>
+<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 43           4.4         3.2          1.3         0.2     setosa</span></span>
+<span id="cb35-56"><a href="#cb35-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 44           5.0         3.5          1.6         0.6     setosa</span></span>
+<span id="cb35-57"><a href="#cb35-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 45           5.1         3.8          1.9         0.4     setosa</span></span>
+<span id="cb35-58"><a href="#cb35-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 46           4.8         3.0          1.4         0.3     setosa</span></span>
+<span id="cb35-59"><a href="#cb35-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 47           5.1         3.8          1.6         0.2     setosa</span></span>
+<span id="cb35-60"><a href="#cb35-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 48           4.6         3.2          1.4         0.2     setosa</span></span>
+<span id="cb35-61"><a href="#cb35-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 49           5.3         3.7          1.5         0.2     setosa</span></span>
+<span id="cb35-62"><a href="#cb35-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50           5.0         3.3          1.4         0.2     setosa</span></span>
+<span id="cb35-63"><a href="#cb35-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 51           7.0         3.2          4.7         1.4 versicolor</span></span>
+<span id="cb35-64"><a href="#cb35-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 52           6.4         3.2          4.5         1.5 versicolor</span></span>
+<span id="cb35-65"><a href="#cb35-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 53           6.9         3.1          4.9         1.5 versicolor</span></span>
+<span id="cb35-66"><a href="#cb35-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 54           5.5         2.3          4.0         1.3 versicolor</span></span>
+<span id="cb35-67"><a href="#cb35-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 55           6.5         2.8          4.6         1.5 versicolor</span></span>
+<span id="cb35-68"><a href="#cb35-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 56           5.7         2.8          4.5         1.3 versicolor</span></span>
+<span id="cb35-69"><a href="#cb35-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 57           6.3         3.3          4.7         1.6 versicolor</span></span>
+<span id="cb35-70"><a href="#cb35-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 58           4.9         2.4          3.3         1.0 versicolor</span></span>
+<span id="cb35-71"><a href="#cb35-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 59           6.6         2.9          4.6         1.3 versicolor</span></span>
+<span id="cb35-72"><a href="#cb35-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60           5.2         2.7          3.9         1.4 versicolor</span></span>
+<span id="cb35-73"><a href="#cb35-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 61           5.0         2.0          3.5         1.0 versicolor</span></span>
+<span id="cb35-74"><a href="#cb35-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 62           5.9         3.0          4.2         1.5 versicolor</span></span>
+<span id="cb35-75"><a href="#cb35-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 63           6.0         2.2          4.0         1.0 versicolor</span></span>
+<span id="cb35-76"><a href="#cb35-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 64           6.1         2.9          4.7         1.4 versicolor</span></span>
+<span id="cb35-77"><a href="#cb35-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 65           5.6         2.9          3.6         1.3 versicolor</span></span>
+<span id="cb35-78"><a href="#cb35-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 66           6.7         3.1          4.4         1.4 versicolor</span></span>
+<span id="cb35-79"><a href="#cb35-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 67           5.6         3.0          4.5         1.5 versicolor</span></span>
+<span id="cb35-80"><a href="#cb35-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 68           5.8         2.7          4.1         1.0 versicolor</span></span>
+<span id="cb35-81"><a href="#cb35-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 69           6.2         2.2          4.5         1.5 versicolor</span></span>
+<span id="cb35-82"><a href="#cb35-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70           5.6         2.5          3.9         1.1 versicolor</span></span>
+<span id="cb35-83"><a href="#cb35-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 71           5.9         3.2          4.8         1.8 versicolor</span></span>
+<span id="cb35-84"><a href="#cb35-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 72           6.1         2.8          4.0         1.3 versicolor</span></span>
+<span id="cb35-85"><a href="#cb35-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 73           6.3         2.5          4.9         1.5 versicolor</span></span>
+<span id="cb35-86"><a href="#cb35-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 74           6.1         2.8          4.7         1.2 versicolor</span></span>
+<span id="cb35-87"><a href="#cb35-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 75           6.4         2.9          4.3         1.3 versicolor</span></span>
+<span id="cb35-88"><a href="#cb35-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 76           6.6         3.0          4.4         1.4 versicolor</span></span>
+<span id="cb35-89"><a href="#cb35-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 77           6.8         2.8          4.8         1.4 versicolor</span></span>
+<span id="cb35-90"><a href="#cb35-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 78           6.7         3.0          5.0         1.7 versicolor</span></span>
+<span id="cb35-91"><a href="#cb35-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 79           6.0         2.9          4.5         1.5 versicolor</span></span>
+<span id="cb35-92"><a href="#cb35-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80           5.7         2.6          3.5         1.0 versicolor</span></span>
+<span id="cb35-93"><a href="#cb35-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 81           5.5         2.4          3.8         1.1 versicolor</span></span>
+<span id="cb35-94"><a href="#cb35-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 82           5.5         2.4          3.7         1.0 versicolor</span></span>
+<span id="cb35-95"><a href="#cb35-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 83           5.8         2.7          3.9         1.2 versicolor</span></span>
+<span id="cb35-96"><a href="#cb35-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 84           6.0         2.7          5.1         1.6 versicolor</span></span>
+<span id="cb35-97"><a href="#cb35-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 85           5.4         3.0          4.5         1.5 versicolor</span></span>
+<span id="cb35-98"><a href="#cb35-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 86           6.0         3.4          4.5         1.6 versicolor</span></span>
+<span id="cb35-99"><a href="#cb35-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 87           6.7         3.1          4.7         1.5 versicolor</span></span>
+<span id="cb35-100"><a href="#cb35-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 88           6.3         2.3          4.4         1.3 versicolor</span></span>
+<span id="cb35-101"><a href="#cb35-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 89           5.6         3.0          4.1         1.3 versicolor</span></span>
+<span id="cb35-102"><a href="#cb35-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90           5.5         2.5          4.0         1.3 versicolor</span></span>
+<span id="cb35-103"><a href="#cb35-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 91           5.5         2.6          4.4         1.2 versicolor</span></span>
+<span id="cb35-104"><a href="#cb35-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 92           6.1         3.0          4.6         1.4 versicolor</span></span>
+<span id="cb35-105"><a href="#cb35-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 93           5.8         2.6          4.0         1.2 versicolor</span></span>
+<span id="cb35-106"><a href="#cb35-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 94           5.0         2.3          3.3         1.0 versicolor</span></span>
+<span id="cb35-107"><a href="#cb35-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 95           5.6         2.7          4.2         1.3 versicolor</span></span>
+<span id="cb35-108"><a href="#cb35-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 96           5.7         3.0          4.2         1.2 versicolor</span></span>
+<span id="cb35-109"><a href="#cb35-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 97           5.7         2.9          4.2         1.3 versicolor</span></span>
+<span id="cb35-110"><a href="#cb35-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 98           6.2         2.9          4.3         1.3 versicolor</span></span>
+<span id="cb35-111"><a href="#cb35-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 99           5.1         2.5          3.0         1.1 versicolor</span></span>
+<span id="cb35-112"><a href="#cb35-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100          5.7         2.8          4.1         1.3 versicolor</span></span>
+<span id="cb35-113"><a href="#cb35-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 101          6.3         3.3          6.0         2.5  virginica</span></span>
+<span id="cb35-114"><a href="#cb35-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 102          5.8         2.7          5.1         1.9  virginica</span></span>
+<span id="cb35-115"><a href="#cb35-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 103          7.1         3.0          5.9         2.1  virginica</span></span>
+<span id="cb35-116"><a href="#cb35-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 104          6.3         2.9          5.6         1.8  virginica</span></span>
+<span id="cb35-117"><a href="#cb35-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 105          6.5         3.0          5.8         2.2  virginica</span></span>
+<span id="cb35-118"><a href="#cb35-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 106          7.6         3.0          6.6         2.1  virginica</span></span>
+<span id="cb35-119"><a href="#cb35-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 107          4.9         2.5          4.5         1.7  virginica</span></span>
+<span id="cb35-120"><a href="#cb35-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 108          7.3         2.9          6.3         1.8  virginica</span></span>
+<span id="cb35-121"><a href="#cb35-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 109          6.7         2.5          5.8         1.8  virginica</span></span>
+<span id="cb35-122"><a href="#cb35-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 110          7.2         3.6          6.1         2.5  virginica</span></span>
+<span id="cb35-123"><a href="#cb35-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 111          6.5         3.2          5.1         2.0  virginica</span></span>
+<span id="cb35-124"><a href="#cb35-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 112          6.4         2.7          5.3         1.9  virginica</span></span>
+<span id="cb35-125"><a href="#cb35-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 113          6.8         3.0          5.5         2.1  virginica</span></span>
+<span id="cb35-126"><a href="#cb35-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 114          5.7         2.5          5.0         2.0  virginica</span></span>
+<span id="cb35-127"><a href="#cb35-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 115          5.8         2.8          5.1         2.4  virginica</span></span>
+<span id="cb35-128"><a href="#cb35-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 116          6.4         3.2          5.3         2.3  virginica</span></span>
+<span id="cb35-129"><a href="#cb35-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 117          6.5         3.0          5.5         1.8  virginica</span></span>
+<span id="cb35-130"><a href="#cb35-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 118          7.7         3.8          6.7         2.2  virginica</span></span>
+<span id="cb35-131"><a href="#cb35-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 119          7.7         2.6          6.9         2.3  virginica</span></span>
+<span id="cb35-132"><a href="#cb35-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 120          6.0         2.2          5.0         1.5  virginica</span></span>
+<span id="cb35-133"><a href="#cb35-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 121          6.9         3.2          5.7         2.3  virginica</span></span>
+<span id="cb35-134"><a href="#cb35-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 122          5.6         2.8          4.9         2.0  virginica</span></span>
+<span id="cb35-135"><a href="#cb35-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 123          7.7         2.8          6.7         2.0  virginica</span></span>
+<span id="cb35-136"><a href="#cb35-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 124          6.3         2.7          4.9         1.8  virginica</span></span>
+<span id="cb35-137"><a href="#cb35-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 125          6.7         3.3          5.7         2.1  virginica</span></span>
+<span id="cb35-138"><a href="#cb35-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 126          7.2         3.2          6.0         1.8  virginica</span></span>
+<span id="cb35-139"><a href="#cb35-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 127          6.2         2.8          4.8         1.8  virginica</span></span>
+<span id="cb35-140"><a href="#cb35-140" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 128          6.1         3.0          4.9         1.8  virginica</span></span>
+<span id="cb35-141"><a href="#cb35-141" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 129          6.4         2.8          5.6         2.1  virginica</span></span>
+<span id="cb35-142"><a href="#cb35-142" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 130          7.2         3.0          5.8         1.6  virginica</span></span>
+<span id="cb35-143"><a href="#cb35-143" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 131          7.4         2.8          6.1         1.9  virginica</span></span>
+<span id="cb35-144"><a href="#cb35-144" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 132          7.9         3.8          6.4         2.0  virginica</span></span>
+<span id="cb35-145"><a href="#cb35-145" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 133          6.4         2.8          5.6         2.2  virginica</span></span>
+<span id="cb35-146"><a href="#cb35-146" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 134          6.3         2.8          5.1         1.5  virginica</span></span>
+<span id="cb35-147"><a href="#cb35-147" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 135          6.1         2.6          5.6         1.4  virginica</span></span>
+<span id="cb35-148"><a href="#cb35-148" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 136          7.7         3.0          6.1         2.3  virginica</span></span>
+<span id="cb35-149"><a href="#cb35-149" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 137          6.3         3.4          5.6         2.4  virginica</span></span>
+<span id="cb35-150"><a href="#cb35-150" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 138          6.4         3.1          5.5         1.8  virginica</span></span>
+<span id="cb35-151"><a href="#cb35-151" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 139          6.0         3.0          4.8         1.8  virginica</span></span>
+<span id="cb35-152"><a href="#cb35-152" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 140          6.9         3.1          5.4         2.1  virginica</span></span>
+<span id="cb35-153"><a href="#cb35-153" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 141          6.7         3.1          5.6         2.4  virginica</span></span>
+<span id="cb35-154"><a href="#cb35-154" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 142          6.9         3.1          5.1         2.3  virginica</span></span>
+<span id="cb35-155"><a href="#cb35-155" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 143          5.8         2.7          5.1         1.9  virginica</span></span>
+<span id="cb35-156"><a href="#cb35-156" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 144          6.8         3.2          5.9         2.3  virginica</span></span>
+<span id="cb35-157"><a href="#cb35-157" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 145          6.7         3.3          5.7         2.5  virginica</span></span>
+<span id="cb35-158"><a href="#cb35-158" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 146          6.7         3.0          5.2         2.3  virginica</span></span>
+<span id="cb35-159"><a href="#cb35-159" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 147          6.3         2.5          5.0         1.9  virginica</span></span>
+<span id="cb35-160"><a href="#cb35-160" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 148          6.5         3.0          5.2         2.0  virginica</span></span>
+<span id="cb35-161"><a href="#cb35-161" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 149          6.2         3.4          5.4         2.3  virginica</span></span>
+<span id="cb35-162"><a href="#cb35-162" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 150          5.9         3.0          5.1         1.8  virginica</span></span>
+<span id="cb35-163"><a href="#cb35-163" aria-hidden="true" tabindex="-1"></a>iris_tibble</span>
+<span id="cb35-164"><a href="#cb35-164" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 150 × 5</span></span>
+<span id="cb35-165"><a href="#cb35-165" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span></span>
+<span id="cb35-166"><a href="#cb35-166" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  </span></span>
+<span id="cb35-167"><a href="#cb35-167" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1          5.1         3.5          1.4         0.2 setosa </span></span>
+<span id="cb35-168"><a href="#cb35-168" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2          4.9         3            1.4         0.2 setosa </span></span>
+<span id="cb35-169"><a href="#cb35-169" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3          4.7         3.2          1.3         0.2 setosa </span></span>
+<span id="cb35-170"><a href="#cb35-170" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4          4.6         3.1          1.5         0.2 setosa </span></span>
+<span id="cb35-171"><a href="#cb35-171" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5          5           3.6          1.4         0.2 setosa </span></span>
+<span id="cb35-172"><a href="#cb35-172" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6          5.4         3.9          1.7         0.4 setosa </span></span>
+<span id="cb35-173"><a href="#cb35-173" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7          4.6         3.4          1.4         0.3 setosa </span></span>
+<span id="cb35-174"><a href="#cb35-174" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8          5           3.4          1.5         0.2 setosa </span></span>
+<span id="cb35-175"><a href="#cb35-175" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9          4.4         2.9          1.4         0.2 setosa </span></span>
+<span id="cb35-176"><a href="#cb35-176" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10          4.9         3.1          1.5         0.1 setosa </span></span>
+<span id="cb35-177"><a href="#cb35-177" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 140 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="useful-commands" class="level2">
+<h2 class="anchored" data-anchor-id="useful-commands">Useful commands</h2>
+<ul>
+<li><code>dplyr::count</code>: count value by variables</li>
+<li><code>tidyr::fill</code>: fill na values</li>
+<li><code>dplyr::bind_rows</code>: combine data.frame</li>
+<li>etc.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># count</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span> <span class="fu">count</span>(k)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 96 × 2</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    k         n</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt; &lt;int&gt;</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 01     5481</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 02     5596</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 03     8492</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 04     7922</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 05     5037</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 06     5889</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 07     9132</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 08    10330</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 09    10937</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 10     6924</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 86 more rows</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="co"># bind multiple data frame</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>baci_2018 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="st">"data/baci_hs92_2018_2digit.rds"</span>))</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="st">"data/baci_hs92_2019_2digit.rds"</span>))</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>baci <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(baci_2018, baci_2019)</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>baci <span class="sc">|&gt;</span> <span class="fu">head</span>()</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 6</span></span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       t     i     j k           v      q</span></span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  2018     4    24 84    117.    26.0  </span></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  2018     4    31 08      2.57   0.3  </span></span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  2018     4    31 57      1.60   0.064</span></span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  2018     4    32 34      8.66   0.113</span></span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  2018     4    32 39      0.163  0    </span></span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  2018     4    32 61      1.10   0.013</span></span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>baci <span class="sc">|&gt;</span> <span class="fu">tail</span>()</span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 6</span></span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       t     i     j k           v     q</span></span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  2019   894   854 10      0.19   0.04</span></span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  2019   894   854 39     52.6    7   </span></span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  2019   894   854 72     43.7    4.11</span></span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  2019   894   854 82     17.2    1.35</span></span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  2019   894   858 24    313.    59.4 </span></span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  2019   894   858 48      0.025  0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cheatsheet" class="level2">
+<h2 class="anchored" data-anchor-id="cheatsheet">cheatsheet</h2>
+<p><img src="https://raw.githubusercontent.com/rstudio/cheatsheets/main/pngs/data-import.png" class="img-fluid" alt="data import"> <img src="https://raw.githubusercontent.com/rstudio/cheatsheets/main/pngs/data-transformation.png" class="img-fluid" alt="dplyr"> <img src="https://raw.githubusercontent.com/rstudio/cheatsheets/main/pngs/tidyr.png" class="img-fluid" alt="tidyr"></p>
+<hr>
+</section>
+</section>
+<section id="put-it-all-together" class="level1">
+<h1>Put it all together</h1>
+<section id="computing-export-share" class="level2">
+<h2 class="anchored" data-anchor-id="computing-export-share">Computing export share</h2>
+<p>We want to get export value in million and market share of product Fruits and nuts in year 2019 classified by country name and region ordered by export values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>baci_2019 <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(k <span class="sc">==</span> <span class="st">"08"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(i) <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">v =</span> <span class="fu">sum</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>v) <span class="sc">|&gt;</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">export_value =</span> v <span class="sc">/</span> <span class="fl">1e3</span>,</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">export_share =</span> export_value <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="fu">sum</span>(export_value)) <span class="sc">|&gt;</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    country_codes,</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"i"</span> <span class="ot">=</span> <span class="st">"iso3n"</span>)</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country_name, region, export_value, export_share)</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 213 × 4</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    country_name region        export_value export_share</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;        &lt;chr&gt;                &lt;dbl&gt;        &lt;dbl&gt;</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 USA          North America       14765.        11.4 </span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 Spain        Europe              10088.         7.76</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 Mexico       North America        7524.         5.78</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 Chile        South America        6829.         5.25</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 Netherlands  Europe               5831.         4.48</span></span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 China        Asia                 5781.         4.44</span></span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 Viet Nam     Asia                 5734.         4.41</span></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 Turkey       Asia                 4648.         3.57</span></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 Thailand     Asia                 4010.         3.08</span></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 Italy        Europe               3730.         2.87</span></span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 203 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="combining-baci-data-from-20112020" class="level2">
+<h2 class="anchored" data-anchor-id="combining-baci-data-from-20112020">Combining BACI data from 2011:2020</h2>
+<p>We use <code>for loop</code> to read BACI data 2 digit level from 2011 to 2020 and combine into one single <code>data.frame</code> using <code>bind_rows</code>. We also convert trade value from thousands to millions USD. Note that we use <code>paste0</code> to join text together where 0 means joing without space.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>baci <span class="ot">&lt;-</span> <span class="fu">tibble</span>() <span class="co"># create an empty object to hold data</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2011</span><span class="sc">:</span><span class="dv">2020</span>) {</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  path <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"data/baci_hs92_"</span>, i, <span class="st">"_2digit.rds"</span>) <span class="co"># define path</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(path)) <span class="co"># read data of each year</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">v =</span> v<span class="sc">/</span><span class="fl">1e3</span>) <span class="co"># convert to million USD</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  baci <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(baci, df) <span class="co"># incremental combine data</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>baci</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 8,707,706 × 6</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i     j k            v      q</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2011     4    12 39    0.000031  0.001</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2011     4    12 40    0.000151  0.005</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2011     4    12 84    0.000013  0.001</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2011     4    12 87    0.000091  0.001</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2011     4    24 19    0.000149  0.01 </span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2011     4    24 21    0.101    25.8  </span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2011     4    24 32    0.000621  0.511</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2011     4    24 39    0.000033  0.026</span></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2011     4    24 40    0.00545   0.88 </span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2011     4    24 48    0.109    28.2  </span></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 8,707,696 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="adding-descriptions-of-exporters-importers-and-product-to-baci-data" class="level2">
+<h2 class="anchored" data-anchor-id="adding-descriptions-of-exporters-importers-and-product-to-baci-data">Adding descriptions of exporters, importers, and product to BACI data</h2>
+<p>We use <code>left_join</code> to add additional information on to <code>baci</code>. Specifically, we use <code>product_codes</code> to join on <code>k</code> and <code>country_codes</code> to join on <code>i</code> and <code>j</code>. We also rename variables using <code>rename</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>baci_extra <span class="ot">&lt;-</span> baci <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    product_codes <span class="sc">|&gt;</span> <span class="fu">select</span>(hs_product_2digit_code<span class="sc">:</span>sector),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"k"</span> <span class="ot">=</span> <span class="st">"hs_product_2digit_code"</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">k_name =</span> hs_product_2digit_name,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">k_sector =</span> sector</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    country_codes <span class="sc">|&gt;</span> <span class="fu">select</span>(iso3n, iso3c, country_name, region),</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"i"</span> <span class="ot">=</span> <span class="st">"iso3n"</span>)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">i_iso3c =</span> iso3c,</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">i_name =</span> country_name,</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">i_region =</span> region</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>    country_codes <span class="sc">|&gt;</span> <span class="fu">select</span>(iso3n, iso3c, country_name, region),</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"j"</span> <span class="ot">=</span> <span class="st">"iso3n"</span>)</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">j_iso3c =</span> iso3c,</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">j_name =</span> country_name,</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">j_region =</span> region</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(t, i, i_iso3c<span class="sc">:</span>i_region, j, j_iso3c<span class="sc">:</span>j_region, k, k_name<span class="sc">:</span>k_sector, v, q)</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>baci_extra</span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 8,707,706 × 14</span></span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i i_iso3c i_name  i_reg…¹     j j_iso3c j_name j_reg…² k     k_name</span></span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; </span></span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2011     4 AFG     Afghan… Asia       12 DZA     Alger… Africa  39    Plast…</span></span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2011     4 AFG     Afghan… Asia       12 DZA     Alger… Africa  40    Rubber</span></span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2011     4 AFG     Afghan… Asia       12 DZA     Alger… Africa  84    Indus…</span></span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2011     4 AFG     Afghan… Asia       12 DZA     Alger… Africa  87    Vehic…</span></span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2011     4 AFG     Afghan… Asia       24 AGO     Angola Africa  19    Prepa…</span></span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2011     4 AFG     Afghan… Asia       24 AGO     Angola Africa  21    Misce…</span></span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2011     4 AFG     Afghan… Asia       24 AGO     Angola Africa  32    Dyes,…</span></span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2011     4 AFG     Afghan… Asia       24 AGO     Angola Africa  39    Plast…</span></span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2011     4 AFG     Afghan… Asia       24 AGO     Angola Africa  40    Rubber</span></span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2011     4 AFG     Afghan… Asia       24 AGO     Angola Africa  48    Paper…</span></span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 8,707,696 more rows, 3 more variables: k_sector &lt;chr&gt;, v &lt;dbl&gt;,</span></span>
+<span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   q &lt;dbl&gt;, and abbreviated variable names ¹​i_region, ²​j_region</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>baci_extra_i <span class="ot">&lt;-</span> baci_extra <span class="sc">|&gt;</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(t, i, i_iso3c, i_name, i_region, k, k_name, k_sector) <span class="sc">|&gt;</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">v =</span> <span class="fu">sum</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q =</span> <span class="fu">sum</span>(q, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(country_data, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"t"</span> <span class="ot">=</span> <span class="st">"year"</span>, <span class="st">"i_iso3c"</span> <span class="ot">=</span> <span class="st">"iso3"</span>))</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by 't', 'i', 'i_iso3c', 'i_name', 'i_region',</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 'k', 'k_name'. You can override using the `.groups` argument.</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>baci_extra_i</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 193,930 × 13</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        t     i i_iso3c i_name      i_region k     k_name k_sec…¹       v       q</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  2011     4 AFG     Afghanistan Asia     01    Live … Agricu… 1.00e-1 5.5 e-2</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  2011     4 AFG     Afghanistan Asia     02    Meat   Agricu… 1.49e-1 6.74e+1</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  2011     4 AFG     Afghanistan Asia     03    Fish   Agricu… 1.11e-3 8.5 e-2</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  2011     4 AFG     Afghanistan Asia     04    Diary… Agricu… 5.02e-1 2.85e+2</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  2011     4 AFG     Afghanistan Asia     05    Anima… Agricu… 4.36e-1 2.01e+2</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  2011     4 AFG     Afghanistan Asia     06    Plants Agricu… 1.1 e-5 1   e-3</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  2011     4 AFG     Afghanistan Asia     07    Veget… Agricu… 2.67e+1 1.25e+5</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  2011     4 AFG     Afghanistan Asia     08    Fruit… Agricu… 1.66e+2 1.13e+5</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  2011     4 AFG     Afghanistan Asia     09    Coffe… Agricu… 7.87e+0 4.90e+3</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  2011     4 AFG     Afghanistan Asia     10    Cerea… Agricu… 5.05e-2 1.58e+2</span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 193,920 more rows, 3 more variables: pop &lt;dbl&gt;, gdp &lt;dbl&gt;,</span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   gdpcap &lt;dbl&gt;, and abbreviated variable name ¹​k_sector</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="saving-data-for-further-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="saving-data-for-further-analysis">Saving data for further analysis</h2>
+<p>This mimics data pipeline operation where we do some data integration and transformation, then we save the transformed data to seperate data objects. Data analysts or data scientists can use transformed datta for data analytics or data visualization.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>baci_extra <span class="sc">|&gt;</span> <span class="fu">saveRDS</span>(<span class="fu">here</span>(<span class="st">"data/baci_extra.rds"</span>))</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>baci_extra_i <span class="sc">|&gt;</span> <span class="fu">saveRDS</span>(<span class="fu">here</span>(<span class="st">"data/baci_extra_i.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+<section id="further-topics" class="level1">
+<h1>Further Topics</h1>
+<ul>
+<li><code>haven</code> package can import data from <code>stata</code>, <code>spss</code> and <code>sas</code>.</li>
+<li>Categorial data, see <code>forcat</code> package.</li>
+<li>Date/Time and time-series data, see <code>lubdridate</code>, <code>xts</code>, <code>tsibble</code>, <code>timetk</code> and <code>tsbox</code> package.</li>
+<li>Spatial (vector and raster), see <code>sp</code>, <code>sf</code>, <code>raster</code>, and <code>stars</code> package.</li>
+</ul>
+<section id="link" class="level2">
+<h2 class="anchored" data-anchor-id="link">link</h2>
+<ul>
+<li>https://r4ds.had.co.nz</li>
+<li>https://geocompr.robinlovelace.net/index.html</li>
+<li>https://www.tsbox.help</li>
+<li>https://tsibble.tidyverts.org</li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

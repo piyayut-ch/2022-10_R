@@ -1,0 +1,56 @@
+
+
+```{r}
+library(WDI)
+WDIsearch('servic.*export.*BoP') |> as_tibble()
+
+indicators <- c(
+  "BX.GSR.NFSV.CD", # total services export
+  "BX.GSR.CMCP.ZS", # communication
+  "BX.GSR.INSF.ZS", # finance
+  "BX.GSR.TRAN.ZS", # transport
+  "BX.GSR.TRVL.ZS"  # travel
+)
+
+df_raw <- WDI(
+  indicator = indicators, start = 1996, end = 2020, extra = TRUE
+) |> as_tibble()
+
+
+df_raw |>
+  filter(region != "Aggregates") |>
+  select(t = year, iso3c, BX.GSR.NFSV.CD:BX.GSR.TRVL.ZS) |>
+  arrange(t) |>
+  rowwise() |>
+  mutate(
+    travel = BX.GSR.NFSV.CD * BX.GSR.TRVL.ZS / 100,
+    transport = BX.GSR.NFSV.CD * BX.GSR.TRAN.ZS / 100,
+    ict = BX.GSR.NFSV.CD * BX.GSR.CMCP.ZS / 100,
+    financial = BX.GSR.NFSV.CD * BX.GSR.INSF.ZS / 100
+  ) |>
+  select(-c(BX.GSR.NFSV.CD:BX.GSR.TRVL.ZS)) |>
+  pivot_longer(
+    travel:financial,
+    names_to = "k",
+    values_to = "v",
+    values_drop_na = TRUE
+  ) |>
+  left_join(
+    country_codes |> select(iso3c, i = iso3n),
+    by = "iso3c"
+  ) |>
+  select(t, i, k, v, iso3c) |>
+  filter(iso3c == "TWN")
+
+
+  filter(is.na(i)) |>
+  distinct(i, iso3c)
+  
+  |>
+  writexl::write_xlsx("data/wdi_export_service.xlsx")
+
+country_codes |>
+  left_join(country |> select(-name_en), by = c("iso3a" = "iso3a"))
+  writexl::write_xlsx("data/export_services_wdi.xlsx")
+
+```

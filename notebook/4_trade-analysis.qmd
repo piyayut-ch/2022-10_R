@@ -1,0 +1,521 @@
+---
+title: "Trade Analysis"
+date: 2022-11-02
+author:
+  name: Piyayut Chitchumnong
+  affiliation: "[National Big Agricultural Data Center](https://nabc.go.th)"
+highlight-style: dracula
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+format:
+  html:
+    toc: true
+---
+
+# Introduction
+The objective of this section is to use `R` for international trad analysis including
+
+- Compute annual growth rate
+- Calculate trade indicies
+- Estimate gravity model
+
+
+___
+
+# Load Packges
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(here)
+library(economiccomplexity)
+library(gravity)
+library(modelsummary)
+library(flextable)
+```
+
+
+___
+
+# Import data
+
+```{r}
+#| cache: true
+# bilateral trade data from 2011 to 2020 using HS92 at 2 digit level
+baci_extra <- readRDS(here("data/baci_extra.rds"))
+baci_extra
+
+# trade data of exporter from 2011 to 2020 using HS92 at 2 digit level
+baci_extra_i <- readRDS(here("data/baci_extra_i.rds"))
+baci_extra_i
+
+# data for gravity model
+gravity_0019 <- readRDS(here("data/gravity_0019.rds"))
+gravity_0019
+
+# additional data
+country_codes <- baci_extra_i |> distinct(i, i_iso3c, i_name, i_region)
+country_codes
+
+product_codes <- baci_extra_i |> distinct(k, k_name, k_sector)
+product_codes
+```
+
+
+___
+
+# Annual growth rate 
+We follow average growth rate methods list in UNESCAP article [link](https://www.unescap.org/sites/default/files/Stats_Brief_Apr2015_Issue_07_Average-growth-rate.pdf). There are 4 methods
+
+- Arithematic
+- Geometric
+- Exponential
+- Least-squared
+
+
+## Motivation
+We simulate a time series that follows a compound growth formula. As show in plot below. The objective is to find a number that best represents growth rate.
+
+```{r}
+set.seed(123) # make randomization reproducible
+x0 <- 100
+n <- 10
+growth <- rep(0.05, n)
+error <- rnorm(n, 0, 0.1)
+x <- c(x0, (x0 * cumprod(1 + growth))*(exp(error)))
+plot(x, type="l")
+```
+
+As menioned in the UNESCAP article, the appropriate choice depends on domain and realization of a series. General guideline for trade series is that we should follow either geometric or least-square method.
+
+
+## Implementation using R
+Now let's implement all four methods using `R`. We define 4 functions that compute average growth rate of each method.
+
+- Arithmetic
+```{r}
+growth_arithmetic <- function(vec) {
+  n <- length(vec)
+  (vec[n]/vec[1] - 1) / (n-1)
+}
+growth_arithmetic(x)
+```
+
+- Geometric
+```{r}
+growth_geometric <- function(vec) {
+  n <- length(vec)
+  (vec[n]/vec[1])**(1/(n-1)) - 1
+}
+growth_geometric(x)
+```
+
+- Exponential
+```{r}
+growth_exponent <- function(vec) {
+  n <- length(vec)
+  log(vec[n]/vec[1])/(n-1)
+}
+growth_exponent(x)
+```
+
+- Least-squared
+```{r}
+growth_ols <- function(vec) {
+  y <- vec
+  x <- seq_along(y)
+  result <- lm(log(y) ~ x)
+  (exp(coef(result))[['x']]) - 1
+}
+growth_ols(x)
+```
+
+## Simulation
+We use a monte carlo simulation to illustrate the differnece between each methods. We assume that a series follow compound growth rate. We simulate 1000 series for 3, 4, 5, 10, and 20 periods. As we expect, the higher the number of periods(observations), the higher accuracy. Also, note that the least-squared approach produces less sd comparing to geometric approach as the former use more observation.
+
+```{r}
+# define a function that simulate a time series of n periods for 1000 series
+# and estimate growth for 4 methods
+sim_growth <- function(n, seed = 123) {
+  set.seed(seed)
+  df <- tibble()
+  for (i in 1:1000) {
+    x0 <- 100
+    growth <- rep(0.05, n)
+    error <- rnorm(n, 0, 0.1)
+    x <- c(x0, (x0 * cumprod(1 + growth))*(exp(error)))
+    df[i, 'round'] <- i
+    df[i, 'g_ari'] <- growth_arithmetic(x)
+    df[i, 'g_geo'] <- growth_geometric(x)
+    df[i, 'g_exp'] <- growth_exponent(x)
+    df[i, 'g_ols'] <- growth_ols(x)
+  }
+  df
+}
+
+# make a for loop to see the difference by varying the number of periods
+n <- c(3, 4, 5, 10, 20)
+seed <- 123
+res <- tibble()
+for (i in seq_along(n)) {
+  res_ <- sim_growth(n[i], seed = seed) |>
+    summarize(
+      across(
+        g_ari:g_ols,
+        .fns = list(mean = mean, sd = sd),
+        .names = "{.col}_{.fn}"
+      )
+    )
+  res_[1, 'n_period'] <- n[i]
+  res <- bind_rows(res, res_)
+}
+res
+```
+
+
+## Example
+Let's apply to real dataset. Suppose we want to make a table of export data of Thailand from 2016-2020 classified by products where each year has its own column (pivot wider). In addition, we compute two additional metrics: the average and growth rate from 2016-2020. To do that, we split our calculation into five steps:
+
+1. Filter `baci_extra_i` for country and year of interest.
+
+```{r}
+# step1: filter data of interest
+df <- baci_extra_i |>
+  filter(t %in% 2016:2020, i_iso3c == "THA") |>
+  arrange(t, i_iso3c, k)
+df
+```
+
+2. Reshape the table using `pivot_wider`.
+
+```{r}
+# step2: make a wider table where year represent years
+df_wide <- df |>
+  pivot_wider(
+    c(k, k_name, k_sector),
+    names_from = "t",
+    values_from = "v"
+  )
+df_wide
+```
+
+3. Compute the average and growth rate using `group_by` and `summarize` together with `mean` and our `growth_ols` function. 
+
+```{r}
+# step3: compute summarize metrics
+df_sum <- df |>
+  group_by(k) |>
+  summarize(
+    avg_1620 = mean(v, na.rm = TRUE),
+    growth_1620 = growth_ols(v) * 100
+  ) |> ungroup()
+df_sum
+```
+
+4. Combine result from step 2 and 3 using `left_join`.
+
+```{r}
+# step4: join two tables
+df_combine <- df_wide |>
+  left_join(df_sum)
+df_combine
+```
+
+5. Save to an excel file using `write_xlsx`.
+
+```{r}
+# step5: save to xlsx file
+df_combine |> write_xlsx(here("output/4-1_export_growth_tha.xlsx"))
+```
+
+## Exercise
+Use `baci_extra_i` to make a report of `Rubber` export of `Indonesia` classified by `destinations` from `2011-2015`.
+
+
+___
+
+# Trade indicators
+Now let's compute some trade indicators, we illustrate how to compute two indicators using `economiccomplexity` package.
+
+## RCA
+Relative Comparative Advantage or Balassa index can be calculated using.
+
+$$
+RCA_{ik} = \frac{X_{ik}/\sum_{k \in K}X_{ik}}{\sum_{i \in I}{X_{ik}/\sum_{i \in I, k \in K}{X_{ik}}}}
+$$
+
+where
+- $X_{ik}$ is export flow from export country `i` of product `k`.
+- $K$ is a set of all products.
+- $I$ is a set of all exporters.
+
+
+### Example
+Let's apply to real dataset. Suppose we want to make a table of RCA of Thai export from 2016-2020 classified by products. To do that, we split our calculation into five steps:
+
+1. Filter `baci_extra_i` by years of interest and then compute average export values of each exporter and products. 
+
+```{r}
+# step1: prepare data using average of 2016-2020
+baci_1620 <- baci_extra_i |>
+  filter(t %in% 2016:2020) |>
+  group_by(country = i_iso3c, product = k) |>
+  summarize(value = mean(v, na.rm = TRUE)) |> ungroup()
+baci_1620
+```
+
+2. Compute Balassa Index (RCA) discrete version using `bi` function and compute Balassa Index (RCA) continuous version using `bi` function with argument `discrete = FALSE`.
+
+```{r}
+# step2: compute balassa index
+# discrete version
+bi <- balassa_index(baci_1620)
+bi[1:5,1:5]
+
+# continuous version
+bi_dec <- balassa_index(baci_1620, discrete = FALSE)
+bi_dec[1:5,1:5]
+```
+
+3. Extract information of interest and add additional information.
+
+```{r}
+# step3: extract information only agriculture hscode 1-24 of Thailand.
+rca_tha <- bi_dec["THA", 1:24] |>
+  as.data.frame() |>
+  rownames_to_column() |>
+  as_tibble() |>
+  select(k = 1, RCA = 2)|>
+  left_join(product_codes, by = c("k" = "k")) |>
+  select(k, k_name, k_sector, RCA)
+rca_tha
+```
+
+4. Save to an excel file using `write_xlsx`.
+```{r}
+# step4: save as excel file
+rca_tha |> write_xlsx(here("output/4-2_rca_tha.xlsx"))
+```
+
+
+### Exercise
+Use `baci_extra_i` to make a report of RCA (continuous version) of every exporters of `Rubber` product from `2016-2020`.
+
+
+## Complexity mesures
+You can compute complexity indexes (e.g. such as the Economic Complexity Index and Product Complexity Index) by using complexity_measures(). The calculations methods are fitness (default), reflections, eigenvalues. See (Mariani et al. 2015) for the methodological details.
+
+The eigenvalues also calls the reflections methods in order to correct the index sign in some special cases when the correlation between the output from both methods is negative.
+
+### Example
+Suppose we want to compute complexity measure using data from 2016 to 2020. We break down into 4 steps
+
+1. Prepare data by filtering `baci_extra_i` by years of interest and then compute average export values of each exporter and products. 
+
+```{r}
+# step1: prepare data using average of 2016-2020
+baci_1620 <- baci_extra_i |>
+  filter(t %in% 2016:2020) |>
+  group_by(country = i_iso3c, product = k) |>
+  summarize(value = mean(v, na.rm = TRUE)) |> ungroup()
+baci_1620
+```
+
+2. Compute Balassa Index (RCA) discrete version.
+
+```{r}
+# step2: compute balassa index discrete version
+bi <- balassa_index(baci_1620)
+bi[1:5, 1:5]
+```
+
+3. Compute complexity measures using eigenvalue method. Note that there are three methods (fitness, reflections or eigenvalues). Then, we convert to tibble and supplement information about country name.
+
+```{r}
+# step3: compute complexity measures
+com_eig <- complexity_measures(bi, method = "eigenvalues")
+com_eig_country <- com_eig$complexity_index_country |>
+  as_tibble(rownames = NA) |>
+  rownames_to_column(var = "i_iso3c") |>
+  arrange(-value) |>
+  left_join(country_codes, by = c("i_iso3c" = "i_iso3c")) |>
+  select(i_iso3c, i_name, i_region, value)
+com_eig_country
+```
+
+4. Save to an excel file using `write_xlsx`.
+
+```{r}
+# step4: save to excel
+com_eig_country |> write_xlsx(here("output/4-3_com_country.xlsx"))
+```
+
+> Note Taiwan = Other Asia
+https://unstats.un.org/wiki/display/comtrade/Taiwan%2C+Province+of+China+Trade+data
+
+
+___
+
+# Gravity
+Gravity model can be used to analyze trade impact of trade measures which can be extended to non-tarrif.
+
+Gravity models are inspired by Newton law of gravitation where trade flow between two countries is the force between two bodies, GDPs are masses of each country and transaction cost is geographical distance. Gravity model can be described as
+
+$$
+X_{ij} = G \frac{Y_{i}^{\beta_1}Y_{j}^{\beta_2}}{D_{ij}^{\beta_3}exp(\beta_4contig_{ij} + \beta_5rta_{ij})}
+$$
+
+where
+
+- $X_{ij}$ is trade flow between country i and j.
+- $Y_{i}$ and $Y_{j}$ is GDP of country i and j.  
+- $D_{ij}$ is distance between country i and j.
+- $contig_{ij}$ is whether or not countries have shared borders.
+- $rta_{ij}$ is whether or not countries have a regional trade agreement together.
+
+This can be log transformed into
+
+$$
+\log X_ij = \beta_0 \log G + \beta_1 \log Y_i + \beta_2 \log Y_j + \beta_3 \log D_{ij} + \beta_4 contig_{ij} + \beta_5 rta_{ij} + \epsilon
+$$
+
+> Note: We can add more additional variables into equations.
+
+## Example
+For simplicity, we use cross-sectional dataset to estimate gravity model. We select year 2018 for illustration. Also, we drop `na` and 0. The number of observations reduce from 61,504 to 23,954. Then, we estimate using ols methods where we estimate 3 specifications: (1) only distance, (2) distance + contig, and (3) distance + contig + rta. 
+
+1. Prepare data, we use `gravity` dataset from `CEPII` website with selected variables. Please see full documentation for whole dataset.
+
+Variables are
+
+- `year` is trade year.
+- `iso3_o` and `iso3_d` are country codes for orginal and desitination countries (3 alphabet).
+- `tradeflow_baci` is trade flow of manufactured goods (in thousands
+current US$) (source: BACI).
+- `gdp_o` and `gdp_d` are GDP of orginal and destination countries (current thousands US$).
+- `dist` is distance between most populated city of each
+country (km). 
+- `distw` is population-weighted distance between most
+populated cities (km).
+- `contig` is dummy equals to 1 if countries are contiguous.
+- `rta` is dummy equals to 1 if the pair currently has a RTA (source: WTO)
+- `comlang_off` is dummy equals to 1 if countries share common official or primary language.
+- `pop_o` and `pop_d` are population of original and destination countries (in thousands).
+- `gdpcap_o` and `gdpcap_d` are GDP per capita of orginal and destination countries (current thousands US$).
+
+```{r}
+# step 1: prep data
+# gravity_0019 <- readRDS(here("data/gravity_0019.rds"))
+gravity_18 <- gravity_0019 |>
+  filter(year == 2018)
+nrow(gravity_18)
+
+gravity_18_nozeros <- gravity_18 |>
+  drop_na() |>
+  filter(tradeflow_baci != 0)
+nrow(gravity_18_nozeros)
+
+gravity_18_nozeros
+```
+
+2. Estimate gravity models using ols methods
+
+- Model 1: only distance
+```{r}
+# step 2: estimate using ols methods
+## model 1: only distance
+fit_ols1 <- lm(
+  log(tradeflow_baci) ~ log(gdp_o) + log(gdp_d) + dist,
+  data = gravity_18_nozeros
+)
+summary(fit_ols1)
+```
+
+- Model 2: distance + contig
+```{r}
+## model 2: distance + contig
+fit_ols2 <- lm(
+  log(tradeflow_baci) ~ log(gdp_o) + log(gdp_d) + dist + contig,
+  data = gravity_18_nozeros
+)
+summary(fit_ols2)
+```
+
+- Model 3: distance + contig + rta
+```{r}
+## model 3: distance + contig + rta
+fit_ols3 <- lm(
+  log(tradeflow_baci) ~ log(gdp_o) + log(gdp_d) + dist + contig + rta,
+  data = gravity_18_nozeros
+)
+summary(fit_ols3)
+```
+
+
+3. Compare three models and save
+```{r}
+# step 3: model summarization and export
+mod <- list(fit_ols1, fit_ols2, fit_ols3) # create a list of models to compare
+
+## html
+modelsummary(mod)
+```
+
+- save to MS word.
+
+```{r}
+## docx
+modelsummary(mod, output = here("output/4-4_gravity_ols_table.docx"))
+```
+
+- save to text file
+```{r}
+#| eval: false
+## text
+sink(file = here("output/4-5_gravity_ols_table.txt"))
+
+cat(paste0(rep("#", 80), collapse="")) # add # to seperate each model
+cat("\n") # make a new line
+cat("Model 1: \n")
+summary(fit_ols1)
+cat("\n")
+
+cat(paste0(rep("#", 80), collapse=""))
+cat("\n")
+cat("Model 2: \n")
+summary(fit_ols2)
+cat("\n")
+
+cat(paste0(rep("#", 80), collapse=""))
+cat("\n")
+cat("Model 3: \n")
+summary(fit_ols3)
+cat("\n")
+
+sink()
+```
+
+## Exercise
+Use `gravity` dataset to estimate gravity models and compare the results when using different distance measures.
+
+- model 1: `dist` + `contig` + `rta` + `comlang_off`
+- model 2: `distw` + `contig` + `rta` + `comlang_off`
+
+
+## Notes:
+- Please the book by UNESCAP for more details. [Link](https://artnet.unescap.org/publications/books-reports/gravity-model-international-trade-user-guide-r-version)
+
+
+___
+
+# Resource
+- <https://pacha.dev/gravity/>
+- <https://pacha.dev/economiccomplexity/>
+- <https://artnet.unescap.org/publications/books-reports/gravity-model-international-trade-user-guide-r-version>
+- <https://r.tiid.org/R_structural_gravity/>
+- <https://r.tiid.org/gravity-models.html>
+- <https://www.wto.org/english/res_e/booksp_e/advancedwtounctad2016_e.pdf>
+- <https://raw.githack.com/uo-ec607/lectures/master/08-regression/08-regression.html>

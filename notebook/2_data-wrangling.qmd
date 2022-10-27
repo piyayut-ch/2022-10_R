@@ -1,0 +1,695 @@
+---
+title: "Data Wrangling"
+date: 2022-10-12
+author:
+  name: Piyayut Chitchumnong
+  affiliation: "[National Agricultural Big Data Center](https://nabc.go.th)"
+highlight-style: dracula
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+format:
+  html:
+    toc: true
+---
+
+# Introduction
+The objective of this section is to introduce basic data wrangling/manipulation/preparation using `R`.
+
+Data wrangling is a step that prepare data for further analysis including
+
+- **import** data: read data from various sources/formats into R session.
+- **tidy** data: reshape data/ cleaning data
+- **transform** data: create new variables/ feature engineering
+
+![](https://d33wubrfki0l68.cloudfront.net/571b056757d68e6df81a3e3853f54d3c76ad6efc/32d37/diagrams/data-science.png)
+
+
+## Tidy Data Concept
+> Tidy data is a way to describe data that’s organized with a particular structure – a rectangular structure, where each variable has its own column, and each observation has its own row (Wickham 2014).
+![](https://www.openscapes.org/img/blog/tidydata/tidydata_1.jpg)
+
+Depending on our task/question, we should transform our data into tidy data.
+
+## Basic operations  
+
+- Importing data
+- Selecting variables
+- Filtering rows
+- Adding new variables
+- Arranging rows by variable
+- Summarizing and Grouping
+- Reshaping table
+- Joining multiple tables
+- Saving data to computers
+
+
+___
+
+# Install and load packages
+```{r}
+library(tidyverse)
+library(here)
+library(readxl)
+library(writexl)
+```
+
+
+___
+# Data
+One of the important step to conduct a data analytics or machine learning project is to understand the data. We use data from [CEPII](http://www.cepii.fr/CEPII/en) including
+
+**Main Data:**
+
+- `BACI`: bilateral trade flows
+- `country_data`: country basic data i.e. population and gdp drived from Gravity data set
+
+
+**Reference Data:** Used for augmenting the main data with additional data i.e. country name or product sector.
+
+- `country_codes`: country codes and names
+- `product_codes`: product codes based on HS92 system.
+
+## BACI
+CEPII's BACI dataset is downloaded from <http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8>.
+
+**Description:**
+BACI provides data on bilateral trade flows for 200 countries at the product level (5000 products). Products correspond to the "Harmonized System" nomenclature (6 digit code).
+
+Please see the [documentation](http://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html)
+
+**Data Dictionary:**
+
+- `t` : Year
+- `i` : Exporter (ISO 3-digit country code)
+- `j` : Importer (ISO 3-digit country code)
+- `k` : Product category (HS92 2/4/6-digit code)
+- `v` : Value of the trade flow (in thousands current USD)
+- `q` : Quantity (in metric tons)
+
+**Note:** The full dataset of HS92 is from 1995-2020 at 6-digit code. To keep files size managable, I use only data from 2016-2020 at 2 digit.
+
+```{r}
+#| echo: false
+baci_2019 <- readRDS(here("data/baci_hs92_2019_2digit.rds"))
+baci_2019
+```
+
+## Country Data
+Country data contains basic data i.e. population and GDP from 2000-2019. It is derived from CEPII's Gravity dataset which is downloaded from <http://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=8>. Please see the [documentation](http://www.cepii.fr/DATA_DOWNLOAD/gravity/doc/Gravity_documentation.pdf).
+
+**Data Dictionary:**
+
+- `year` : Year
+- `iso3` : Country code (ISO 3-digit country code)
+- `pop` : Population (in thousands)
+- `gdp` : GDP (current thousands US$)
+- `gdpcap` : GDP per capita (current thousands US$)
+
+```{r}
+#| echo: false
+country_data <- read_excel(here("data/country_data.xlsx"))
+country_data
+```
+
+## Country Codes
+Country codes is a table that provides additional details about countries including code, name and region. Since there are many code standards/system, we use [ISO 3166](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) which has three code i.e. numeric, two-alphabetic and three-alphabetic. Codes are very helpful when linking tables because tables could use different coding system.
+
+**Data Dictionary:**
+
+- `iso3n` : ISO 3-digit numric country code
+- `country_name_abbreviation` : country name short
+- `country_name_full` : country name full
+- `iso2c` : ISO 2-digit alphabetic country code
+- `iso3c` : ISO 3-digit alphabetic country code
+
+```{r}
+#| echo: false
+country_codes <- read_excel(here("data/baci_meta.xlsx"), 1)
+country_codes
+```
+
+## Product Codes
+Product codes is a table that provides additional details about products using the Harmonized System (HS). The Harmonized System is an international nomenclature for the classification of products for customs purposes. At the international level, HS classifying goods is a six-digit code system where each country can have their own codes called tariff line. HS code has been update regulary i.e. `HS92`, `HS96`, `HS02`, `HS07`, `HS12`, `HS17` and `HS22`. We use `HS92` and also add product name and its sector as the one used by [The Atlas of Economic Complexity](https://atlas.cid.harvard.edu/explore).
+
+**Data Dictionary:**
+
+- `hs_product_2digit_code`: HS92 product code at 2 digit code
+- `hs_product_2digit_name`: HS92 product description at 2 digit code
+- `sector`: sectors as classified by The Atlas of Economic Complexity
+
+```{r}
+#| echo: false
+product_codes <- read_excel(here("data/baci_meta.xlsx"), 2)
+product_codes
+```
+
+
+___
+
+# Importing data
+
+## path
+
+- Path is file location in our computer.
+- We can specify a path with two approachs
+    - absolute path which is full path i.e. "C:/Users/Acer/Google Drive/workshop/2022-10_R"
+    - relative path which is path the relative to working directory
+- We can get working directory via `getwd()`
+- Package `here` help path management
+    - `here::here` will set working directory to the directory that a file `.here` is located.
+    - file `.here` is an empty file for placeholder. We can create it using `here::set_here()`
+- If we use Rstudio and Rproject which we do. Rproject will always set project folder as working directory.
+
+## csv
+CSV is a text file that each columns are seperated by commas stored in `.csv` file extension. Aside from `csv`, there are similar text file that store spreadsheet data but used different seperator or fixed width to determine column by position. There is a csv file named `country_codes.csv` in folder `data`.
+
+We use function `read_csv` from `readr` package which is loaded when we load `tidyverse`.
+```{r}
+country_codes <- read_csv(here("data/country_codes.csv"), show_col_types = FALSE)
+country_codes
+```
+
+## excel
+
+- MS exel is a spreadsheet software. It is very popular and widely used.
+- It comes with two file extension which are `.xls` (2003 and before) and `.xlsx` (2007 onwards).
+- File excel is very flexible
+    - It can holds data and also graphic i.e. graph.
+    - It can have many tables and also have many tabs.
+- R packages that can handle MS excel are 
+  - `readxl`: for read/import excel files support xls and xlsx.
+  - `writexl`: for write/export data into xlsx format.
+  - `openxlsx`: for read/write excel, support only xlsx but can insert graphic and custom table format. Advanced users should check this out.
+
+**excel_sheets**
+```{r}
+sheets <- excel_sheets(here("data/baci_meta.xlsx"))
+sheets
+```
+
+We see that there are 4 sheets:
+
+- `country_codes`
+- `product_codes_hs92_2digit`
+- `product_codes_hs92_4digit`
+- `product_codes_hs92_6digit`
+
+This tutorial will use only `country_codes` and `product_codes_hs92_2digit`.
+
+**read_excel** check `help(read_excel)` for full explanation. Unlike csv file, we need to specify sheet either index or name. If not specified, the first sheet will be loaded by default.
+```{r}
+# sheet name
+country_codes <- read_excel(here("data/baci_meta.xlsx"), "country_codes")
+
+# sheet number
+product_codes <- read_excel(here("data/baci_meta.xlsx"), 2)
+product_codes
+
+# country data using default: sheet = 1
+country_data <- read_excel(here("data/country_data.xlsx"))
+country_data
+```
+
+## rds
+
+- `rds` is a file format that stores R object including `data.frame` and others.
+- `readRDS` for import rds into R session.
+- `saveRDS` for export/save an object into a rds file.
+- Note file rds will keep class and attribute of the object. This means that when we save a `data.frame` into `rds`, data types also be saved and can be restored using `readRDS`.
+
+```{r}
+baci_2019 <- readRDS(here("data/baci_hs92_2019_2digit.rds"))
+baci_2019
+```
+
+
+___
+
+# Selecting variables
+In real data wrangling work, we often get a table that contains too many variables. It is helpful to select some variables for further uses. 
+
+We use `select` from `dplyr` package.
+
+**Syntax:**
+```{r}
+#| eval: false
+df |>
+  select(
+    column_x, # select
+    new_column_y = column_y, ... # select with rename
+  )
+```
+
+**Example:** We select year, product, orgin country and trade value from `baci_2020`.
+```{r}
+baci_2019 |> select(t, i, k, value = v)
+```
+
+**Excercise:** Select year, destination country and trade volume from `baci_2020` dataset where rename q.
+```{r}
+#| eval: false
+baci_2019 |> select(...)
+```
+
+
+___
+
+# Filtering rows
+We often interest in a subset of the data. There are many ways to filter data i.e. by index of rows. But one common way is to filter by conditions.
+
+We use `filter` from `dplyr` package.
+
+**Syntax:**
+```{r}
+#| eval: false
+df |>
+  filter(
+    logical_expression(column_x) #i.e. column_x > 10
+  )
+```
+
+**Example:** Get cereal (`k == "10"`) export flow of Thailand (`i == 764`).
+```{r}
+baci_2019 |> filter(i == 764 & k == "10")
+```
+
+**Excercise:** Get Vegetables and Fruit import flow of India. 
+```{r}
+#| eval: false
+baci_2019 |> filter(...)
+```
+
+
+___
+
+# Adding new variables
+When we analyze data, we usually have to compute new variable(s) using original variables.
+
+We use `mutate` from `dplyr` package. It can use to make multiple variables in single function call.
+
+**Syntax:**
+```{r}
+#| eval: false
+df |>
+  mutate(
+    new_x = expression,
+    ...
+  )
+```
+
+**Example:** Compute unit price by dividing value by quantity
+```{r}
+baci_2019 |> mutate(unitprice = v / q)
+```
+
+**Excercise:** Change unit of the unit price to US dollar per ton
+```{r}
+#| eval: false
+baci_2019 |> mutate(...)
+```
+
+
+___
+
+# Arranging rows by variables
+Often, we have to sort or rearrange rows by values of particular columns to help us better understanding of data. We can sort from lower to larger (ascending) or the opposite (descending). Also multiple columns can be sorted.
+
+We use `arrange` from `dplyr` package. Default mode of sorting is ascending, if we want to sort descending, use `desc(variable)` syntax.
+
+**Syntax:**
+```{r}
+#| eval: false
+df |>
+  arrange(column1, desc(column2),)
+```
+
+**Example:** Sort `baci_2019` by country code ascending and export value descending.
+
+```{r}
+baci_2019 |> arrange(i, desc(v))
+```
+
+**Excercise:** Sort `country_data` by year ascending and population descending.
+```{r}
+#| eval: false
+country_data |> arrange(...)
+```
+
+___
+
+# Summarizing and Grouping
+As data is huge, we need a way or a measure that let us have a better understanding about data. One way is to condense information into some sort of summary statistics i.e. average, min, max, sum, count, etc. These operations are basically reduce the number of rows. In addition, We can summaize data by group (categorial data). In this tutorial, we will show how to do it with group(s). 
+
+We use `group_by` from `dplyr` package before use `summarize` function. The result is grouped dataframe. I normally `ungroup` it to normal dataframe.
+
+**Syntax:**
+```{r}
+#| eval: false
+df |>
+  group_by(column1, column2, ...) |>
+  summarize(
+    new_x = FUN(column_x)
+  ) |> ungroup()
+```
+
+**Example:** Find total export value by exporters and products.
+```{r}
+baci_2019 |>
+  group_by(i, k) |>
+  summarize(
+    v = sum(v)
+  ) |> ungroup()
+```
+
+**Exercise:** Use `country_data`, find total population by year.
+```{r}
+#| eval: false
+country_data |>
+  group_by(...) |>
+  summarize(...)
+```
+
+
+___
+
+# Reshaping table
+Reshaping is used we want to change the way data is presenting. There are `wide` format and `long` format.
+
+- `wide` format is a format that have more columns but less rows. Good for making report orpresenting data.
+- `long` format is a format that have less columns but more rows. Good for data management and data warehousing.
+
+We can convert back and forth as needed. For `excel` user, it is the famous pivot-table function.
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/main/images/static/png/original-dfs-tidy.png)
+
+
+## Pivot wider
+Convert from long format to wide format.
+
+We use `pivot_wider` from `tidyr` package.
+
+**Syntax:**
+```{r}
+#| eval: false
+df |>
+  pivot_wider(
+    id_cols = c("column1", "column2", ...),
+    names_from = c("column1", "column2", ...),
+    values_from = c("column1", "column2", ...),
+    ...
+  )
+```
+
+**Example:** Make a report of each country of population by years where we want each year to be a column. We can achieve this by pivot `country_data` to wide format. 
+```{r}
+country_data |>
+  pivot_wider(
+    id_cols = "iso3",
+    names_from = "year",
+    values_from = "pop"
+  )
+```
+
+
+**Exercise:** Use `baci_2019`, make a matrix of trade value where rows are exporters and columns are importers.
+```{r}
+#| eval: false
+baci_2019 |>
+  group_by(...) |>
+  summarize(...) |>
+  pivot_wider(
+    id_cols = ...,
+    names_from = ...,
+    values_from = ...
+  )
+
+# or
+baci_2019 |>
+  pivot_wider(
+    id_cols = ...,
+    names_from = ...,
+    values_from = ...,
+    values_fn = ...
+  )
+```
+
+
+## Pivot longer
+Convert from wide format to long format.
+
+We use `pivot_longer` from `tidyr` package.
+
+**Syntax:**
+```{r}
+#| eval: false
+df |>
+  pivot_longer(
+    cols = c("column1", "column2", ...),
+    names_to = "column",
+    values_to = "column",
+    ...
+  )
+```
+
+**Example:** Normalize `country_data` table by moving measurment variables including `pop`, `gdp` and `gdpcap` columns into longer format where there is a column to store the variable name and a column store their value. We can achieve this by pivot `country_data` to long format.
+```{r}
+country_data |>
+  pivot_longer(
+    cols = c("pop", "gdp", "gdpcap"), 
+    names_to  = "variable",
+    values_to = "value"
+  )
+```
+
+**Exercise:** Use `baci_2019` and pivot longer trade value and quantity
+```{r}
+#| eval: false
+baci_2019 |>
+  pivot_longer(
+    cols = ...,
+    names_to = ...,
+    values_to = ...
+  )
+```
+
+
+___
+
+# Join multiple tables
+We join tables together to enrich data i.e. adding new variables from other table or adding metadata from reference tables.
+
+Like SQL-join, there are many types of join.
+
+- left_join  
+- right_join  
+- inner_join  
+- full_join  
+- semi_join  
+- anti_join  
+![](http://www2.stat.duke.edu/~cr173/Sta323_Sp18/slides/imgs/join_venn.png)
+
+
+In this tutorial, we illustrate left-join where the left table rows are preserved and add only matched data from right table.
+
+**Syntax:**
+```{r}
+#| eval: false
+df1 |>
+  left_join(
+    df2,
+    by = c("df1_column" = "df2_column")
+  )
+# where df1_column and df2_column are key to join both table together
+```
+
+**Example:** Add country name to `baci_2019`
+```{r}
+baci_2019 |>
+  left_join(
+    country_codes,
+    by = c("i" = "iso3n")
+  )
+```
+
+**Exercise:** Add product description to `baci_2019`
+```{r}
+#| eval: false
+baci_2019 |>
+  left_join(
+    ...,
+    by = ...
+  )
+```
+
+
+___
+
+# Saving data
+```{r}
+#| eval: false
+# csv
+baci |> write_csv(here("output/baci.csv"))
+# excel
+country_data |> write_xlsx(here("output/country_data.xlsx"))
+# RDS
+baci |> saveRDS(here("output/baci.rds"))
+```
+
+
+___
+
+# Miscellaneous
+
+## tibble
+`tibble` is an enhanced `data.frame` where it has better print resultt (preview data with key metadata i.e. dimension, data types).
+
+```{r}
+# tibble
+iris_tibble <- as_tibble(iris)
+
+# class
+class(iris)
+class(iris_tibble)
+
+# preview
+iris
+iris_tibble
+```
+
+## Useful commands
+
+- `dplyr::count`: count value by variables
+- `tidyr::fill`: fill na values
+- `dplyr::bind_rows`: combine data.frame
+- etc.
+
+**Example:**
+```{r}
+# count
+baci_2019 |> count(k)
+
+# bind multiple data frame
+baci_2018 <- readRDS(here("data/baci_hs92_2018_2digit.rds"))
+baci_2019 <- readRDS(here("data/baci_hs92_2019_2digit.rds"))
+
+baci <- bind_rows(baci_2018, baci_2019)
+baci |> head()
+baci |> tail()
+
+# baci |> write_xlsx(here("output/baci.xlsx")) # number of rows is too large
+```
+
+## cheatsheet
+![data import](https://raw.githubusercontent.com/rstudio/cheatsheets/main/pngs/data-import.png)
+![dplyr](https://raw.githubusercontent.com/rstudio/cheatsheets/main/pngs/data-transformation.png)
+![tidyr](https://raw.githubusercontent.com/rstudio/cheatsheets/main/pngs/tidyr.png)
+
+
+___
+
+# Put it all together
+
+## Computing export share
+We want to get export value in million and market share of product Fruits and nuts in year 2019 classified by country name and region ordered by export values.
+```{r}
+baci_2019 |>
+  filter(k == "08") |>
+  group_by(i) |>
+  summarize(v = sum(v, na.rm = TRUE)) |>
+  ungroup() |>
+  arrange(-v) |>
+  mutate(
+    export_value = v / 1e3,
+    export_share = export_value * 100 / sum(export_value)) |>
+  left_join(
+    country_codes,
+    by = c("i" = "iso3n")
+  ) |>
+  select(country_name, region, export_value, export_share)
+```
+
+## Combining BACI data from 2011:2020
+We use `for loop` to read BACI data 2 digit level from 2011 to 2020 and combine into one single `data.frame` using `bind_rows`. We also convert trade value from thousands to millions USD. Note that we use `paste0` to join text together where 0 means joing without space.
+
+```{r}
+baci <- tibble() # create an empty object to hold data
+for (i in 2011:2020) {
+  path <- paste0("data/baci_hs92_", i, "_2digit.rds") # define path
+  df <- readRDS(here(path)) # read data of each year
+  df <- df |> mutate(v = v/1e3) # convert to million USD
+  baci <- bind_rows(baci, df) # incremental combine data
+}
+baci
+```
+
+## Adding descriptions of exporters, importers, and product to BACI data
+We use `left_join` to add additional information on to `baci`. Specifically, we use `product_codes` to join on `k` and `country_codes` to join on `i` and `j`. We also rename variables using `rename` function.
+
+```{r}
+baci_extra <- baci |>
+  left_join(
+    product_codes |> select(hs_product_2digit_code:sector),
+    by = c("k" = "hs_product_2digit_code")
+  ) |>
+  rename(
+    k_name = hs_product_2digit_name,
+    k_sector = sector
+  ) |>
+  left_join(
+    country_codes |> select(iso3n, iso3c, country_name, region),
+    by = c("i" = "iso3n")
+  ) |>
+  rename(
+    i_iso3c = iso3c,
+    i_name = country_name,
+    i_region = region
+  ) |>
+  left_join(
+    country_codes |> select(iso3n, iso3c, country_name, region),
+    by = c("j" = "iso3n")
+  ) |>
+  rename(
+    j_iso3c = iso3c,
+    j_name = country_name,
+    j_region = region
+  ) |>
+  select(t, i, i_iso3c:i_region, j, j_iso3c:j_region, k, k_name:k_sector, v, q)
+baci_extra
+```
+
+```{r}
+baci_extra_i <- baci_extra |>
+  group_by(t, i, i_iso3c, i_name, i_region, k, k_name, k_sector) |>
+  summarize(
+    v = sum(v, na.rm = TRUE),
+    q = sum(q, na.rm = TRUE)
+  ) |> ungroup() |>
+  left_join(country_data, by = c("t" = "year", "i_iso3c" = "iso3"))
+baci_extra_i
+```
+
+## Saving data for further analysis
+This mimics data pipeline operation where we do some data integration and transformation, then we save the transformed data to seperate data objects. Data analysts or data scientists can use transformed datta for data analytics or data visualization.
+
+```{r}
+#| eval: false
+baci_extra |> saveRDS(here("data/baci_extra.rds"))
+baci_extra_i |> saveRDS(here("data/baci_extra_i.rds"))
+```
+
+
+___
+
+# Further Topics
+- `haven` package can import data from `stata`, `spss` and `sas`.
+- Categorial data, see `forcat` package.
+- Date/Time and time-series data, see `lubdridate`, `xts`, `tsibble`, `timetk`  and `tsbox` package.
+- Spatial (vector and raster), see `sp`, `sf`, `raster`, and `stars` package.
+
+## link
+- https://r4ds.had.co.nz
+- https://geocompr.robinlovelace.net/index.html
+- https://www.tsbox.help
+- https://tsibble.tidyverts.org

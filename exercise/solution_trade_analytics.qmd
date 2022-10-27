@@ -1,0 +1,68 @@
+# Exercise 4.1
+
+```{r}
+# step1: filter data of interest
+df <- baci_extra |>
+  filter(t %in% 2011:2015, i_iso3c == "IDN", k == "40")
+
+# step2: make a wider table where year represent years
+df_wide <- df |>
+  pivot_wider(
+    c(j_iso3c, j_name, j_region),
+    names_from = "t",
+    values_from = "v"
+  ) |>
+  arrange(desc(`2015`))
+df_wide
+
+# step3: compute summarize metrics
+df_sum <- df |>
+  group_by(j_iso3c) |>
+  summarize(
+    avg_1620 = mean(v, na.rm = TRUE),
+    growth_1620 = growth_ols(v) * 100
+  )
+df_sum
+
+# step4: join two tables
+df_combine <- df_wide |>
+  left_join(df_sum)
+df_combine
+
+# step5: save to xlsx file
+df_combine |> write_xlsx(here("output/ex_4-1.xlsx"))
+```
+
+# Exercise 4.2
+
+```{r}
+# step1: prepare data using average of 2016-2020
+baci_1620 <- baci_extra_i |>
+  filter(t %in% 2016:2020) |>
+  group_by(country = i_iso3c, product = k) |>
+  summarize(value = mean(v, na.rm = TRUE)) |> ungroup()
+
+# step2: compute balassa index continuous version
+bi_dec <- balassa_index(baci_1620, discrete = FALSE)
+bi_dec[1:5,1:5]
+
+bi_dec[, 40]
+rca_rubber
+
+# step3: extract information only agriculture hscode 1-24 of Thailand.
+rca_cereal <- bi_dec[, 10] |>
+  as.data.frame() |>
+  rownames_to_column() |>
+  as_tibble() |>
+  select(i_iso3c = 1, rca = 2)|>
+  left_join(country_codes, by = c("i_iso3c" = "i_iso3c")) |>
+  select(i_iso3c, i_name, i_region, rca) |>
+  arrange(-rca)
+rca_cereal
+
+baci_1620 |> filter(product == "10") |> arrange(-value) |>
+  left_join(country_codes, by = c("country" = "i_iso3c"))
+
+# step5: save as excel file
+rca_cereal |> write_xlsx(here("output/ex_4-2_rca_cereal.xlsx"))
+```

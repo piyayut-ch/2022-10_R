@@ -1,0 +1,33 @@
+# Exercise2: Data Wrangling
+
+Prerequisites
+```{r}
+library(tidyverse)
+library(readxl)
+library(writexl)
+```
+
+Import `baci` data of year 2019 using `rds` file [link]() using `readRDS` function and save it to `baci_2019`.
+
+```{r}
+baci_2019 <- readRDS()
+```
+
+
+1. How many rows and columns of the `baci_2019`?
+
+**Answer:**
+a. 
+b. 
+c. 
+d. 
+
+2. Filter
+
+3. Mutate
+
+4. Group by
+
+5. Pivot
+
+6. Join

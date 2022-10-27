@@ -1,0 +1,484 @@
+---
+title: "Introduction to R"
+date: 2022-10-12
+author:
+  name: Piyayut Chitchumnong
+  affiliation: "[National Agricultural Big Data Center](https://nabc.go.th)"
+highlight-style: dracula
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+format:
+  html:
+    toc: true
+---
+
+# Introduction
+The objective of this section is to introduce and make you familiar with R programming.
+
+This could be abstract at first, but it laids out strong foundation for writing R code. Most of concepts can be applied to other programming languages i.e. python.
+
+___
+
+# Object
+Object sometime called variable is a container for holding data. It can be defined by a name and value. We can create one using following syntax.
+
+**Syntax:**
+```{r eval=FALSE}
+name <- value
+```
+
+Note:
+
+- We work with objects in `R`.
+- Each `object` has internal R type i.e. double, character.
+- Each `object` has a class which enhanced capabilities of an `object` i.e. dataframe. One can make own class.
+- `typeof` is a function for checking object's type.
+- `class` is a function for checking object's class.
+- `str` is a function for preview object's properties and values.
+
+**Example:** Create a variable x that its value is a number 5
+```{r}
+# to execute r command in Rstudio, select code chunk and hit ctrl + enter
+x <- 5
+print(x)
+typeof(x)
+class(x)
+str(x)
+```
+
+___
+
+# Vector
+Vector is a collection of object.
+
+## Atomic Vector
+Atomic vector is a vector where all members are **same type** where common types are  
+
+- logical: `TRUE` or `FALSE`  
+- numeric: numbers either intergers or decimal numbers (double).
+- character: text
+
+We can create a vector using `c` function (c is from concatenate).
+```{r}
+# logical
+x_logical <- c(TRUE, FALSE)
+class(x_logical)
+typeof(x_logical)
+
+# integer
+x_int <- c(1L, 2L) # ending L for integer
+class(x_int)
+typeof(x_int)
+
+# double
+x_double <- c(1.1, 2)
+class(x_double)
+typeof(x_double)
+
+# character/string
+x_char <- c("1", "2")
+class(x_char)
+typeof(x_char)
+```
+
+We have to know the type of the object we are working with because each type has its own set of operactions. Applying wrong operation to inappropriate type is common error. For example, we cannot use `+` operator to a string.
+```{r}
+#| error: true
+x_int + 1
+x_double + 1
+x_char + 1
+```
+
+## List
+List is a vector where members can be **different types**.
+
+we can create a vector using `list` function.
+```{r}
+my_list <- list(1:10, c("A", "B", "C"))
+my_list
+```
+
+## Named Vector
+A vector that its elements can have names.
+
+```{r}
+(x_vec_named <- c("A" = 1, "B" = 2))
+(x_list_named <- list("A" = 1:10, "B" = letters))
+```
+
+## Augmented Vector
+is a vector built on top of basic vectors. This gives `R` flexibility and customizability for many use cases. Augmented vector usually has special `attribute` and `methods` for user to work with. Well-known augmented vectors is `data.frame` which will be discussed in details later. 
+
+
+## Helpers
+`R` provides helper functions to create a vector. The common ones are
+
+- `:` used for creating a sequence of integers.
+```{r}
+1:10
+```
+
+- `seq` function used for creating a more complicated sequence.
+```{r}
+seq(0, 100, by = 10)
+```
+
+- `rep` function used for creating a repeat sequence.
+```{r}
+rep(1, 10)
+```
+
+___
+
+# Subset/Slice
+In practice, we want to work with some elements of a vector or list. We can do this in two ways which are bracket and masking.
+
+## Bracket
+There are two ways which are 1. single bracket `[` and 2. double bracket`[[` where we can use numeric index or named index (if any)
+
+1. For vector, the use of `[` will return a named vector if any but the use of `[[` will return an unamed vector.
+
+2. For list, the use of `[` will always return a list but the use of `[[` will return the object
+
+> Note: For list, we can use `$` and `[[`, interchagably.
+
+
+It is easier to understand these concepts using example.
+```{r}
+# atomic vector
+x_vec_named <- c("A" = 1, "B" = 2)
+
+x_vec_named[1]
+x_vec_named['A']
+
+x_vec_named[[2]]
+x_vec_named[['B']]
+```
+
+```{r}
+# list
+x_list_named <- list("A" = 1:10, "B" = letters)
+
+x_list_named[1]
+x_list_named['A']
+
+x_list_named[[2]]
+x_list_named[['B']]
+x_list_named$B
+
+x_list_named[[1]][5]
+```
+
+## Data Masking
+This approach uses logical vector to select elements that their values are `TRUE`. Note that the size of logical vector must be equals to the size of orginal vector.
+
+```{r}
+x_vec_named[c(TRUE, FALSE)]
+```
+
+In practice, we use data masking method together with conditional execution. Will talke more about this.
+
+```{r}
+x <- 1:10
+x[x > 3]
+```
+
+___
+
+# Data Frame
+
+- `data.frame` is a way to represent data like in spreadsheet 
+- `row` indicates an observation
+- `column` indicates a variable/field/feature
+- All data in a column must be same type.
+- Basically, `data.frame` is a list.
+
+We use `iris` dataframe that comes with native R for illustration.
+
+**Example:** `iris` dataframe
+```{r}
+head(iris) # display first 6 rows
+typeof(iris)
+class(iris)
+attributes(iris)
+methods(class=class(iris))
+```
+
+___
+
+
+# Vectorized Operations
+Vectorized operation is an operation that applies element by element.
+
+```{r}
+x <- 1:10
+
+# add
+x + 10
+
+# multiplication
+x * 10
+
+# power
+x ** 2
+
+# square root
+sqrt(x)
+
+# log
+log(x)
+
+# exponential
+exp(x)
+```
+
+___
+
+# Function
+
+- Function is an object that can do some operation i.e. compute arithmetic mean of a numeric vector.
+- We can learn more how to use a function using `help(functionA)` or `?functionA`
+- Functions are used in various ways such as mathamatical/statistical computation, data visualization, and regression.
+- We can create our own function.
+- But we do not have to reinvet the wheel, it is very likely that someone might create a function and make it public avaiable. Usually in a form of a `R package` where will cover next. What we need to do is simply download and use it.
+
+**Syntax:**
+```{r}
+#| eval: false
+function(arg1 = value1, arg2 = value2, ...)
+# note: some functions do not require an argument
+```
+
+**Example:** call a function sum
+```{r}
+# example
+sum(1:10)
+```
+
+```{r}
+#| eval: false
+# help
+help(sum) # or ?sum
+```
+
+___
+
+# Package
+
+- Package is a collection of functions and/or data that are wrapped together for maintain and sharing.
+- To use R package, there are two steps: 1) Download and install 2) Load package.
+- Step 1: Download the package to our computer. Like application in our phone, we need to download and install the package in our computer. We can use function `install.packages` or `install_github` from package `remotes`. In general, package's website will provide install instruction i.e. [tidyverse](https://www.tidyverse.org/).
+- Step 2: Load the package into our session. This is one common mistake. Everytime we open R or Rstudio, we need to load required packages. Otherwise, the function we call will not be available. There are two methods
+    - Method 1: Load the entire package using `library` and then call function.
+    - Method 2: We can call particular package using `package_name::function_name`.
+
+**Syntax:**
+```{r}
+#| eval: false
+# syntax for installation
+install.packages("package_name")
+install_github("github_repo")
+
+# syntax for load package/function
+# method 1
+library(package_name)
+function_name()
+# method 2
+package_name::function_name
+```
+
+**Example:** We use a function `count` from `dplyr` package.
+```{r}
+# install.packages("dplyr")
+
+# method 1
+library(dplyr)
+count(iris, Species) 
+
+# method 2
+dplyr::count(iris, Species)
+```
+
+___
+
+# Conditional Execution
+Conditional execution is a code or program to be excuted under conditions for instance if condition is true, then do action A otherwise do action B.
+
+## Comparison Operators
+These are operators that compare something and return a logical vector.
+```{r}
+1 > 1
+1 < 1
+1 == 1
+1 != 1
+1 >= 1
+1 <= 1
+1 %in% 1:3
+1 %in% 2:4
+"a" %in% c("a", "b", "c")
+```
+
+___
+
+## Logical Operators
+These are operators used in logical operations i.e. negate and or etc.
+```{r}
+TRUE
+
+# negate
+!TRUE
+
+# AND
+TRUE & TRUE
+TRUE & FALSE
+FALSE & FALSE
+
+# OR
+TRUE | TRUE
+TRUE | FALSE
+FALSE | FALSE
+```
+
+## if-else if-else
+We can do operation based on conditions using `if` `else if` and `else` keyword.
+
+**Syntax:**
+```{r}
+#| eval: false
+if (condition1) {
+  do A
+} else if (condition2) {
+  do B
+} else if (conditionN) {
+  do N
+} else {
+  do Z
+}
+```
+
+**Example:** We want to compare two numbers a and b and return result in explanatory text.
+
+- First try
+```{r}
+a <- 1
+b <- 1
+if (a > b) {
+  print(paste0(a, " is greater than ", b))
+} else {
+  print(paste0(a, " is less than ", b))
+}
+```
+
+> This is incomplete. What should be fixed?
+
+- Second try
+```{r}
+a <- 1
+b <- 1
+if (a > b) {
+  print(paste0(a, " is greater than ", b))
+} else if (a < b) {
+  print(paste0(a, " is less than ", b))
+} else {
+  print(paste0(a, " equals to ", b))
+}
+```
+
+___
+
+# Loop
+There are two main types:
+
+- for loop
+- while loop
+
+## for loop
+We can do same operations on each element of a collection.
+
+**Syntax:**
+```{r}
+#| eval: false
+for (i in list_a) {
+  do something with i
+}
+```
+
+**Example:** Count 1 to 10
+```{r}
+for(i in seq(1:10)) {
+  print(i)
+}
+```
+> For loop is best for routine jobs i.e. reading data files (1000 files) and integrate to one data.
+
+## while loop
+We can do some operations **until certain condition** is not met.
+
+**Syntax:**
+```{r}
+#| eval: false
+while (condition) {
+  do something
+  update condition
+}
+```
+
+**Example:** Count number start from 0 and increase by 2 but cannot be greater than 10
+```{r}
+i <- 0
+
+while(i < 10) {
+  print(i)
+  i <- i+2
+}
+```
+
+> - While loop is best for operations that cannot determine the end point. For example, solve equations using numerical method. The program will search until the error is less than acceptable error threshold i.e. 0.0000001.
+> - Warning: It could happen that the condition of while loop is never violate. This is called infinite loop.
+
+___
+
+# Tips
+
+- Use parentheses carefully
+    - `()` used for function call.
+    - `[]` and `[[]]` used for subseting vector/list/data.frame.
+    - `{}` used for control flow i.e. if, for loop and while loop.
+
+- use pipe `|>`
+    - `|>` is pipe operator which brings previous object and put it in subsequent function as the first arguement.
+    - `|>` helps codes are easier to read and avoid nested codes.
+
+**Syntax:**
+```{r}
+#| eval: false
+
+# without pipe
+functionB(functionA(x, y), z)
+
+# with pipe
+x |> functionA(y) |> functionB(z)
+```
+
+**Example:**
+```{r}
+# without pipe
+set.seed(123)
+mean(rnorm(1000, mean = 10, sd = 1))
+
+# with pipe
+set.seed(123)
+rnorm(1000, mean = 10, sd = 1) |> mean()
+```
+
+- R is case-sensitive. So, `iris` and `IRIS` are different. 
+
+- Do not forget to install and load package before call a function.
+
+___
+
+# Addition Resources
+- <https://r4ds.had.co.nz/>
+- <https://adv-r.hadley.nz/>

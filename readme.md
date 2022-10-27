@@ -1,0 +1,30 @@
+Content
+- Basic R programming
+    - data type and class
+    - subset
+    - if
+    - function
+    - package
+    - loop
+    - miscellaneous
+- Data Wrangling
+    - data frame/tibble
+    - read data and save data
+    - excercise: read and export excel 
+    - manipulation
+    - exercise: compute growth
+    - datetime
+    - factor
+    - map
+- Data Visualization
+    - ggplot
+    - map
+    - table
+    - exercise: line plot/tree plot/chrolepleth
+- Data Analysis
+    - EDA
+    - linear regression
+    - limited dependent regression
+    - panel regression
+    - time series regression
+    - exercise: simple regression

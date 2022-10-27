@@ -1,0 +1,83 @@
+---
+title: "read data"
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+country_list <- c(
+  "IND", "KHM", "LAO", "LKA", "MMR", "NPL", 
+  "PAK", "PHL", "PNG", "THA", "TLS", "VNM"
+)
+
+df_e <- read_excel("data/THA/BACI_THA_hs2.xlsx", "e_ag_partners")
+df_m <- read_excel("data/THA/BACI_THA_hs2.xlsx", "m_ag_partners")
+
+df_e_long <- df_e |>
+  pivot_longer(
+    cols = !m_abv:hs96_2dgt,
+    names_to = "variable_year",
+    values_to = "amount",
+    values_drop_na = TRUE
+  ) |>
+  mutate(
+    hs96_2dgt = str_pad(hs96_2dgt, 2, pad="0"),
+    variable= str_sub(variable_year, 1, 1),
+    year = str_sub(variable_year, 2, 5) |> as.integer()
+  ) |>
+  select(-variable_year)
+
+df_e_long |> colnames()
+
+df_e_long |>
+  filter(hs96_2dgt == "10", variable == "v", m_abv == "USA") |>
+  ggplot(aes(x=year, y=amount)) + 
+  geom_line()
+
+df_e_long |>
+  filter(hs96_2dgt == "10", variable == "v", m_abv %in% c("USA", "JPN")) |>
+  ggplot(aes(x=year, y=amount, color = importer)) + 
+  geom_line()
+
+
+logest <- function(y, x, ...) {
+  if(missing(x) || is.null(x)) x <- seq_along(y)
+  result <- lm(log(y) ~ x, ...)
+  exp(coef(result))[['x']] - 1
+}
+
+x <- 1:6
+y <- c(33100, 47300, 69000, 102000, 150000, 220000)
+
+y_hat <- c(33100)
+for (i in 1:5) {
+  y_hat[i+1] <- y_hat[i] * (1+0.46)
+}
+y_hat
+
+CAGR_formula <- function(vec) {
+  n = length(vec)
+  yrs = n-1
+  PV <- vec[1]
+  FV <- vec[n]
+
+  values <- ((FV/PV)^(1/yrs)-1)
+  return(values)
+}
+
+simple_growth <- function(vec) {
+  n = length(vec)
+  yrs = n-1
+  PV <- vec[1]
+  FV <- vec[n]
+  values <- ((FV-PV)/PV)
+  return(values)
+}
+
+mean((y - lag(y)) / lag(y), na.rm = TRUE)
+
+CAGR_formula(y)
+logest(y)
+simple_growth(y)
+```

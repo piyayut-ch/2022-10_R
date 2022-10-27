@@ -1,0 +1,620 @@
+---
+title: "Data Visualization"
+date: 2022-10-19
+author:
+  name: Piyayut Chitchumnong
+  affiliation: "[National Agricultural Big Data Center](https://nabc.go.th)"
+highlight-style: dracula
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+format:
+  html:
+    toc: true
+---
+
+# Introduction
+The objective of this section is to introduce basic data visualization and implementation using `R`.
+
+## Choosing the right charts
+There are a lot of chart types, we have to select the chart that suites our purpose.
+
+**Guideline:**  
+
+- https://www.r-graph-gallery.com
+- https://www.data-to-viz.com
+- http://ft-interactive.github.io/visual-vocabulary/
+![](https://github.com/Financial-Times/chart-doctor/raw/main/visual-vocabulary/poster.png)
+![](https://www.data-to-viz.com/img/poster/poster_big.png)
+
+
+___
+
+# Install and load packages
+```{r}
+library(tidyverse)
+library(scales)
+library(here)
+library(treemapify)
+library(gganimate)
+library(rnaturalearth)
+library(sf)
+library(plotly)
+library(leaflet)
+library(viridis)
+# make usre you install.packages("gifski") for gganimate
+```
+
+
+___
+
+# Import data
+```{r}
+# bilateral trade data from 2011 to 2020 using HS92 at 2 digit level
+baci_extra <- readRDS(here("data/baci_extra.rds"))
+baci_extra
+
+# trade data of exporter from 2011 to 2020 using HS92 at 2 digit level
+baci_extra_i <- readRDS(here("data/baci_extra_i.rds"))
+baci_extra_i
+```
+
+
+___
+
+# Static data visualization: ggplot2
+
+- `ggplot2` is one of the most popular package for visualization and it is foundation for others extensions.
+- It uses a concept called `The Grammar of Graphics` where graphic is built layer by layer.
+
+**Basic ggplot2:**
+- making chart is simply mapping data to visuals properties called `Aesthetic mapping`.
+- specify visual representation called geoms i.e. line chart or bar chart.
+- build graphic layer by layer to create a complex graphic just like photoshop.
+
+See <https://datavizs21.classes.andrewheiss.com/content/03-content/> for more details.
+
+![](http://r.qcbs.ca/workshop03/workshop03-en/images/gglayers.png)
+
+where
+
+- **Data**: The raw data that you want to plot.  
+- **Geometries** `geom_`: The geometric shapes that will represent the data i.e. bar, line, point, etc.  
+- **Aesthetics** `aes()`: Aesthetics of the geometric and statistical objects, such as position, color, size, shape, and transparency
+- **Scales** `scale_`: Maps between the data and the aesthetic dimensions, such as data range to plot width or factor values to colors.
+- **Statistical transformations** `stat_`: Statistical summaries of the data, such as quantiles, fitted curves, and sums.
+- **Coordinate system** `coord_`: The transformation used for mapping data coordinates into the plane of the data rectangle.
+- **Facets** `facet_`: The arrangement of the data into a grid of plots.
+- **Visual** themes `theme()`: The overall visual defaults of a plot, such as background, grids, axes, default typeface, sizes and colors.
+
+Source: <https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/>
+
+
+**Syntax:**
+```{r}
+#| eval: false
+ggplot(
+  data = <DATA>, # required
+  aes(x = <VARIABLE>, y = <VARIABLE>, ...) # required
+) +
+  geom_*(<ARGS>) +
+  geom_*(<ARGS>) +
+  ...
+
+# or
+<DATA> |> # required
+  ggplot(aes(x = <VARIABLE>, y = <VARIABLE>, ...)) + # required
+  geom_*(<ARGS>) +
+  geom_*(<ARGS>) +
+  ...
+```
+
+
+**Example:** A walkthrough tutorial of how make a `ggplot2` from start to finish. We are interested to visualize distribution of 3 products (cereal, fruits and nuts, oil seed and oleaginous fruits) export during 2015-2019.
+
+```{r}
+# data prep
+data_test <- baci_extra_i |>
+  filter(k %in% c("08", "10", "12"), t %in% 2015:2019) |>
+  mutate(gdp = gdp / 1e6)
+data_test
+```
+
+## Aesthetic mapping
+Call `ggplot` function and `aes` to map variables to visual elements. The result is an empty canvas since we do not specify how graphic will be drawn.
+
+```{r}
+g <- ggplot(data_test, aes(x = gdp, y = v, color = k_name))
+g
+```
+
+## Geometries
+Use `geom_point` function to create a scatter plot.
+```{r}
+g + geom_point()
+```
+
+Custom visual properties of layers.
+```{r}
+g + geom_point(alpha = 0.2, size = 3)
+```
+
+## Scale
+Use `scale` package to customize scale for each chart property.
+```{r}
+g + 
+  geom_point(alpha = 0.2, size = 3) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma)
+```
+
+## Statistical summaries
+Use `stat_smooth` to generate linear model.
+```{r}
+g + 
+  geom_point(alpha = 0.2, size = 3) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  stat_smooth(method = "lm", se = FALSE)
+```
+
+## Labels
+Use `labs` to label title, caption, axis title or legend.
+```{r}
+g + 
+  geom_point(alpha = 0.2, size = 3) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  stat_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "GDP (mil USD)",
+    y = "Export Value (mil USD)",
+    title = "Export Value of 3 Agricultural Products from 2011-2020",
+    caption = "Data: BACI",
+    color = "Product"
+  )
+```
+
+## Theme
+Use `theme` or `theme_` to change charts appearance. Moreover, we change the location of the legend by argument `legend.position` of `theme`.
+```{r}
+g +
+  geom_point(alpha = 0.2, size = 3) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  stat_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "GDP (mil USD)",
+    y = "Export Value (mil USD)",
+    title = "Export Value of 3 Agricultural Products from 2011-2020",
+    caption = "Data: BACI",
+    color = "Product"
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+## Coordinates
+Use `coord` to custom coordinates system. In this case, we use `coord_flip` to flip x and y axis.
+```{r}
+g + 
+  geom_point(alpha = 0.2, size = 3) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  stat_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "GDP (mil USD)",
+    y = "Export Value (mil USD)",
+    title = "Export Value of 3 Agricultural Products from 2011-2020",
+    caption = "Data: BACI",
+    color = "Product"
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  coord_flip()
+```
+
+## Facet
+Use `facet_wrap` to seperate graphic by grouping variables.
+```{r}
+g + 
+  geom_point(alpha = 0.2, size = 3) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  stat_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "GDP (mil USD)",
+    y = "Export Value (mil USD)",
+    title = "Export Value of 3 Agricultural Products from 2011-2020",
+    caption = "Data: BACI",
+    color = "Product"
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(title = "Product")) +
+  facet_wrap( ~ k_name)
+```
+
+## Save
+There are two methods:
+
+- use Rstudio GUI
+Go to buttom right Panel and click tab `Plots`. Then click `Export` and `Save as Image ...`.
+
+
+- use commandline
+```{r}
+g + 
+  geom_point(alpha = 0.2, size = 3) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  stat_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "GDP (mil USD)",
+    y = "Export Value (mil USD)",
+    title = "Export Value of 3 Agricultural Products from 2011-2020",
+    caption = "Data: BACI",
+    color = "Product"
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(title = "Product")) +
+  facet_wrap( ~ k_name)
+
+ggsave(here("output/plot_test.png"), width = 8, height = 5)
+```
+
+
+___
+# Gallery
+We show some common charts and how to create it.
+
+## Bar chart
+Good for comparison and ranking.
+
+**Example:** Top 20 exporters of Fruits and Nuts in 2020.
+```{r}
+data_bar <- baci_extra_i |>
+  filter(t == 2020 & k == "10") |>
+  mutate(i_name = fct_reorder(i_name, v)) |> #reorder country name using factor
+  arrange(desc(v)) |>
+  head(20)
+
+ggplot(data_bar, aes(x = v, y = i_name, fill = i_region)) +
+  geom_col() +
+  scale_x_continuous(labels = comma)
+```
+
+**Exercise:** Top 20 exporter of Meat in 2018.
+```{r}
+
+```
+
+## Line chart
+Good for displaying changes overtime.
+
+**Example:** Fruits and Nuts Export of Thailand, Viet Nam and China from 2011 - 2020.
+```{r}
+data_line <- baci_extra_i |>
+  filter(i_iso3c %in% c("THA", "VNM", "CHN") & k == "08")
+
+ggplot(data_line, aes(x = t, y = v, color = i_name)) +
+  geom_line() +
+  scale_x_continuous(breaks = 2011:2020) +
+  scale_y_continuous(labels = comma)
+```
+
+**Exercise:** Flour Export of Thailand, Viet Nam and China from 2011 - 2020.
+```{r}
+
+```
+
+## Area chart
+Good for displaying changes overtime.
+
+**Example:** Export structure of Laos PDR from 2011-2020.
+```{r}
+data_area <- baci_extra_i |>
+  filter(i_iso3c == "LAO") |>
+  group_by(t, k_sector) |>
+  summarize(v = sum(v, na.rm = TRUE)) |>
+  ungroup() |>
+  group_by(t) |>
+  mutate(pct = v / sum(v))
+
+# unit
+ggplot(data_area, aes(x = t, y = v, fill = k_sector)) +
+  geom_area(alpha = 0.8, size = 0.5, color = "black") +
+  scale_x_continuous(breaks = 2011:2020) +
+  scale_y_continuous(labels = comma)
+
+# share
+ggplot(data_area, aes(x = t, y = pct, fill = k_sector)) +
+  geom_area(alpha = 0.8, size = 0.5, color = "black") +
+  scale_x_continuous(breaks = 2011:2020) +
+  scale_y_continuous(labels = comma)
+```
+
+**Exercise:** Export structure of Bangladesh from 2011-2020.
+```{r}
+
+```
+
+## Histrogram
+Good for displaying distribution of data.
+
+**Example:** Distribution of bilateral trade of cereals in 2020.
+- original scale
+```{r}
+data_hist <- baci_extra |>
+  filter(t == 2020, k == "10")
+
+ggplot(data_hist, aes(x = v)) + 
+  geom_histogram(
+    bins = 30, 
+    fill = "navyblue", 
+    color = "white"
+  )
+```
+
+- log scale: the distribution of log transformed data is more likely to look like the normal distribution.
+```{r}
+ggplot(data_hist, aes(x = log(v))) +
+  geom_histogram(
+    bins = 30,
+    fill = "navyblue",
+    color = "white"
+  )
+```
+
+**Exercise:** Distribution of bilateral trade of oil seeds and oleaginous fruits in 2020 in log.
+```{r}
+
+```
+
+## Boxplot
+Good for comparing distribution of data classified by categorial variable.
+
+**Example:** Distribution of bilateral trade of cereals by selected exporters in 2020.
+```{r}
+data_boxplot <- baci_extra |>
+  filter(i_iso3c %in% c("THA", "VNM", "CHN", "IND", "PAK"), k == "10", t == 2020)
+
+ggplot(data_boxplot, aes(x = i_name, y = log(v), fill = i_name)) + 
+    geom_boxplot() +
+    coord_flip()
+```
+
+**Exercise:** Distribution of bilateral trade of fish by selected exporters in 2020.
+```{r}
+
+```
+
+## Treemap
+
+**Example:** Export structure of Laos PDR in 2020.
+```{r}
+data_treemap <- baci_extra_i |>
+  filter(t == 2020, i_iso3c == "LAO")
+
+ggplot(
+  data_treemap,
+  aes(area = v,
+      fill = k_sector,
+      subgroup = k_sector,
+      label = k_name)
+  ) +
+  geom_treemap(color = "white", start = "topleft") +
+  geom_treemap_subgroup_border(color = "grey40", start = "topleft") +
+  geom_treemap_text(
+    color = "grey30",
+    place = "topleft",
+    start = "topleft",
+    reflow = TRUE) +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1))
+```
+
+**Exercise:** Export structure of Cambodia in 2011.
+```{r}
+
+```
+
+
+## Scatter Plot
+Good for displaying relationship between variables.
+
+**Example:** Unit price and export value of cereal in 2019.
+```{r}
+data_scatter <- baci_extra_i |>
+  filter(t == 2019, k == "10") |>
+  mutate(
+    unit_price = v * 1e6 / q,
+    gdp = gdp / 1e6
+  )
+
+ggplot(
+  data_scatter,
+  aes(x = v,
+      y = unit_price,
+      size = gdp,
+      color = i_region)
+  ) +
+  geom_point(alpha = 0.8) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  scale_size(range = c(1, 20), guide = NULL)
+```
+
+**Exercise:** Unit price and export value of sugar and candy in 2015.
+```{r}
+
+```
+
+
+## Map
+Good for displaying information that has spatial implication.
+
+- `sf` class from package `sf` handles spatial data i.e. polygon data
+- `ne_countries` from package `rnaturalearth` is used to download world map.
+
+```{r}
+# load map
+world <- ne_countries(scale = "small", returnclass = "sf")
+class(world)
+```
+
+
+**Example:** Cereal exporters in 2020.
+```{r}
+data_map <- baci_extra_i |> filter(t == 2020, k == "10")
+
+world_baci <- world |> 
+  filter(continent != "Antarctica") |>
+  left_join(
+    data_map,
+    by = c("adm0_a3" = "i_iso3c")
+  )
+
+ggplot(world_baci, aes(fill = v)) +
+  geom_sf() +
+  scale_fill_viridis(option = "magma", begin = 0.2, end = 1, alpha = 1) +
+  theme(legend.position = "bottom") +
+  guides(
+    fill = guide_colorbar(
+      title = "Export Value",
+      barwidth = 30,
+      direction = "horizontal"
+    )
+  )
+```
+
+## Animation
+Good for making chart outstanding. We use package `gganimate`.
+This example is adapt from <https://www.r-bloggers.com/2020/01/how-to-create-bar-race-animation-charts-in-r/>
+
+```{r}
+#| cache: true
+data_animate <- baci_extra_i |>
+  filter(k == "10") |>
+  group_by(t) |>
+  mutate(rank = rank(-v)) |>
+  group_by(i_name) |>
+  filter(rank <= 15) |>
+  ungroup()
+
+barplot <- ggplot(data_animate,
+                  aes(rank, group = i_name,
+                      fill = as.factor(i_region),
+                      color = as.factor(i_region))) +
+  geom_tile(aes(y = v/2,
+                height = v,
+                width = 0.9), alpha = 0.8, color = NA) +
+  geom_text(aes(y = 0, label = paste(i_name, " ")), vjust = 0.2, hjust = 1) +
+  coord_flip(clip = "off", expand = FALSE) +
+  scale_y_continuous(labels = comma) +
+  scale_x_reverse() +
+  guides(color = FALSE, fill = FALSE) +
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.position="none",
+        panel.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        panel.grid.major.x = element_line( size=.1, color="grey" ),
+        panel.grid.minor.x = element_line( size=.1, color="grey" ),
+        plot.title=element_text(size=20, hjust=0.5, face="bold"),
+        plot.subtitle=element_text(size=16, hjust=0.5),
+        plot.caption =element_text(size=10, hjust=1, face="italic", color="grey"),
+        plot.background=element_blank(),
+        plot.margin = margin(0.5, 1, 0.5, 4, "cm"))
+
+anim <- barplot +
+  transition_states(t, transition_length = 4, state_length = 1) +
+  view_follow(fixed_x = TRUE)  +
+  labs(title = 'Export Value : {closest_state}',
+       subtitle  =  "Top 15 Cereal Exporters",
+       caption  = "Export Values in Millions USD | Data Source: BACI")
+
+animate(anim, 200, fps = 20, height = 6, width = 8, units = "in", res = 300,
+        renderer = gifski_renderer(here("output/bar_race.gif")))
+```
+
+
+___
+# Dynamic data visualization
+Dynamic or interactive graphic allows user to interact with chart i.e. zoom, mouse click, mouse hover etc. This is based on web-technology (`javascript`). There are rich of `R` packages that create interactive graphics where these packages will create `javascript` object for us.
+
+Some popular packages for interactive graphics are:
+
+- [plotly](https://plotly.com/r/)
+- [echart](https://echarts4r.john-coene.com)
+- [highcharters](https://jkunst.com/highcharter/)
+- [d3](https://rstudio.github.io/r2d3/)
+- etc.
+
+We could use these graphics in dashboard like Power BI or tableau.
+- [dashboard](http://rstudio-pubs-static.s3.amazonaws.com/404855_9ed74e922347401f826b0b06f5edf4e1.html)
+
+
+## plotly
+
+```{r}
+data_boxplot <- baci_extra |>
+  filter(i_iso3c %in% c("THA", "VNM", "CHN", "IND", "PAK"), k == "10", t == 2020)
+
+g <- ggplot(data_boxplot, aes(x = i_name, y = log(v), fill = i_name)) + 
+    geom_boxplot() +
+    coord_flip()
+
+plotly::ggplotly(g)
+```
+
+## leaflet
+
+```{r}
+pal <- colorBin("YlOrRd", domain = world_baci$v, reverse = FALSE)
+labels <- sprintf(
+  "<strong>%s</strong><br/>%s million USD",
+  world_baci$i_name, prettyNum(world_baci$v, big.mark = ",")
+) |> lapply(htmltools::HTML)
+
+leaflet(world_baci) |>
+  addProviderTiles(providers$CartoDB.Positron)|> 
+  addPolygons(
+    fillColor = ~pal(v),
+    weight = 1,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlightOptions = highlightOptions(
+      weight = 3,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")
+  )
+```
+
+___
+
+# Resource
+- <https://github.com/uo-ec607/lectures>
+- <https://www.andrewheiss.com>
+- <https://www.r-graph-gallery.com>
+- <https://socviz.co>
+- <https://clauswilke.com/dataviz/>
+- <https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/>
+- <https://evamaerey.github.io/ggplot_flipbook/ggplot_flipbook_xaringan.html>
