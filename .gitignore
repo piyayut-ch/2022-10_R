@@ -41,11 +41,7 @@ vignettes/*.pdf
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 
-# raw-data
-data-raw/*.xlsx
-*.xlsx
-
-
+# ignore directories
 output/
 data/atlas
 data/BACI
