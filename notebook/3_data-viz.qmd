@@ -20,7 +20,7 @@ The objective of this section is to introduce basic data visualization and imple
 ## Choosing the right charts
 There are a lot of chart types, we have to select the chart that suites our purpose.
 
-**Guideline:**  
+**Guideline:**
 
 - https://www.r-graph-gallery.com
 - https://www.data-to-viz.com
@@ -468,7 +468,7 @@ class(world)
 
 **Example:** Cereal exporters in 2020.
 ```{r}
-data_map <- baci_extra_i |> filter(t == 2020, k == "10")
+data_map <- baci_extra_i |> filter(t == 2020, k == "17")
 
 world_baci <- world |> 
   filter(continent != "Antarctica") |>

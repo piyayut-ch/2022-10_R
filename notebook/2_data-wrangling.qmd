@@ -477,7 +477,7 @@ baci_2019 |>
 
 ___
 
-# Join multiple tables
+# Joining multiple tables
 We join tables together to enrich data i.e. adding new variables from other table or adding metadata from reference tables.
 
 Like SQL-join, there are many types of join.
@@ -589,7 +589,7 @@ baci |> tail()
 
 ___
 
-# Put it all together
+# Putting it all together
 
 ## Computing export share
 We want to get export value in million and market share of product Fruits and nuts in year 2019 classified by country name and region ordered by export values.
@@ -689,7 +689,8 @@ ___
 - Spatial (vector and raster), see `sp`, `sf`, `raster`, and `stars` package.
 
 ## link
-- https://r4ds.had.co.nz
-- https://geocompr.robinlovelace.net/index.html
-- https://www.tsbox.help
-- https://tsibble.tidyverts.org
+- <https://r4ds.had.co.nz>
+- <https://geocompr.robinlovelace.net/index.html>
+- <https://r-spatial.org/book/>
+- <https://www.tsbox.help>
+- <https://tsibble.tidyverts.org>

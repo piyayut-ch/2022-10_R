@@ -1,33 +1,403 @@
-# Exercise2: Data Wrangling
+---
+title: "Excercise 3: Data Visualization"
+author:
+  name: Piyayut Chitchumnong
+  affiliation: "[National Agricultural Big Data Center](https://nabc.go.th)"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    fig-width: 10
+    fig-height: 6
+---
 
-Prerequisites
+## Load packages
 ```{r}
+#| warning: false
 library(tidyverse)
-library(readxl)
-library(writexl)
+library(scales)
+library(treemapify)
+library(rnaturalearth)
+library(sf)
+library(viridis)
 ```
 
-Import `baci` data of year 2019 using `rds` file [link]() using `readRDS` function and save it to `baci_2019`.
+## Import data
+
+- Import `baci_extra_i`  which is export by product (HS 2 digit) of exporting countries from 2011-2020. You have two options to load data.
+
+**Option 1**: Import from internet.
+```{r}
+#| eval: false
+url_baci_i <- "https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/baci_extra_i.rds"
+baci_extra_i <- readRDS(gzcon(url(url_baci_i)))
+# gzcon and url function are used to download data from github
+```
+
+**Option 2**: Import from your machine, if you open with the R project and have the file in folder data.
+```{r}
+path_baci <- here::here("data/baci_extra_i.rds")
+baci_extra_i <- readRDS(path_baci)
+```
 
 ```{r}
-baci_2019 <- readRDS()
+baci_extra_i
+```
+
+- Import `world` map using `rnaturalearth` package.
+
+```{r}
+#| column: screen-right
+world <- ne_countries(scale = "small", returnclass = "sf")
+plot(world['admin'])
 ```
 
 
-1. How many rows and columns of the `baci_2019`?
 
-**Answer:**
-a. 
-b. 
-c. 
-d. 
+## Question 1: Bar plot
+Make top 20 exporters of `Meat` in 2018. Fill `...` in the code snippet.
 
-2. Filter
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+data_bar <- baci_extra_i |>
+  filter(t == ... & k == ...) |>
+  mutate(i_name = fct_reorder(i_name, v)) |>
+  arrange(desc(v)) |>
+  head(20)
 
-3. Mutate
+ggplot(data_bar, aes(x = ..., y = ..., fill = ...)) +
+  geom_col() +
+  scale_x_continuous(labels = comma)
+```
 
-4. Group by
+### Solution
+```{r}
+#| column: screen-right
+data_bar <- baci_extra_i |>
+  filter(t == 2018 & k == "02") |>
+  mutate(i_name = fct_reorder(i_name, v)) |> #reorder country name using factor
+  arrange(desc(v)) |>
+  head(20)
 
-5. Pivot
+ggplot(data_bar, aes(x = v, y = i_name, fill = i_region)) +
+  geom_col() +
+  scale_x_continuous(labels = comma)
+```
+:::
 
-6. Join
+
+## Question 2: Line plot
+Make a line plot of `Flours, starches and malts` export of Thailand, Viet Nam and China from 2011 - 2020. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+data_line <- baci_extra_i |>
+  filter(i_iso3c %in% c(...) & k == ...)
+
+ggplot(data_line, aes(x = ..., y = ..., color = ...)) +
+  geom_line() +
+  scale_x_continuous(breaks = 2011:2020) +
+  scale_y_continuous(labels = comma)
+```
+
+### Solution
+```{r}
+#| column: screen-right
+data_line <- baci_extra_i |>
+  filter(i_iso3c %in% c("THA", "VNM", "CHN") & k == "11")
+
+ggplot(data_line, aes(x = t, y = v, color = i_name)) +
+  geom_line() +
+  scale_x_continuous(breaks = 2011:2020) +
+  scale_y_continuous(labels = comma)
+```
+:::
+
+
+## Question 3: Area plot
+Make an area plot that shows export structure of India from 2011-2020 using share. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+data_area <- baci_extra_i |>
+  filter(i_iso3c == ...) |>
+  group_by(...) |>
+  summarize(v = sum(v, na.rm = TRUE)) |>
+  ungroup() |>
+  group_by(t) |>
+  mutate(pct = ...)
+
+ggplot(data_area, aes(x = ..., y = ..., fill = ...)) +
+  geom_area(alpha = 0.8, size = 0.5, color = "black") +
+  scale_x_continuous(breaks = 2011:2020) +
+  scale_y_continuous(labels = comma)
+```
+
+### Solution
+```{r}
+#| column: screen-right
+#| warning: false
+data_area <- baci_extra_i |>
+  filter(i_iso3c == "IDN") |>
+  group_by(t, k_sector) |>
+  summarize(v = sum(v, na.rm = TRUE)) |>
+  ungroup() |>
+  group_by(t) |>
+  mutate(pct = v / sum(v))
+
+ggplot(data_area, aes(x = t, y = pct, fill = k_sector)) +
+  geom_area(alpha = 0.8, size = 0.5, color = "black") +
+  scale_x_continuous(breaks = 2011:2020) +
+  scale_y_continuous(labels = comma)
+```
+:::
+
+
+## Question 4: Histogram
+Make a histogram of distribution of export of trade value of `Oil seeds and oleaginous fruits` in 2020 in log. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+data_hist <- baci_extra |>
+  filter(t == ..., k == ...)
+
+ggplot(data_hist, aes(x = ...)) +
+  geom_histogram(
+    bins = 30,
+    fill = "navyblue",
+    color = "white"
+  )
+```
+
+### Solution
+```{r}
+#| column: screen-right
+data_hist <- baci_extra_i |>
+  filter(t == 2020, k == "12")
+
+ggplot(data_hist, aes(x = log(v))) +
+  geom_histogram(
+    bins = 30,
+    fill = "navyblue",
+    color = "white"
+  )
+```
+:::
+
+
+## Question 5: Box plot
+Make a box plot of distribution of log of trade value in 2020 of
+
+- `Meat`
+- `Fish`
+- `Cereals`
+- `Flours, starches and malts`
+- `Oil seeds and oleaginous fruits`
+
+Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+data_boxplot <- baci_extra_i |>
+  filter(k %in% c(...), t == ...)
+
+ggplot(data_boxplot, aes(x = ..., y = log(...), fill = ...)) + 
+  geom_boxplot() +
+  coord_flip()
+```
+
+### Solution
+```{r}
+#| column: screen-right
+data_boxplot <- baci_extra_i |>
+  filter(k %in% c("02", "03", "10", "11", "12"), t == 2020)
+
+ggplot(data_boxplot, aes(x = k_name, y = log(v), fill = k_name)) + 
+  geom_boxplot() +
+  coord_flip()
+```
+:::
+
+
+## Question 6: Treemap
+Make a treemap plot of Cambodia in 2011. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+data_treemap <- baci_extra_i |>
+  filter(t == ..., i_iso3c == ...)
+
+ggplot(
+  data_treemap,
+  aes(area = ...,
+      fill = ...,
+      subgroup = ...,
+      label = ...)
+  ) +
+  geom_treemap(color = "white", start = "topleft") +
+  geom_treemap_subgroup_border(color = "grey40", start = "topleft") +
+  geom_treemap_text(
+    color = "grey30",
+    place = "topleft",
+    start = "topleft",
+    reflow = TRUE) +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1))
+```
+
+### Solution
+```{r}
+#| column: screen-right
+data_treemap <- baci_extra_i |>
+  filter(t == 2011, i_iso3c == "KHM")
+
+ggplot(
+  data_treemap,
+  aes(area = v,
+      fill = k_sector,
+      subgroup = k_sector,
+      label = k_name)
+  ) +
+  geom_treemap(color = "white", start = "topleft") +
+  geom_treemap_subgroup_border(color = "grey40", start = "topleft") +
+  geom_treemap_text(
+    color = "grey30",
+    place = "topleft",
+    start = "topleft",
+    reflow = TRUE) +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1))
+```
+:::
+
+
+## Question 7: Scatter plot
+Make a scatter plot of unit price (x) and export value (y) of `Oil seeds and oleaginous fruits` in 2015. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+data_scatter <- baci_extra_i |>
+  filter(t == ..., k == ...) |>
+  mutate(
+    unit_price = v * 1e6 / q,
+    gdp = gdp / 1e6
+  )
+
+ggplot(
+  data_scatter,
+  aes(x = ...,
+      y = ...,
+      size = ...,
+      color = ...)
+  ) +
+  geom_point(alpha = 0.8) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  scale_size(range = c(1, 20), guide = NULL)
+```
+
+### Solution
+```{r}
+#| column: screen-right
+data_scatter <- baci_extra_i |>
+  filter(t == 2015, k == "12") |>
+  mutate(
+    unit_price = v * 1e6 / q,
+    gdp = gdp / 1e6
+  )
+
+ggplot(
+  data_scatter,
+  aes(x = v,
+      y = unit_price,
+      size = gdp,
+      color = i_region)
+  ) +
+  geom_point(alpha = 0.8) +
+  scale_x_log10(labels = comma) +
+  scale_y_log10(labels = comma) +
+  scale_size(range = c(1, 20), guide = NULL)
+```
+:::
+
+
+## Question 8: Map
+Make a cholorpleth map (heatmap) of `Diary products` in year 2019. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+mytheme <- theme(
+  panel.background = element_rect(fill = 'black'),
+  panel.grid.major = element_line(color = 'black')
+)
+
+data_map <- baci_extra_i |> filter(t == ..., k == ...)
+
+world_baci <- world |> 
+  filter(continent != "Antarctica") |>
+  left_join(
+    data_map,
+    by = c("adm0_a3" = "i_iso3c")
+  )
+
+ggplot(world_baci, aes(fill = ...)) +
+  geom_sf(color = "grey60") +
+  scale_fill_viridis(option = "magma", begin = 0.1, end = 1) +
+  theme(legend.position = "bottom") +
+  guides(
+    fill = guide_colorbar(
+      title = "Export Value",
+      barwidth = 30,
+      direction = "horizontal"
+    )
+  ) +
+  mytheme
+```
+
+### Solution
+```{r}
+#| column: screen-right
+mytheme <- theme(
+  panel.background = element_rect(fill = 'black'),
+  panel.grid.major = element_line(color = 'black')
+)
+
+data_map <- baci_extra_i |> filter(t == 2019, k == "04")
+
+world_baci <- world |> 
+  filter(continent != "Antarctica") |>
+  left_join(
+    data_map,
+    by = c("adm0_a3" = "i_iso3c")
+  )
+
+ggplot(world_baci, aes(fill = v)) +
+  geom_sf(color = "grey60") +
+  scale_fill_viridis(option = "magma", begin = 0.1, end = 1) +
+  theme(legend.position = "bottom") +
+  guides(
+    fill = guide_colorbar(
+      title = "Export Value",
+      barwidth = 30,
+      direction = "horizontal"
+    )
+  ) +
+  mytheme
+```
+:::

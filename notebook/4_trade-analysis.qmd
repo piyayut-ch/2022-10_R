@@ -499,7 +499,7 @@ sink()
 ```
 
 ## Exercise
-Use `gravity` dataset to estimate gravity models and compare the results when using different distance measures.
+Use `gravity_18_nozeros` dataset to estimate gravity models and compare the results when using different distance measures.
 
 - model 1: `dist` + `contig` + `rta` + `comlang_off`
 - model 2: `distw` + `contig` + `rta` + `comlang_off`

@@ -1,21 +1,26 @@
 Content
 - Basic R programming
-    - data type and class
-    - subset
-    - if
-    - function
-    - package
-    - loop
-    - miscellaneous
+    - Object
+    - Vector
+    - Subset/Slice
+    - Data Frame
+    - Vectorized Operations
+    - Function
+    - Package
+    - Conditional Execution
+    - Loop
+    - Tip
 - Data Wrangling
-    - data frame/tibble
-    - read data and save data
-    - excercise: read and export excel 
-    - manipulation
-    - exercise: compute growth
-    - datetime
-    - factor
-    - map
+    - Importing data
+    - Selecting variables
+    - Filtering rows
+    - Adding new variables
+    - Arraning rows by variables
+    - Summarizing and Grouping
+    - Reshaping tables
+    - Joining multiple tables
+    - Saving data
+    - Miscellaneous
 - Data Visualization
     - ggplot
     - map

@@ -1,33 +1,208 @@
-# Exercise2: Data Wrangling
+---
+title: "Excercise 2: Data Wrangling"
+author:
+  name: Piyayut Chitchumnong
+  affiliation: "[National Agricultural Big Data Center](https://nabc.go.th)"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    fig-width: 10
+    fig-height: 6
+---
 
-Prerequisites
+## Load packages
 ```{r}
+#| warning: false
 library(tidyverse)
-library(readxl)
-library(writexl)
+library(openxlsx)
 ```
 
-Import `baci` data of year 2019 using `rds` file [link]() using `readRDS` function and save it to `baci_2019`.
+## Import data
+
+- `baci` data of year 2019
+- `country_codes`
+- `product_codes`
+
+You have two options:
+
+- Import from internet
 
 ```{r}
-baci_2019 <- readRDS()
+#| eval: false
+# baci
+url_baci <- "https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/baci_hs92_2019_2digit.rds"
+baci_2019 <- readRDS(gzcon(url(url_baci)))
+# gzcon and url function are used to download data from github
+
+# country code and product code
+url_metadata <- "https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/baci_meta.xlsx"
+country_codes <- read.xlsx(url_metadata, 1) |> as_tibble()
+product_codes <- read.xlsx(url_metadata, 2) |> as_tibble()
 ```
 
+- Import Load from your machine, if you open with the R project and have the file in folder data.
+```{r}
+path_baci <- here::here("data/baci_hs92_2019_2digit.rds")
+path_metadata <- here::here("data/baci_meta.xlsx")
 
-1. How many rows and columns of the `baci_2019`?
+baci_2019 <- readRDS(path_baci)
+country_codes <- read.xlsx(path_metadata, 1) |> as_tibble()
+product_codes <- read.xlsx(path_metadata, 2) |> as_tibble()
+```
 
-**Answer:**
-a. 
-b. 
-c. 
-d. 
+Preview data
+```{r}
+baci_2019
+country_codes
+product_codes
+```
 
-2. Filter
+## Question 1
+How many rows and columns of the `baci_2019`?
 
-3. Mutate
+::: {.panel-tabset}
+### Choices
+a. 1,025,860
+b.   895,929
+c.   985,224
+d.   785,460
 
-4. Group by
+### Solution
+```{r}
+nrow(baci_2019)
+```
+:::
 
-5. Pivot
+## Question 2
+Use `baci_2019` to get a data of `Diary products` save it to `daily_2019`. Fill `...` in the code snippet.
 
-6. Join
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+daily_2019 <- baci_2019 |> filter(...)
+```
+
+### Solution
+```{r}
+product_codes |> head(10)
+
+daily_2019 <- baci_2019 |> filter(k == "04")
+daily_2019
+```
+:::
+
+
+## Question 3
+Use `daily_2019` to compute a unit price and convert the unit to US dollar per ton. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+daily_2019 |> mutate(unit_price = ...)
+```
+
+### Solution
+```{r}
+daily_2019 |> mutate(unit_price = v*1000/q)
+```
+:::
+
+## Question 4
+Use `daily_2019` to get import values by destination countries (importers). Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+daily_2019 |>
+  group_by(...) |>
+  summarize(v = ...)
+```
+
+### Solution
+```{r}
+daily_2019 |>
+  group_by(j) |>
+  summarize(v = sum(v))
+```
+:::
+
+## Question 5
+Use `daily_2019` to make a table
+
+- rows are exporters
+- columns are importers
+- value of each cell is trade value.
+
+Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+daily_2019 |>
+  pivot_wider(
+    id_cols = ...,
+    names_from = ...,
+    values_from = ...
+  )
+```
+
+### Solution
+```{r}
+daily_2019 |>
+  pivot_wider(
+    id_cols = "i",
+    names_from = "j",
+    values_from = "v"
+  )
+```
+:::
+
+## Question 6
+Redo Question 5 by using country name instead of country codes. Use `daily_2019` and `country_codes`.
+Hint: You need to join two times and `rename` to add prefix. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+daily_2019 |>
+  left_join(..., by = ...) |>
+  rename() |>
+  left_join(..., by = ...) |>
+  rename() |>
+  pivot_wider(
+    id_cols = ...,
+    names_from = ...,
+    values_from = ...
+  )
+```
+
+### Solution
+```{r}
+daily_2019 |>
+  left_join(country_codes, by = c("i" = "iso3n")) |>
+  rename(
+    i_country_name = country_name,
+    i_iso2c = iso2c,
+    i_iso3c = iso3c,
+    i_region = region
+  ) |>
+  left_join(country_codes, by = c("j" = "iso3n")) |>
+  rename(
+    j_country_name = country_name,
+    j_iso2c = iso2c,
+    j_iso3c = iso3c,
+    j_region = region
+  ) |>
+  pivot_wider(
+    id_cols = "i_country_name",
+    names_from = "j_country_name",
+    values_from = "v"
+  )
+```
+:::

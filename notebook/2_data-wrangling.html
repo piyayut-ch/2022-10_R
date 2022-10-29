@@ -135,7 +135,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#pivot-wider" id="toc-pivot-wider" class="nav-link" data-scroll-target="#pivot-wider">Pivot wider</a></li>
   <li><a href="#pivot-longer" id="toc-pivot-longer" class="nav-link" data-scroll-target="#pivot-longer">Pivot longer</a></li>
   </ul></li>
-  <li><a href="#join-multiple-tables" id="toc-join-multiple-tables" class="nav-link" data-scroll-target="#join-multiple-tables">Join multiple tables</a></li>
+  <li><a href="#joining-multiple-tables" id="toc-joining-multiple-tables" class="nav-link" data-scroll-target="#joining-multiple-tables">Joining multiple tables</a></li>
   <li><a href="#saving-data" id="toc-saving-data" class="nav-link" data-scroll-target="#saving-data">Saving data</a></li>
   <li><a href="#miscellaneous" id="toc-miscellaneous" class="nav-link" data-scroll-target="#miscellaneous">Miscellaneous</a>
   <ul class="collapse">
@@ -143,7 +143,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#useful-commands" id="toc-useful-commands" class="nav-link" data-scroll-target="#useful-commands">Useful commands</a></li>
   <li><a href="#cheatsheet" id="toc-cheatsheet" class="nav-link" data-scroll-target="#cheatsheet">cheatsheet</a></li>
   </ul></li>
-  <li><a href="#put-it-all-together" id="toc-put-it-all-together" class="nav-link" data-scroll-target="#put-it-all-together">Put it all together</a>
+  <li><a href="#putting-it-all-together" id="toc-putting-it-all-together" class="nav-link" data-scroll-target="#putting-it-all-together">Putting it all together</a>
   <ul class="collapse">
   <li><a href="#computing-export-share" id="toc-computing-export-share" class="nav-link" data-scroll-target="#computing-export-share">Computing export share</a></li>
   <li><a href="#combining-baci-data-from-20112020" id="toc-combining-baci-data-from-20112020" class="nav-link" data-scroll-target="#combining-baci-data-from-20112020">Combining BACI data from 2011:2020</a></li>
@@ -823,8 +823,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <hr>
 </section>
 </section>
-<section id="join-multiple-tables" class="level1">
-<h1>Join multiple tables</h1>
+<section id="joining-multiple-tables" class="level1">
+<h1>Joining multiple tables</h1>
 <p>We join tables together to enrich data i.e.&nbsp;adding new variables from other table or adding metadata from reference tables.</p>
 <p>Like SQL-join, there are many types of join.</p>
 <ul>
@@ -889,10 +889,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># csv</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>baci <span class="sc">|&gt;</span> <span class="fu">write_csv</span>(<span class="fu">here</span>(<span class="st">"output/baci.csv"</span>))</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># excel</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># baci |&gt; write_xlsx(here("output/baci.xlsx")) # number of rows is too large</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>country_data <span class="sc">|&gt;</span> <span class="fu">write_xlsx</span>(<span class="fu">here</span>(<span class="st">"output/country_data.xlsx"</span>))</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># RDS</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>baci <span class="sc">|&gt;</span> <span class="fu">saveRDS</span>(<span class="fu">here</span>(<span class="st">"output/baci.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>country_data <span class="sc">|&gt;</span> <span class="fu">write_xlsx</span>(<span class="fu">here</span>(<span class="st">"output/country_data.xlsx"</span>))</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co"># RDS</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>baci <span class="sc">|&gt;</span> <span class="fu">saveRDS</span>(<span class="fu">here</span>(<span class="st">"output/baci.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 </section>
@@ -1132,7 +1131,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  2019   894   854 72     43.7    4.11</span></span>
 <span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  2019   894   854 82     17.2    1.35</span></span>
 <span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  2019   894   858 24    313.    59.4 </span></span>
-<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  2019   894   858 48      0.025  0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  2019   894   858 48      0.025  0</span></span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a><span class="co"># baci |&gt; write_xlsx(here("output/baci.xlsx")) # number of rows is too large</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="cheatsheet" class="level2">
@@ -1141,8 +1142,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <hr>
 </section>
 </section>
-<section id="put-it-all-together" class="level1">
-<h1>Put it all together</h1>
+<section id="putting-it-all-together" class="level1">
+<h1>Putting it all together</h1>
 <section id="computing-export-share" class="level2">
 <h2 class="anchored" data-anchor-id="computing-export-share">Computing export share</h2>
 <p>We want to get export value in million and market share of product Fruits and nuts in year 2019 classified by country name and region ordered by export values.</p>
@@ -1303,10 +1304,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="link" class="level2">
 <h2 class="anchored" data-anchor-id="link">link</h2>
 <ul>
-<li>https://r4ds.had.co.nz</li>
-<li>https://geocompr.robinlovelace.net/index.html</li>
-<li>https://www.tsbox.help</li>
-<li>https://tsibble.tidyverts.org</li>
+<li><a href="https://r4ds.had.co.nz" class="uri">https://r4ds.had.co.nz</a></li>
+<li><a href="https://geocompr.robinlovelace.net/index.html" class="uri">https://geocompr.robinlovelace.net/index.html</a></li>
+<li><a href="https://r-spatial.org/book/" class="uri">https://r-spatial.org/book/</a></li>
+<li><a href="https://www.tsbox.help" class="uri">https://www.tsbox.help</a></li>
+<li><a href="https://tsibble.tidyverts.org" class="uri">https://tsibble.tidyverts.org</a></li>
 </ul>
 </section>
 </section>

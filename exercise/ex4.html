@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.658">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Piyayut Chitchumnong">
+
+<title>Excercise 4: Trade Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="ex4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ex4_files/libs/quarto-html/quarto.js"></script>
+<script src="ex4_files/libs/quarto-html/popper.min.js"></script>
+<script src="ex4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ex4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ex4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ex4_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ex4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ex4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ex4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+<script src="ex4_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="ex4_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link href="ex4_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="ex4_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#load-packages" id="toc-load-packages" class="nav-link active" data-scroll-target="#load-packages">Load packages</a></li>
+  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">Import data</a></li>
+  <li><a href="#question-1" id="toc-question-1" class="nav-link" data-scroll-target="#question-1">Question 1</a></li>
+  <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2">Question 2</a></li>
+  <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3">Question 3</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Excercise 4: Trade Analysis</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    Piyayut Chitchumnong 
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            <a href="https://nabc.go.th">National Agricultural Big Data Center</a>
+          </p>
+      </div>
+    </div>
+
+<div class="quarto-title-meta">
+
+      
+    
+  </div>
+  
+
+</header>
+
+<section id="load-packages" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages">Load packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(economiccomplexity)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gravity)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelsummary)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flextable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="import-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-data">Import data</h2>
+<ul>
+<li><code>baci_extra</code> which is a bilatteral trade by product (HS 2 digit) from 2011-2020.</li>
+<li><code>baci_extra_i</code> which is export by product (HS 2 digit) of exporting countries from 2011-2020.</li>
+<li><code>gravity</code> which is dataset for gravity model.</li>
+</ul>
+<p>You have two options to load data. &gt; This could take a while to load</p>
+<p><strong>Option 1</strong>: Import from internet.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>url_baci <span class="ot">&lt;-</span> <span class="st">"https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/baci_extra.rds"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>baci_extra <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">gzcon</span>(<span class="fu">url</span>(url_baci)))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>url_baci_i <span class="ot">&lt;-</span> <span class="st">"https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/baci_extra_i.rds"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>baci_extra_i <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">gzcon</span>(<span class="fu">url</span>(url_baci_i)))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>url_gravity <span class="ot">&lt;-</span> <span class="st">"https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/gravity_0019.rds"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>gravity_0019 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">gzcon</span>(<span class="fu">url</span>(url_gravity)))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>country_codes <span class="ot">&lt;-</span> baci_extra_i <span class="sc">|&gt;</span> <span class="fu">distinct</span>(i, i_iso3c, i_name, i_region)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>product_codes <span class="ot">&lt;-</span> baci_extra_i <span class="sc">|&gt;</span> <span class="fu">distinct</span>(k, k_name, k_sector)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># gzcon and url function are used to download data from github</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Option 2</strong>: Import from your machine, if you open with the R project and have the file in folder data.</p>
+<div class="cell" data-hash="ex4_cache/html/unnamed-chunk-3_358f140e95504fa3bf3b355e3ac72618">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>path_baci <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/baci_extra.rds"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>baci_extra <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(path_baci)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>path_baci_i <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/baci_extra_i.rds"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>baci_extra_i <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(path_baci_i)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>path_gravity <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/gravity_0019.rds"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>gravity_0019 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(path_gravity)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># additional data</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>country_codes <span class="ot">&lt;-</span> baci_extra_i <span class="sc">|&gt;</span> <span class="fu">distinct</span>(i, i_iso3c, i_name, i_region)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>product_codes <span class="ot">&lt;-</span> baci_extra_i <span class="sc">|&gt;</span> <span class="fu">distinct</span>(k, k_name, k_sector)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Preview data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>baci_extra <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["t"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["i"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["i_iso3c"],"name":[3],"type":["chr"],"align":["left"]},{"label":["i_name"],"name":[4],"type":["chr"],"align":["left"]},{"label":["i_region"],"name":[5],"type":["chr"],"align":["left"]},{"label":["j"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["j_iso3c"],"name":[7],"type":["chr"],"align":["left"]},{"label":["j_name"],"name":[8],"type":["chr"],"align":["left"]},{"label":["j_region"],"name":[9],"type":["chr"],"align":["left"]},{"label":["k"],"name":[10],"type":["chr"],"align":["left"]},{"label":["k_name"],"name":[11],"type":["chr"],"align":["left"]},{"label":["k_sector"],"name":[12],"type":["chr"],"align":["left"]},{"label":["v"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["q"],"name":[14],"type":["dbl"],"align":["right"]}],"data":[{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"12","7":"DZA","8":"Algeria","9":"Africa","10":"39","11":"Plastics","12":"Chemicals","13":"0.000031","14":"0.001"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"12","7":"DZA","8":"Algeria","9":"Africa","10":"40","11":"Rubber","12":"Chemicals","13":"0.000151","14":"0.005"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"12","7":"DZA","8":"Algeria","9":"Africa","10":"84","11":"Industrial Machinery","12":"Machinery","13":"0.000013","14":"0.001"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"12","7":"DZA","8":"Algeria","9":"Africa","10":"87","11":"Vehicles","12":"Vehicles","13":"0.000091","14":"0.001"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"24","7":"AGO","8":"Angola","9":"Africa","10":"19","11":"Preparations of cereals, flour, starch or milk","12":"Agriculture","13":"0.000149","14":"0.010"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"24","7":"AGO","8":"Angola","9":"Africa","10":"21","11":"Miscellaneous edible preparations","12":"Agriculture","13":"0.100835","14":"25.789"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>baci_extra_i <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["t"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["i"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["i_iso3c"],"name":[3],"type":["chr"],"align":["left"]},{"label":["i_name"],"name":[4],"type":["chr"],"align":["left"]},{"label":["i_region"],"name":[5],"type":["chr"],"align":["left"]},{"label":["k"],"name":[6],"type":["chr"],"align":["left"]},{"label":["k_name"],"name":[7],"type":["chr"],"align":["left"]},{"label":["k_sector"],"name":[8],"type":["chr"],"align":["left"]},{"label":["v"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["q"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["pop"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["gdp"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["gdpcap"],"name":[13],"type":["dbl"],"align":["right"]}],"data":[{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"01","7":"Live animals","8":"Agriculture","9":"0.100268","10":"0.055","11":"29105.48","12":"17870160","13":"0.614"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"02","7":"Meat","8":"Agriculture","9":"0.148744","10":"67.350","11":"29105.48","12":"17870160","13":"0.614"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"03","7":"Fish","8":"Agriculture","9":"0.001111","10":"0.085","11":"29105.48","12":"17870160","13":"0.614"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"04","7":"Diary products","8":"Agriculture","9":"0.502073","10":"285.177","11":"29105.48","12":"17870160","13":"0.614"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"05","7":"Animal products","8":"Agriculture","9":"0.436071","10":"201.275","11":"29105.48","12":"17870160","13":"0.614"},{"1":"2011","2":"4","3":"AFG","4":"Afghanistan","5":"Asia","6":"06","7":"Plants","8":"Agriculture","9":"0.000011","10":"0.001","11":"29105.48","12":"17870160","13":"0.614"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>gravity_0019 <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["year"],"name":[1],"type":["int"],"align":["right"]},{"label":["iso3_o"],"name":[2],"type":["chr"],"align":["left"]},{"label":["iso3_d"],"name":[3],"type":["chr"],"align":["left"]},{"label":["tradeflow_baci"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["gdp_o"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["gdp_d"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["dist"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["distw"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["contig"],"name":[9],"type":["int"],"align":["right"]},{"label":["rta"],"name":[10],"type":["int"],"align":["right"]},{"label":["comlang_off"],"name":[11],"type":["int"],"align":["right"]},{"label":["pop_o"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["pop_d"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["gdpcap_o"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["gdpcap_d"],"name":[15],"type":["dbl"],"align":["right"]}],"data":[{"1":"2000","2":"ABW","3":"ABW","4":"NA","5":"1873453","6":"1873453","7":"5.225","8":"25.094","9":"0","10":"0","11":"0","12":"90.858","13":"90.858","14":"20.620","15":"20.620"},{"1":"2001","2":"ABW","3":"ABW","4":"NA","5":"1920263","6":"1920263","7":"5.225","8":"25.094","9":"0","10":"0","11":"0","12":"92.894","13":"92.894","14":"20.672","15":"20.672"},{"1":"2002","2":"ABW","3":"ABW","4":"NA","5":"1941095","6":"1941095","7":"5.225","8":"25.094","9":"0","10":"0","11":"0","12":"94.995","13":"94.995","14":"20.434","15":"20.434"},{"1":"2003","2":"ABW","3":"ABW","4":"NA","5":"2021302","6":"2021302","7":"5.225","8":"25.094","9":"0","10":"0","11":"0","12":"97.015","13":"97.015","14":"20.835","15":"20.835"},{"1":"2004","2":"ABW","3":"ABW","4":"NA","5":"2228279","6":"2228279","7":"5.225","8":"25.094","9":"0","10":"0","11":"0","12":"98.742","13":"98.742","14":"22.567","15":"22.567"},{"1":"2005","2":"ABW","3":"ABW","4":"NA","5":"2331006","6":"2331006","7":"5.225","8":"25.094","9":"0","10":"0","11":"0","12":"100.031","13":"100.031","14":"23.303","15":"23.303"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>Prepare data for gravity model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gravity_18_nozeros <span class="ot">&lt;-</span> gravity_0019 <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2018</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tradeflow_baci <span class="sc">!=</span> <span class="dv">0</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>gravity_18_nozeros <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["year"],"name":[1],"type":["int"],"align":["right"]},{"label":["iso3_o"],"name":[2],"type":["chr"],"align":["left"]},{"label":["iso3_d"],"name":[3],"type":["chr"],"align":["left"]},{"label":["tradeflow_baci"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["gdp_o"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["gdp_d"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["dist"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["distw"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["contig"],"name":[9],"type":["int"],"align":["right"]},{"label":["rta"],"name":[10],"type":["int"],"align":["right"]},{"label":["comlang_off"],"name":[11],"type":["int"],"align":["right"]},{"label":["pop_o"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["pop_d"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["gdpcap_o"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["gdpcap_d"],"name":[15],"type":["dbl"],"align":["right"]}],"data":[{"1":"2018","2":"AFG","3":"AGO","4":"103.725","5":"18353881","6":"101353231","7":"7607.800","8":"7573.253","9":"0","10":"0","11":"0","12":"37172.39","13":"30809.761","14":"0.494","15":"3.290"},{"1":"2018","2":"AFG","3":"ARE","4":"126094.876","5":"18353881","6":"422215044","7":"1813.615","8":"1657.193","9":"0","10":"0","11":"0","12":"37172.39","13":"9630.959","14":"0.494","15":"43.839"},{"1":"2018","2":"AFG","3":"ARG","4":"12.443","5":"18353881","6":"517626700","7":"15298.504","8":"15341.162","9":"0","10":"0","11":"0","12":"37172.39","13":"44494.503","14":"0.494","15":"11.633"},{"1":"2018","2":"AFG","3":"ARM","4":"4.787","5":"18353881","6":"12457942","7":"2266.150","8":"2171.302","9":"0","10":"0","11":"0","12":"37172.39","13":"2951.776","14":"0.494","15":"4.220"},{"1":"2018","2":"AFG","3":"AUS","4":"553.002","5":"18353881","6":"1432881172","7":"11433.487","8":"11086.141","9":"0","10":"0","11":"0","12":"37172.39","13":"24982.689","14":"0.494","15":"57.355"},{"1":"2018","2":"AFG","3":"AUT","4":"570.371","5":"18353881","6":"455094862","7":"4568.098","8":"4567.302","9":"0","10":"0","11":"0","12":"37172.39","13":"8840.521","14":"0.494","15":"51.478"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1</h2>
+<p>Use <code>baci_extra</code> to make a report of <code>Rubber</code> export of <code>Indonesia</code> classified by <code>destinations</code> from <code>2011-2015</code>. Fill <code>...</code> in the code snippet.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Code</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Solution</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step0: define growth function</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>growth_ols <span class="ot">&lt;-</span> <span class="cf">function</span>(vec) {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> vec</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">seq_along</span>(y)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(y) <span class="sc">~</span> x)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">exp</span>(<span class="fu">coef</span>(result))[[<span class="st">'x'</span>]]) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># step1: filter data of interest</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> baci_extra <span class="sc">|&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">%in%</span> ..., i_iso3c <span class="sc">==</span> ..., k <span class="sc">==</span> ...)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># step2: make a wider table where year represent years where we want to keep country code, name and region.</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>df_wide <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(..., ..., ...),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> <span class="st">"..."</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="st">"..."</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">2015</span><span class="st">`</span>))</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>df_wide</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co"># step3: compute summarize metrics where growth in 100%</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>df_sum <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(...) <span class="sc">|&gt;</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_1620 =</span> ...,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_1620 =</span> ...</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>df_sum</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co"># step4: join two tables</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>df_combine <span class="ot">&lt;-</span> df_wide <span class="sc">|&gt;</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_sum)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>df_combine</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co"># step5: save to xlsx file: optional</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>df_combine <span class="sc">|&gt;</span> writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(<span class="fu">here</span>(<span class="st">"output/ex_4-1_growth.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step0: define growth function</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>growth_ols <span class="ot">&lt;-</span> <span class="cf">function</span>(vec) {</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> vec</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">seq_along</span>(y)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(y) <span class="sc">~</span> x)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">exp</span>(<span class="fu">coef</span>(result))[[<span class="st">'x'</span>]]) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># step1: filter data of interest</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> baci_extra <span class="sc">|&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">%in%</span> <span class="dv">2011</span><span class="sc">:</span><span class="dv">2015</span>, i_iso3c <span class="sc">==</span> <span class="st">"IDN"</span>, k <span class="sc">==</span> <span class="st">"40"</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># step2: make a wider table where year represent years where we want to keep country code, name and region.</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>df_wide <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(j_iso3c, j_name, j_region),</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> <span class="st">"t"</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="st">"v"</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">2015</span><span class="st">`</span>))</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>df_wide</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["j_iso3c"],"name":[1],"type":["chr"],"align":["left"]},{"label":["j_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["j_region"],"name":[3],"type":["chr"],"align":["left"]},{"label":["2011"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["2012"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["2013"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["2014"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["2015"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"USA","2":"USA","3":"North America","4":"3591.750575","5":"2633.418071","6":"2326.882787","7":"1859.887142","8":"1828.228052"},{"1":"JPN","2":"Japan","3":"Asia","4":"2210.780506","5":"1590.233370","6":"1342.405519","7":"1000.903598","8":"823.854965"},{"1":"CHN","2":"China","3":"Asia","4":"2050.959588","5":"1740.343861","6":"1550.653612","7":"823.742576","8":"529.029799"},{"1":"IND","2":"India","3":"Asia","4":"333.412056","5":"376.209126","6":"402.795789","7":"408.175145","8":"333.450508"},{"1":"KOR","2":"Rep. of Korea","3":"Asia","4":"600.590436","5":"492.742713","6":"418.040330","7":"322.386460","8":"286.323099"},{"1":"DEU","2":"Germany","3":"Europe","4":"656.289443","5":"396.758401","6":"357.705808","7":"332.826396","8":"247.680008"},{"1":"CAN","2":"Canada","3":"North America","4":"490.343873","5":"350.476485","6":"271.645575","7":"224.054971","8":"175.845030"},{"1":"BRA","2":"Brazil","3":"South America","4":"582.804998","5":"278.308057","6":"301.532272","7":"258.093491","8":"169.166001"},{"1":"TUR","2":"Turkey","3":"Asia","4":"356.126763","5":"209.428621","6":"215.713758","7":"174.409019","8":"139.275774"},{"1":"BEL","2":"Belgium","3":"Europe","4":"236.363411","5":"228.565699","6":"188.928704","7":"191.969297","8":"132.471774"},{"1":"FRA","2":"France","3":"Europe","4":"391.983341","5":"222.714431","6":"174.878522","7":"129.900871","8":"102.175597"},{"1":"TWN","2":"Other Asia, nes","3":"Asia","4":"255.787825","5":"161.379564","6":"151.751787","7":"135.570161","8":"101.760559"},{"1":"SGP","2":"Singapore","3":"Asia","4":"262.076345","5":"241.829538","6":"148.564939","7":"116.259358","8":"100.863156"},{"1":"AUS","2":"Australia","3":"Oceania","4":"140.959914","5":"149.199039","6":"119.357029","7":"115.086306","8":"100.310726"},{"1":"MYS","2":"Malaysia","3":"Asia","4":"146.707117","5":"146.149872","6":"140.264884","7":"98.932313","8":"93.003848"},{"1":"ITA","2":"Italy","3":"Europe","4":"262.827168","5":"130.658561","6":"113.554977","7":"108.846623","8":"90.837623"},{"1":"NLD","2":"Netherlands","3":"Europe","4":"339.286200","5":"173.675574","6":"99.435646","7":"122.042218","8":"81.758914"},{"1":"GBR","2":"United Kingdom","3":"Europe","4":"229.880595","5":"144.970899","6":"140.813804","7":"114.661788","8":"75.919700"},{"1":"LUX","2":"Luxembourg","3":"Europe","4":"196.371845","5":"31.324132","6":"19.103152","7":"85.101505","8":"72.787490"},{"1":"PHL","2":"Philippines","3":"Asia","4":"70.636931","5":"73.550783","6":"69.732015","7":"76.362783","8":"72.785536"},{"1":"MEX","2":"Mexico","3":"North America","4":"117.989399","5":"107.040402","6":"82.176134","7":"73.327939","8":"71.246416"},{"1":"ESP","2":"Spain","3":"Europe","4":"325.372422","5":"160.205535","6":"107.718582","7":"78.483714","8":"64.919367"},{"1":"VNM","2":"Viet Nam","3":"Asia","4":"41.785058","5":"23.373668","6":"29.661138","7":"33.937507","8":"57.921194"},{"1":"SAU","2":"Saudi Arabia","3":"Asia","4":"80.122223","5":"88.898457","6":"78.507281","7":"72.782687","8":"54.602258"},{"1":"POL","2":"Poland","3":"Europe","4":"212.086780","5":"126.794594","6":"118.784047","7":"96.011175","8":"53.039443"},{"1":"SVN","2":"Slovenia","3":"Europe","4":"69.228463","5":"43.216048","6":"30.802840","7":"37.816612","8":"51.537571"},{"1":"ARG","2":"Argentina","3":"South America","4":"119.735181","5":"104.399399","6":"90.530615","7":"65.469464","8":"51.074189"},{"1":"THA","2":"Thailand","3":"Asia","4":"56.083260","5":"66.140800","6":"46.128347","7":"44.800702","8":"49.077063"},{"1":"EGY","2":"Egypt","3":"Africa","4":"85.604356","5":"49.069215","6":"59.256857","7":"56.714262","8":"47.523292"},{"1":"ZAF","2":"South Africa","3":"Africa","4":"132.325512","5":"97.664160","6":"89.753984","7":"64.720056","8":"47.111046"},{"1":"RUS","2":"Russian Federation","3":"Europe","4":"95.163866","5":"73.495300","6":"64.740145","7":"45.416922","8":"43.133571"},{"1":"ARE","2":"United Arab Emirates","3":"Asia","4":"75.953541","5":"84.879048","6":"57.604538","7":"71.115418","8":"38.046362"},{"1":"LVA","2":"Latvia","3":"Europe","4":"14.819657","5":"25.391771","6":"28.701389","7":"31.712749","8":"36.465624"},{"1":"CZE","2":"Czechia","3":"Europe","4":"52.553442","5":"54.265156","6":"51.694172","7":"38.092552","8":"31.269917"},{"1":"ROU","2":"Romania","3":"Europe","4":"111.305837","5":"73.280530","6":"60.796315","7":"45.381698","8":"30.027512"},{"1":"NZL","2":"New Zealand","3":"Oceania","4":"35.506875","5":"33.205042","6":"37.676990","7":"45.387496","8":"29.262888"},{"1":"HUN","2":"Hungary","3":"Europe","4":"29.215669","5":"10.007578","6":"1.950533","7":"12.768864","8":"29.001853"},{"1":"PAK","2":"Pakistan","3":"Asia","4":"35.462436","5":"31.418100","6":"23.700346","7":"25.990429","8":"28.216209"},{"1":"SVK","2":"Slovakia","3":"Europe","4":"57.078940","5":"46.984088","6":"40.653590","7":"34.832573","8":"26.918315"},{"1":"LKA","2":"Sri Lanka","3":"Asia","4":"15.110722","5":"13.331207","6":"19.822465","7":"22.563097","8":"24.401096"},{"1":"FIN","2":"Finland","3":"Europe","4":"31.184491","5":"31.604863","6":"40.894881","7":"35.648970","8":"23.423354"},{"1":"PRT","2":"Portugal","3":"Europe","4":"2.202286","5":"2.062107","6":"17.061904","7":"13.431696","8":"18.869176"},{"1":"HKG","2":"China, Hong Kong SAR","3":"Asia","4":"20.403237","5":"13.522373","6":"12.963475","7":"15.689292","8":"18.591232"},{"1":"IRN","2":"Iran","3":"Asia","4":"82.635836","5":"18.915318","6":"15.496630","7":"12.614211","8":"16.553632"},{"1":"COL","2":"Colombia","3":"South America","4":"16.272944","5":"12.724306","6":"19.371050","7":"12.176907","8":"12.312678"},{"1":"ISR","2":"Israel","3":"Asia","4":"18.366436","5":"25.664390","6":"17.297277","7":"20.242800","8":"12.092739"},{"1":"AUT","2":"Austria","3":"Europe","4":"13.534179","5":"9.087205","6":"16.127900","7":"16.166593","8":"10.391839"},{"1":"PER","2":"Peru","3":"South America","4":"11.896478","5":"6.653812","6":"18.258150","7":"10.745445","8":"8.349847"},{"1":"BGD","2":"Bangladesh","3":"Asia","4":"8.480936","5":"7.096938","6":"7.168296","7":"8.150553","8":"7.866885"},{"1":"JOR","2":"Jordan","3":"Asia","4":"8.255299","5":"12.463423","6":"10.137795","7":"8.463772","8":"7.695452"},{"1":"BGR","2":"Bulgaria","3":"Europe","4":"15.545879","5":"8.981256","6":"8.540173","7":"8.222929","8":"7.167084"},{"1":"CHE","2":"Switzerland","3":"Europe","4":"4.733184","5":"5.172749","6":"5.194596","7":"6.299278","8":"7.120280"},{"1":"SWE","2":"Sweden","3":"Europe","4":"10.361111","5":"6.887550","6":"7.431790","7":"6.730208","8":"6.167837"},{"1":"LBN","2":"Lebanon","3":"Asia","4":"3.976563","5":"4.993215","6":"7.243115","7":"6.953975","8":"6.085548"},{"1":"PNG","2":"Papua New Guinea","3":"Oceania","4":"8.433477","5":"7.702157","6":"5.709878","7":"5.062626","8":"5.950701"},{"1":"LTU","2":"Lithuania","3":"Europe","4":"20.029186","5":"11.736349","6":"6.843297","7":"1.791954","8":"5.722863"},{"1":"GRC","2":"Greece","3":"Europe","4":"4.521901","5":"3.815004","6":"4.417980","7":"3.829704","8":"5.631751"},{"1":"OMN","2":"Oman","3":"Asia","4":"3.195748","5":"2.873779","6":"4.757407","7":"3.092987","8":"5.579690"},{"1":"BLR","2":"Belarus","3":"Europe","4":"13.534338","5":"13.568465","6":"9.677319","7":"0.042772","8":"5.191276"},{"1":"CHL","2":"Chile","3":"South America","4":"12.442940","5":"9.192750","6":"6.652007","7":"1.901544","8":"4.892089"},{"1":"KEN","2":"Kenya","3":"Africa","4":"6.116889","5":"5.472033","6":"6.906023","7":"4.119691","8":"4.817446"},{"1":"YEM","2":"Yemen","3":"Asia","4":"12.271555","5":"18.523670","6":"17.073423","7":"15.059775","8":"4.810964"},{"1":"MMR","2":"Myanmar","3":"Asia","4":"6.200086","5":"5.152621","6":"5.799719","7":"7.712864","8":"4.748898"},{"1":"NGA","2":"Nigeria","3":"Africa","4":"10.305225","5":"7.610973","6":"11.651281","7":"10.198823","8":"4.543184"},{"1":"ECU","2":"Ecuador","3":"South America","4":"22.539978","5":"5.374280","6":"5.224259","7":"4.254030","8":"4.436144"},{"1":"SRB","2":"Serbia","3":"Europe","4":"18.131098","5":"9.775695","6":"9.335928","7":"3.379191","8":"4.154909"},{"1":"MAR","2":"Morocco","3":"Africa","4":"3.035493","5":"1.634211","6":"2.862838","7":"2.606649","8":"4.049568"},{"1":"QAT","2":"Qatar","3":"Asia","4":"2.287198","5":"2.933939","6":"2.823606","7":"3.603101","8":"3.953395"},{"1":"SDN","2":"Sudan","3":"Africa","4":"NA","5":"5.268998","6":"4.417043","7":"3.942655","8":"3.869716"},{"1":"IRQ","2":"Iraq","3":"Asia","4":"4.416608","5":"7.961285","6":"4.670202","7":"5.197241","8":"3.801200"},{"1":"LBY","2":"Libya","3":"Africa","4":"2.511895","5":"10.581269","6":"9.811670","7":"6.818258","8":"3.773410"},{"1":"CRI","2":"Costa Rica","3":"North America","4":"11.953133","5":"3.016159","6":"4.142184","7":"2.202088","8":"3.252592"},{"1":"DZA","2":"Algeria","3":"Africa","4":"4.274460","5":"6.154541","6":"2.808399","7":"2.214639","8":"2.903333"},{"1":"NOR","2":"Norway","3":"Europe","4":"1.616336","5":"1.621928","6":"3.333476","7":"2.664401","8":"2.880352"},{"1":"KHM","2":"Cambodia","3":"Asia","4":"2.278364","5":"6.075453","6":"6.676353","7":"4.288655","8":"2.592273"},{"1":"KWT","2":"Kuwait","3":"Asia","4":"3.212668","5":"2.267884","6":"3.621502","7":"4.521333","8":"2.576860"},{"1":"TLS","2":"Timor-Leste","3":"Asia","4":"3.004554","5":"3.764785","6":"4.457742","7":"3.460862","8":"2.565615"},{"1":"PAN","2":"Panama","3":"North America","4":"4.911897","5":"4.406444","6":"2.027608","7":"1.746720","8":"2.249114"},{"1":"PRY","2":"Paraguay","3":"South America","4":"2.694441","5":"2.013198","6":"2.542694","7":"2.238295","8":"1.956243"},{"1":"IRL","2":"Ireland","3":"Europe","4":"10.695309","5":"6.850542","6":"3.364110","7":"1.291739","8":"1.932584"},{"1":"GTM","2":"Guatemala","3":"North America","4":"1.158324","5":"0.934428","6":"1.204430","7":"1.038828","8":"1.805805"},{"1":"BRN","2":"Brunei Darussalam","3":"Asia","4":"2.367061","5":"2.447880","6":"2.658909","7":"2.641996","8":"1.786317"},{"1":"ETH","2":"Ethiopia","3":"Africa","4":"1.939694","5":"1.126549","6":"0.994027","7":"0.526453","8":"1.733558"},{"1":"BOL","2":"Bolivia (Plurinational State of)","3":"South America","4":"2.556072","5":"2.504470","6":"3.721831","7":"1.753972","8":"1.563201"},{"1":"SLV","2":"El Salvador","3":"North America","4":"0.817290","5":"0.944910","6":"1.205070","7":"0.777271","8":"1.527978"},{"1":"EST","2":"Estonia","3":"Europe","4":"9.345214","5":"17.940108","6":"9.603095","7":"5.629883","8":"1.464489"},{"1":"DOM","2":"Dominican Rep.","3":"North America","4":"1.082075","5":"1.236426","6":"0.997666","7":"1.001736","8":"1.458770"},{"1":"AFG","2":"Afghanistan","3":"Asia","4":"1.651073","5":"0.876843","6":"1.274020","7":"1.203523","8":"1.371035"},{"1":"DNK","2":"Denmark","3":"Europe","4":"6.885211","5":"4.719724","6":"3.231947","7":"2.331159","8":"1.251990"},{"1":"UKR","2":"Ukraine","3":"Europe","4":"4.398080","5":"2.569447","6":"1.573758","7":"1.269882","8":"1.174863"},{"1":"URY","2":"Uruguay","3":"South America","4":"2.119807","5":"1.486824","6":"1.204569","7":"1.152431","8":"1.148567"},{"1":"VEN","2":"Venezuela","3":"South America","4":"39.204888","5":"33.027747","6":"15.662485","7":"4.156278","8":"1.097490"},{"1":"MUS","2":"Mauritius","3":"Africa","4":"2.140789","5":"2.116844","6":"1.393669","7":"1.163729","8":"0.909253"},{"1":"GEO","2":"Georgia","3":"Asia","4":"2.640725","5":"2.545305","6":"1.796333","7":"1.702896","8":"0.895960"},{"1":"GHA","2":"Ghana","3":"Africa","4":"1.340129","5":"1.369251","6":"1.331169","7":"1.643073","8":"0.860136"},{"1":"SYR","2":"Syria","3":"Asia","4":"4.675047","5":"2.500892","6":"1.935213","7":"1.992881","8":"0.824595"},{"1":"TUN","2":"Tunisia","3":"Africa","4":"0.250597","5":"0.539208","6":"0.935159","7":"0.934999","8":"0.796718"},{"1":"BHR","2":"Bahrain","3":"Asia","4":"0.796325","5":"0.830687","6":"1.105571","7":"1.259177","8":"0.769881"},{"1":"CIV","2":"C๔te d'Ivoire","3":"Africa","4":"0.243379","5":"0.486778","6":"0.084694","7":"0.416063","8":"0.701337"},{"1":"NIC","2":"Nicaragua","3":"North America","4":"0.598382","5":"0.728333","6":"0.904082","7":"0.429435","8":"0.674846"},{"1":"HND","2":"Honduras","3":"North America","4":"1.143250","5":"1.443971","6":"0.860177","7":"0.917707","8":"0.627827"},{"1":"NPL","2":"Nepal","3":"Asia","4":"0.379796","5":"0.238236","6":"0.429482","7":"0.588878","8":"0.613155"},{"1":"HRV","2":"Croatia","3":"Europe","4":"0.613286","5":"0.763148","6":"0.930158","7":"0.692201","8":"0.593809"},{"1":"FJI","2":"Fiji","3":"Oceania","4":"0.668295","5":"0.695012","6":"0.702355","7":"0.597649","8":"0.560312"},{"1":"TZA","2":"United Rep. of Tanzania","3":"Africa","4":"0.148740","5":"0.355404","6":"0.096314","7":"0.311249","8":"0.511985"},{"1":"HTI","2":"Haiti","3":"North America","4":"0.406194","5":"0.692335","6":"0.401465","7":"0.429062","8":"0.483759"},{"1":"SUR","2":"Suriname","3":"South America","4":"0.181014","5":"0.204706","6":"0.501269","7":"0.477767","8":"0.441345"},{"1":"SEN","2":"Senegal","3":"Africa","4":"1.000483","5":"2.175778","6":"0.752198","7":"0.450623","8":"0.416501"},{"1":"TTO","2":"Trinidad and Tobago","3":"North America","4":"0.182361","5":"0.190495","6":"0.197735","7":"0.199381","8":"0.408398"},{"1":"UGA","2":"Uganda","3":"Africa","4":"0.286054","5":"0.292208","6":"0.660271","7":"0.554500","8":"0.365180"},{"1":"AGO","2":"Angola","3":"Africa","4":"0.123382","5":"0.089402","6":"0.554535","7":"1.510511","8":"0.354891"},{"1":"CYP","2":"Cyprus","3":"Asia","4":"0.694987","5":"1.175006","6":"0.439372","7":"0.365874","8":"0.326275"},{"1":"CMR","2":"Cameroon","3":"Africa","4":"0.751584","5":"0.158945","6":"0.214362","7":"0.196241","8":"0.315918"},{"1":"DJI","2":"Djibouti","3":"Africa","4":"0.924318","5":"0.446595","6":"NA","7":"0.162858","8":"0.313074"},{"1":"MNG","2":"Mongolia","3":"Asia","4":"0.039690","5":"NA","6":"0.269805","7":"0.242980","8":"0.272675"},{"1":"LAO","2":"Lao People's Dem. Rep.","3":"Asia","4":"0.845533","5":"1.309380","6":"0.667298","7":"0.508752","8":"0.271729"},{"1":"COD","2":"Dem. Rep. of the Congo","3":"Africa","4":"NA","5":"0.175175","6":"0.309640","7":"0.292276","8":"0.261209"},{"1":"BIH","2":"Bosnia Herzegovina","3":"Europe","4":"0.177088","5":"0.113550","6":"0.177802","7":"0.274861","8":"0.255926"},{"1":"DMA","2":"Dominica","3":"North America","4":"0.353876","5":"0.150422","6":"1.788766","7":"0.777020","8":"0.255760"},{"1":"MLT","2":"Malta","3":"Europe","4":"0.039298","5":"0.056402","6":"0.116076","7":"0.087763","8":"0.252438"},{"1":"GIN","2":"Guinea","3":"Africa","4":"0.000937","5":"0.000991","6":"0.064929","7":"0.250159","8":"0.246786"},{"1":"NCL","2":"New Caledonia","3":"Oceania","4":"0.177620","5":"0.431158","6":"0.272881","7":"0.291116","8":"0.237140"},{"1":"MNE","2":"Montenegro","3":"Europe","4":"0.237268","5":"0.051244","6":"0.012507","7":"0.076089","8":"0.233083"},{"1":"MKD","2":"TFYR of Macedonia","3":"Europe","4":"0.368032","5":"0.269064","6":"0.418348","7":"0.331095","8":"0.231598"},{"1":"LBR","2":"Liberia","3":"Africa","4":"0.090481","5":"0.000678","6":"0.062433","7":"0.120416","8":"0.220982"},{"1":"MDV","2":"Maldives","3":"Asia","4":"0.023519","5":"0.080407","6":"0.109353","7":"0.210583","8":"0.214952"},{"1":"MDG","2":"Madagascar","3":"Africa","4":"0.040688","5":"0.147124","6":"0.213241","7":"0.189165","8":"0.211191"},{"1":"KAZ","2":"Kazakhstan","3":"Asia","4":"0.206887","5":"0.576917","6":"1.511551","7":"0.569576","8":"0.208617"},{"1":"ARM","2":"Armenia","3":"Asia","4":"0.764615","5":"0.592436","6":"0.550280","7":"0.615525","8":"0.204214"},{"1":"MDA","2":"Rep. of Moldova","3":"Europe","4":"0.106171","5":"0.277818","6":"0.342251","7":"0.216858","8":"0.200349"},{"1":"BRB","2":"Barbados","3":"North America","4":"0.093003","5":"0.131703","6":"0.163209","7":"0.113005","8":"0.190825"},{"1":"JAM","2":"Jamaica","3":"North America","4":"0.969886","5":"0.393870","6":"0.461810","7":"0.193391","8":"0.189391"},{"1":"AZE","2":"Azerbaijan","3":"Asia","4":"0.263805","5":"0.136489","6":"0.098658","7":"0.053579","8":"0.173030"},{"1":"RWA","2":"Rwanda","3":"Africa","4":"0.032064","5":"0.000081","6":"0.001563","7":"0.045126","8":"0.165390"},{"1":"MWI","2":"Malawi","3":"Africa","4":"0.213360","5":"0.139406","6":"0.232832","7":"0.139900","8":"0.164560"},{"1":"SLB","2":"Solomon Isds","3":"Oceania","4":"0.006461","5":"0.001286","6":"NA","7":"0.039352","8":"0.160472"},{"1":"BEN","2":"Benin","3":"Africa","4":"0.011145","5":"0.009842","6":"0.246716","7":"0.402467","8":"0.156692"},{"1":"SLE","2":"Sierra Leone","3":"Africa","4":"NA","5":"0.003650","6":"0.047287","7":"0.113561","8":"0.152429"},{"1":"ALB","2":"Albania","3":"Europe","4":"0.353574","5":"0.002222","6":"0.138368","7":"0.439116","8":"0.143196"},{"1":"NAM","2":"Namibia","3":"Africa","4":"0.000131","5":"NA","6":"NA","7":"0.114792","8":"0.142505"},{"1":"ISL","2":"Iceland","3":"Europe","4":"0.281804","5":"0.079474","6":"0.082216","7":"0.111347","8":"0.133881"},{"1":"BLZ","2":"Belize","3":"North America","4":"NA","5":"0.046770","6":"0.053864","7":"0.133049","8":"0.133823"},{"1":"ZWE","2":"Zimbabwe","3":"Africa","4":"0.116736","5":"0.091404","6":"0.217151","7":"0.205935","8":"0.129836"},{"1":"GAB","2":"Gabon","3":"Africa","4":"NA","5":"0.181413","6":"0.155654","7":"0.154552","8":"0.106732"},{"1":"NRU","2":"Nauru","3":"Oceania","4":"NA","5":"NA","6":"NA","7":"NA","8":"0.100464"},{"1":"WSM","2":"Samoa","3":"Oceania","4":"0.104182","5":"0.044763","6":"0.081241","7":"0.057858","8":"0.097972"},{"1":"COG","2":"Congo","3":"Africa","4":"0.000681","5":"0.045212","6":"0.042306","7":"0.108218","8":"0.088055"},{"1":"MOZ","2":"Mozambique","3":"Africa","4":"0.056243","5":"0.013376","6":"0.133676","7":"0.096341","8":"0.085608"},{"1":"VUT","2":"Vanuatu","3":"Oceania","4":"0.245656","5":"0.093659","6":"0.126313","7":"0.065919","8":"0.080094"},{"1":"ZMB","2":"Zambia","3":"Africa","4":"0.062629","5":"0.048595","6":"0.090811","7":"0.214257","8":"0.078482"},{"1":"BMU","2":"Bermuda","3":"North America","4":"0.066636","5":"0.021268","6":"0.037867","7":"0.024542","8":"0.072324"},{"1":"MRT","2":"Mauritania","3":"Africa","4":"0.040386","5":"NA","6":"NA","7":"0.032572","8":"0.071435"},{"1":"CYM","2":"Cayman Isds","3":"North America","4":"NA","5":"NA","6":"NA","7":"NA","8":"0.070223"},{"1":"GRD","2":"Grenada","3":"North America","4":"0.007411","5":"0.002149","6":"0.000836","7":"0.000316","8":"0.066123"},{"1":"TGO","2":"Togo","3":"Africa","4":"0.021928","5":"0.196167","6":"0.345412","7":"0.224295","8":"0.065699"},{"1":"PSE","2":"State of Palestine","3":"Asia","4":"0.000188","5":"0.026142","6":"0.048191","7":"0.003197","8":"0.058376"},{"1":"PYF","2":"French Polynesia","3":"Oceania","4":"0.069920","5":"0.050683","6":"0.033337","7":"0.009936","8":"0.040662"},{"1":"GMB","2":"Gambia","3":"Africa","4":"NA","5":"NA","6":"0.025315","7":"0.042800","8":"0.036155"},{"1":"CUB","2":"Cuba","3":"North America","4":"NA","5":"NA","6":"0.047174","7":"NA","8":"0.032870"},{"1":"VCT","2":"Saint Vincent and the Grenadines","3":"North America","4":"0.035835","5":"0.000515","6":"0.000762","7":"0.026147","8":"0.026237"},{"1":"CUW","2":"Cura็ao","3":"North America","4":"0.000010","5":"0.000971","6":"0.000314","7":"0.000077","8":"0.025242"},{"1":"STP","2":"Sao Tome and Principe","3":"Africa","4":"NA","5":"NA","6":"0.013173","7":"0.010535","8":"0.023567"},{"1":"AND","2":"Andorra","3":"Europe","4":"NA","5":"NA","6":"NA","7":"0.000485","8":"0.020849"},{"1":"TKM","2":"Turkmenistan","3":"Asia","4":"0.005042","5":"NA","6":"0.026555","7":"0.139542","8":"0.008237"},{"1":"BFA","2":"Burkina Faso","3":"Africa","4":"0.121205","5":"0.145854","6":"0.374949","7":"0.004202","8":"0.008171"},{"1":"NER","2":"Niger","3":"Africa","4":"0.000084","5":"0.007765","6":"0.004378","7":"0.103777","8":"0.007113"},{"1":"ATG","2":"Antigua and Barbuda","3":"North America","4":"0.020072","5":"0.006434","6":"0.001910","7":"0.000923","8":"0.004299"},{"1":"SYC","2":"Seychelles","3":"Africa","4":"0.013330","5":"0.017206","6":"0.011480","7":"0.031183","8":"0.003351"},{"1":"COK","2":"Cook Isds","3":"Oceania","4":"0.000326","5":"NA","6":"NA","7":"0.004908","8":"0.002867"},{"1":"KGZ","2":"Kyrgyzstan","3":"Asia","4":"0.000095","5":"0.004078","6":"0.004086","7":"0.009630","8":"0.002768"},{"1":"COM","2":"Comoros","3":"Africa","4":"NA","5":"0.003966","6":"0.001317","7":"0.000789","8":"0.002644"},{"1":"SWZ","2":"Swaziland","3":"Africa","4":"0.171600","5":"0.045801","6":"NA","7":"NA","8":"0.002289"},{"1":"TON","2":"Tonga","3":"Oceania","4":"NA","5":"NA","6":"0.000423","7":"0.004144","8":"0.001649"},{"1":"GNQ","2":"Equatorial Guinea","3":"Africa","4":"NA","5":"NA","6":"0.094057","7":"0.028641","8":"0.001605"},{"1":"KIR","2":"Kiribati","3":"Oceania","4":"NA","5":"0.000321","6":"0.006439","7":"0.002161","8":"0.001199"},{"1":"GUY","2":"Guyana","3":"South America","4":"0.017450","5":"0.133908","6":"0.000011","7":"0.011429","8":"0.000960"},{"1":"GRL","2":"Greenland","3":"North America","4":"0.000474","5":"0.000531","6":"0.000504","7":"0.000894","8":"0.000915"},{"1":"KNA","2":"Saint Kitts and Nevis","3":"North America","4":"0.063463","5":"NA","6":"0.033608","7":"0.004599","8":"0.000325"},{"1":"PLW","2":"Palau","3":"Oceania","4":"NA","5":"0.000641","6":"0.000069","7":"0.001306","8":"0.000282"},{"1":"GUM","2":"Guam","3":"Oceania","4":"0.151304","5":"0.142048","6":"0.079114","7":"0.039186","8":"0.000050"},{"1":"TCA","2":"Turks and Caicos Isds","3":"North America","4":"NA","5":"NA","6":"NA","7":"0.002850","8":"0.000005"},{"1":"ASM","2":"American Samoa","3":"Other","4":"0.574747","5":"0.021610","6":"0.020032","7":"NA","8":"NA"},{"1":"BTN","2":"Bhutan","3":"Asia","4":"0.375401","5":"0.172482","6":"NA","7":"NA","8":"NA"},{"1":"BDI","2":"Burundi","3":"Africa","4":"0.014081","5":"0.000039","6":"NA","7":"NA","8":"NA"},{"1":"MAC","2":"China, Macao SAR","3":"Asia","4":"0.056120","5":"0.063182","6":"NA","7":"0.134437","8":"NA"},{"1":"MLI","2":"Mali","3":"Africa","4":"0.001328","5":"NA","6":"NA","7":"NA","8":"NA"},{"1":"ABW","2":"Aruba","3":"North America","4":"0.070066","5":"0.036877","6":"NA","7":"NA","8":"NA"},{"1":"NFK","2":"Norfolk Isds","3":"Oceania","4":"0.316915","5":"NA","6":"0.288600","7":"0.479950","8":"NA"},{"1":"LCA","2":"Saint Lucia","3":"North America","4":"0.000109","5":"0.000024","6":"0.000185","7":"NA","8":"NA"},{"1":"SDN","2":"Fmr Sudan","3":"Africa","4":"2.293044","5":"NA","6":"NA","7":"NA","8":"NA"},{"1":"UZB","2":"Uzbekistan","3":"Asia","4":"0.218347","5":"NA","6":"NA","7":"NA","8":"NA"},{"1":"BWA","2":"Botswana","3":"Africa","4":"NA","5":"0.033886","6":"NA","7":"NA","8":"NA"},{"1":"CPV","2":"Cabo Verde","3":"Africa","4":"NA","5":"0.000088","6":"NA","7":"NA","8":"NA"},{"1":"CAF","2":"Central African Rep.","3":"Africa","4":"NA","5":"0.021246","6":"0.013750","7":"NA","8":"NA"},{"1":"TCD","2":"Chad","3":"Africa","4":"NA","5":"0.013663","6":"0.021739","7":"0.018040","8":"NA"},{"1":"LSO","2":"Lesotho","3":"Africa","4":"NA","5":"0.049985","6":"NA","7":"NA","8":"NA"},{"1":"WLF","2":"Wallis and Futuna Isds","3":"Oceania","4":"NA","5":"0.001088","6":"NA","7":"0.000042","8":"NA"},{"1":"BHS","2":"Bahamas","3":"North America","4":"NA","5":"NA","6":"0.013153","7":"0.000146","8":"NA"},{"1":"PRK","2":"Dem. People's Rep. of Korea","3":"Asia","4":"NA","5":"NA","6":"NA","7":"0.000147","8":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step3: compute summarize metrics where growth in 100%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df_sum <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(j_iso3c) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_1620 =</span> <span class="fu">mean</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_1620 =</span> <span class="fu">growth_ols</span>(v) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>df_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["j_iso3c"],"name":[1],"type":["chr"],"align":["left"]},{"label":["avg_1620"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["growth_1620"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"ABW","2":"5.347150e-02","3":"-47.36819570"},{"1":"AFG","2":"1.275299e+00","3":"-0.54887306"},{"1":"AGO","2":"5.265442e-01","3":"63.88767789"},{"1":"ALB","2":"2.152952e-01","3":"41.60338451"},{"1":"AND","2":"1.066700e-02","3":"4198.76288660"},{"1":"ARE","2":"6.551978e+01","3":"-14.44028117"},{"1":"ARG","2":"8.624177e+01","3":"-19.51220692"},{"1":"ARM","2":"5.454140e-01","3":"-22.91161181"},{"1":"ASM","2":"2.054630e-01","3":"-81.33088206"},{"1":"ATG","2":"6.727600e-03","3":"-39.48996226"},{"1":"AUS","2":"1.249826e+02","3":"-8.97176711"},{"1":"AUT","2":"1.306154e+01","3":"0.47798490"},{"1":"AZE","2":"1.451122e-01","3":"-16.29384906"},{"1":"BDI","2":"7.060000e-03","3":"-99.72303103"},{"1":"BEL","2":"1.956598e+02","3":"-12.47528757"},{"1":"BEN","2":"1.653724e-01","3":"145.89972429"},{"1":"BFA","2":"1.308762e-01","3":"-59.10175188"},{"1":"BGD","2":"7.752722e+00","3":"-0.11887862"},{"1":"BGR","2":"9.691464e+00","3":"-15.09869050"},{"1":"BHR","2":"9.523282e-01","3":"3.54558525"},{"1":"BHS","2":"6.649500e-03","3":"-98.88998708"},{"1":"BIH","2":"1.998454e-01","3":"17.59196660"},{"1":"BLR","2":"8.402834e+00","3":"-53.58799780"},{"1":"BLZ","2":"9.187650e-02","3":"50.05149225"},{"1":"BMU","2":"4.452740e-02","3":"3.11765629"},{"1":"BOL","2":"2.419909e+00","3":"-12.53807526"},{"1":"BRA","2":"3.179810e+02","3":"-22.50332128"},{"1":"BRB","2":"1.383490e-01","3":"13.70455473"},{"1":"BRN","2":"2.380433e+00","3":"-4.75021162"},{"1":"BTN","2":"2.739415e-01","3":"-54.05393166"},{"1":"BWA","2":"3.388600e-02","3":"NA"},{"1":"CAF","2":"1.749800e-02","3":"-35.28193542"},{"1":"CAN","2":"3.024732e+02","3":"-22.10753659"},{"1":"CHE","2":"5.704017e+00","3":"10.66892054"},{"1":"CHL","2":"7.016266e+00","3":"-29.12707426"},{"1":"CHN","2":"1.338946e+03","3":"-29.23471644"},{"1":"CIV","2":"3.864502e-01","3":"21.64984088"},{"1":"CMR","2":"3.274100e-01","3":"-14.12363429"},{"1":"COD","2":"2.595750e-01","3":"12.08523656"},{"1":"COG","2":"5.689440e-02","3":"188.55324347"},{"1":"COK","2":"2.700333e-03","3":"196.55486048"},{"1":"COL","2":"1.457158e+01","3":"-5.83975781"},{"1":"COM","2":"2.179000e-03","3":"-15.87564545"},{"1":"CPV","2":"8.800000e-05","3":"NA"},{"1":"CRI","2":"4.913231e+00","3":"-25.30567425"},{"1":"CUB","2":"4.002200e-02","3":"-30.32178743"},{"1":"CUW","2":"5.322800e-03","3":"271.83640027"},{"1":"CYM","2":"7.022300e-02","3":"NA"},{"1":"CYP","2":"6.003028e-01","3":"-23.50191387"},{"1":"CZE","2":"4.557505e+01","3":"-12.99644190"},{"1":"DEU","2":"3.982520e+02","3":"-19.14101787"},{"1":"DJI","2":"4.617113e-01","3":"-34.66630789"},{"1":"DMA","2":"6.651688e-01","3":"10.43541985"},{"1":"DNK","2":"3.684006e+00","3":"-33.73224612"},{"1":"DOM","2":"1.155335e+00","3":"3.94519236"},{"1":"DZA","2":"3.671074e+00","3":"-16.43703409"},{"1":"ECU","2":"8.365738e+00","3":"-29.42377006"},{"1":"EGY","2":"5.963360e+01","3":"-9.80749523"},{"1":"ESP","2":"1.473399e+02","3":"-32.54581331"},{"1":"EST","2":"8.796558e+00","3":"-38.52666082"},{"1":"ETH","2":"1.264056e+00","3":"-9.38460609"},{"1":"FIN","2":"3.255131e+01","3":"-4.41903919"},{"1":"FJI","2":"6.447246e-01","3":"-4.90936846"},{"1":"FRA","2":"2.043306e+02","3":"-27.58937681"},{"1":"GAB","2":"1.495878e-01","3":"-14.77258680"},{"1":"GBR","2":"1.412494e+02","3":"-21.73200260"},{"1":"GEO","2":"1.916244e+00","3":"-22.61479841"},{"1":"GHA","2":"1.308752e+00","3":"-6.80309647"},{"1":"GIN","2":"1.127604e-01","3":"430.06659216"},{"1":"GMB","2":"3.475667e-02","3":"19.50751532"},{"1":"GNQ","2":"4.143433e-02","3":"-86.93702917"},{"1":"GRC","2":"4.443268e+00","3":"4.52772543"},{"1":"GRD","2":"1.536700e-02","3":"27.89106794"},{"1":"GRL","2":"6.636000e-04","3":"20.15804406"},{"1":"GTM","2":"1.228363e+00","3":"10.45056444"},{"1":"GUM","2":"8.234040e-02","3":"-82.30325064"},{"1":"GUY","2":"3.275160e-02","3":"-56.22609095"},{"1":"HKG","2":"1.623392e+01","3":"-0.37304363"},{"1":"HND","2":"9.985864e-01","3":"-15.22763233"},{"1":"HRV","2":"7.185204e-01","3":"-1.60815821"},{"1":"HTI","2":"4.825630e-01","3":"-1.28128643"},{"1":"HUN","2":"1.658890e+01","3":"2.31617830"},{"1":"IND","2":"3.708085e+02","3":"0.82117155"},{"1":"IRL","2":"4.826857e+00","3":"-39.89176267"},{"1":"IRN","2":"2.924313e+01","3":"-30.37749923"},{"1":"IRQ","2":"5.209307e+00","3":"-7.00805281"},{"1":"ISL","2":"1.377444e-01","3":"-10.87496699"},{"1":"ISR","2":"1.873273e+01","3":"-10.17568339"},{"1":"ITA","2":"1.413450e+02","3":"-20.60615958"},{"1":"JAM","2":"4.416696e-01","3":"-32.82060863"},{"1":"JOR","2":"9.403148e+00","3":"-5.13785791"},{"1":"JPN","2":"1.393636e+03","3":"-21.62922055"},{"1":"KAZ","2":"6.147096e-01","3":"0.03849125"},{"1":"KEN","2":"5.486416e+00","3":"-7.33220172"},{"1":"KGZ","2":"4.131400e-03","3":"113.89784182"},{"1":"KHM","2":"4.382220e+00","3":"-0.89723540"},{"1":"KIR","2":"2.530000e-03","3":"33.13059696"},{"1":"KNA","2":"2.549875e-02","3":"-83.15655577"},{"1":"KOR","2":"4.240166e+02","3":"-17.35220847"},{"1":"KWT","2":"3.240049e+00","3":"2.52022746"},{"1":"LAO","2":"7.205384e-01","3":"-27.49881110"},{"1":"LBN","2":"5.850483e+00","3":"12.54952096"},{"1":"LBR","2":"9.899800e-02","3":"100.68058201"},{"1":"LBY","2":"6.699300e+00","3":"3.81499096"},{"1":"LCA","2":"1.060000e-04","3":"30.27845971"},{"1":"LKA","2":"1.904572e+01","3":"16.00527753"},{"1":"LSO","2":"4.998500e-02","3":"NA"},{"1":"LTU","2":"9.224730e+00","3":"-35.49856242"},{"1":"LUX","2":"8.093762e+01","3":"-9.38474351"},{"1":"LVA","2":"2.741824e+01","3":"22.42304834"},{"1":"MAC","2":"8.457967e-02","3":"54.77491532"},{"1":"MAR","2":"2.837752e+00","3":"10.99753510"},{"1":"MDA","2":"2.286894e-01","3":"10.76377812"},{"1":"MDG","2":"1.602818e-01","3":"42.54682181"},{"1":"MDV","2":"1.277628e-01","3":"71.39473331"},{"1":"MEX","2":"9.035606e+01","3":"-12.95252432"},{"1":"MKD","2":"3.236274e-01","3":"-6.93646451"},{"1":"MLI","2":"1.328000e-03","3":"NA"},{"1":"MLT","2":"1.103954e-01","3":"51.62071911"},{"1":"MMR","2":"5.922838e+00","3":"-1.29076797"},{"1":"MNE","2":"1.220382e-01","3":"3.66261766"},{"1":"MNG","2":"2.062875e-01","3":"76.41736060"},{"1":"MOZ","2":"7.704880e-02","3":"32.50664671"},{"1":"MRT","2":"4.813100e-02","3":"32.99646694"},{"1":"MUS","2":"1.544857e+00","3":"-20.63327207"},{"1":"MWI","2":"1.780116e-01","3":"-5.02793523"},{"1":"MYS","2":"1.250116e+02","3":"-12.20618539"},{"1":"NAM","2":"8.580933e-02","3":"3198.21834856"},{"1":"NCL","2":"2.819830e-01","3":"1.86982325"},{"1":"NER","2":"2.462340e-02","3":"214.88405513"},{"1":"NFK","2":"3.618217e-01","3":"23.06274562"},{"1":"NGA","2":"8.861897e+00","3":"-12.58789940"},{"1":"NIC","2":"6.670156e-01","3":"-2.83676267"},{"1":"NLD","2":"1.632397e+02","3":"-27.37754626"},{"1":"NOR","2":"2.423299e+00","3":"17.96130962"},{"1":"NPL","2":"4.499094e-01","3":"20.47745135"},{"1":"NRU","2":"1.004640e-01","3":"NA"},{"1":"NZL","2":"3.620786e+01","3":"-0.74002402"},{"1":"OMN","2":"3.899922e+00","3":"12.61596997"},{"1":"PAK","2":"2.895750e+01","3":"-6.26336203"},{"1":"PAN","2":"3.068357e+00","3":"-22.02310330"},{"1":"PER","2":"1.118075e+01","3":"-2.26110824"},{"1":"PHL","2":"7.261361e+01","3":"0.97923988"},{"1":"PLW","2":"5.745000e-04","3":"4.88822410"},{"1":"PNG","2":"6.571768e+00","3":"-10.56888598"},{"1":"POL","2":"1.213432e+02","3":"-26.28783349"},{"1":"PRK","2":"1.470000e-04","3":"NA"},{"1":"PRT","2":"1.072543e+01","3":"85.33515655"},{"1":"PRY","2":"2.288974e+00","3":"-5.20314967"},{"1":"PSE","2":"2.721880e-02","3":"155.36165209"},{"1":"PYF","2":"4.090760e-02","3":"-23.76535361"},{"1":"QAT","2":"3.120248e+00","3":"13.88219383"},{"1":"ROU","2":"6.415838e+01","3":"-26.65179403"},{"1":"RUS","2":"6.438996e+01","3":"-18.64870314"},{"1":"RWA","2":"4.884480e-02","3":"161.27177244"},{"1":"SAU","2":"7.498258e+01","3":"-9.21692090"},{"1":"SDN","2":"3.958291e+00","3":"7.85975146"},{"1":"SEN","2":"9.591166e-01","3":"-28.30297353"},{"1":"SGP","2":"1.739187e+02","3":"-23.21916985"},{"1":"SLB","2":"5.189275e-02","3":"269.06464328"},{"1":"SLE","2":"7.923175e-02","3":"234.41147038"},{"1":"SLV","2":"1.054504e+00","3":"11.13897450"},{"1":"SRB","2":"8.955364e+00","3":"-33.02788846"},{"1":"STP","2":"1.575833e-02","3":"33.75493203"},{"1":"SUR","2":"3.612202e-01","3":"30.08336621"},{"1":"SVK","2":"4.129350e+01","3":"-16.49396373"},{"1":"SVN","2":"4.652031e+01","3":"-6.98101246"},{"1":"SWE","2":"7.515699e+00","3":"-10.06231917"},{"1":"SWZ","2":"7.323000e-02","3":"-88.45047151"},{"1":"SYC","2":"1.531000e-02","3":"-19.48206035"},{"1":"SYR","2":"2.385726e+00","3":"-30.90771018"},{"1":"TCA","2":"1.427500e-03","3":"-99.82456140"},{"1":"TCD","2":"1.781400e-02","3":"14.90666827"},{"1":"TGO","2":"1.707002e-01","3":"26.22091134"},{"1":"THA","2":"5.244603e+01","3":"-6.35370485"},{"1":"TKM","2":"4.484400e-02","3":"36.77468749"},{"1":"TLS","2":"3.450712e+00","3":"-3.92139147"},{"1":"TON","2":"2.072000e-03","3":"97.44227394"},{"1":"TTO","2":"2.356740e-01","3":"18.03487575"},{"1":"TUN","2":"6.913362e-01","3":"33.15921746"},{"1":"TUR","2":"2.189908e+02","3":"-18.62191152"},{"1":"TWN","2":"1.612500e+02","3":"-18.27188537"},{"1":"TZA","2":"2.847384e-01","3":"26.35849872"},{"1":"UGA","2":"4.316426e-01","3":"11.95222688"},{"1":"UKR","2":"2.197206e+00","3":"-28.42898262"},{"1":"URY","2":"1.422440e+00","3":"-13.76023997"},{"1":"USA","2":"2.448033e+03","3":"-15.61961206"},{"1":"UZB","2":"2.183470e-01","3":"NA"},{"1":"VCT","2":"1.789920e-02","3":"39.14987389"},{"1":"VEN","2":"1.862978e+01","3":"-60.24473664"},{"1":"VNM","2":"3.733571e+01","3":"10.80480808"},{"1":"VUT","2":"1.223282e-01","3":"-22.83850546"},{"1":"WLF","2":"5.650000e-04","3":"-96.13970588"},{"1":"WSM","2":"7.720320e-02","3":"1.34592243"},{"1":"YEM","2":"1.354788e+01","3":"-18.77763208"},{"1":"ZAF","2":"8.631495e+01","3":"-21.94042196"},{"1":"ZMB","2":"9.895480e-02","3":"21.34817808"},{"1":"ZWE","2":"1.522124e-01","3":"10.79357092"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step4: join two tables</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>df_combine <span class="ot">&lt;-</span> df_wide <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_sum)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "j_iso3c"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df_combine</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["j_iso3c"],"name":[1],"type":["chr"],"align":["left"]},{"label":["j_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["j_region"],"name":[3],"type":["chr"],"align":["left"]},{"label":["2011"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["2012"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["2013"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["2014"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["2015"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["avg_1620"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["growth_1620"],"name":[10],"type":["dbl"],"align":["right"]}],"data":[{"1":"USA","2":"USA","3":"North America","4":"3591.750575","5":"2633.418071","6":"2326.882787","7":"1859.887142","8":"1828.228052","9":"2.448033e+03","10":"-15.61961206"},{"1":"JPN","2":"Japan","3":"Asia","4":"2210.780506","5":"1590.233370","6":"1342.405519","7":"1000.903598","8":"823.854965","9":"1.393636e+03","10":"-21.62922055"},{"1":"CHN","2":"China","3":"Asia","4":"2050.959588","5":"1740.343861","6":"1550.653612","7":"823.742576","8":"529.029799","9":"1.338946e+03","10":"-29.23471644"},{"1":"IND","2":"India","3":"Asia","4":"333.412056","5":"376.209126","6":"402.795789","7":"408.175145","8":"333.450508","9":"3.708085e+02","10":"0.82117155"},{"1":"KOR","2":"Rep. of Korea","3":"Asia","4":"600.590436","5":"492.742713","6":"418.040330","7":"322.386460","8":"286.323099","9":"4.240166e+02","10":"-17.35220847"},{"1":"DEU","2":"Germany","3":"Europe","4":"656.289443","5":"396.758401","6":"357.705808","7":"332.826396","8":"247.680008","9":"3.982520e+02","10":"-19.14101787"},{"1":"CAN","2":"Canada","3":"North America","4":"490.343873","5":"350.476485","6":"271.645575","7":"224.054971","8":"175.845030","9":"3.024732e+02","10":"-22.10753659"},{"1":"BRA","2":"Brazil","3":"South America","4":"582.804998","5":"278.308057","6":"301.532272","7":"258.093491","8":"169.166001","9":"3.179810e+02","10":"-22.50332128"},{"1":"TUR","2":"Turkey","3":"Asia","4":"356.126763","5":"209.428621","6":"215.713758","7":"174.409019","8":"139.275774","9":"2.189908e+02","10":"-18.62191152"},{"1":"BEL","2":"Belgium","3":"Europe","4":"236.363411","5":"228.565699","6":"188.928704","7":"191.969297","8":"132.471774","9":"1.956598e+02","10":"-12.47528757"},{"1":"FRA","2":"France","3":"Europe","4":"391.983341","5":"222.714431","6":"174.878522","7":"129.900871","8":"102.175597","9":"2.043306e+02","10":"-27.58937681"},{"1":"TWN","2":"Other Asia, nes","3":"Asia","4":"255.787825","5":"161.379564","6":"151.751787","7":"135.570161","8":"101.760559","9":"1.612500e+02","10":"-18.27188537"},{"1":"SGP","2":"Singapore","3":"Asia","4":"262.076345","5":"241.829538","6":"148.564939","7":"116.259358","8":"100.863156","9":"1.739187e+02","10":"-23.21916985"},{"1":"AUS","2":"Australia","3":"Oceania","4":"140.959914","5":"149.199039","6":"119.357029","7":"115.086306","8":"100.310726","9":"1.249826e+02","10":"-8.97176711"},{"1":"MYS","2":"Malaysia","3":"Asia","4":"146.707117","5":"146.149872","6":"140.264884","7":"98.932313","8":"93.003848","9":"1.250116e+02","10":"-12.20618539"},{"1":"ITA","2":"Italy","3":"Europe","4":"262.827168","5":"130.658561","6":"113.554977","7":"108.846623","8":"90.837623","9":"1.413450e+02","10":"-20.60615958"},{"1":"NLD","2":"Netherlands","3":"Europe","4":"339.286200","5":"173.675574","6":"99.435646","7":"122.042218","8":"81.758914","9":"1.632397e+02","10":"-27.37754626"},{"1":"GBR","2":"United Kingdom","3":"Europe","4":"229.880595","5":"144.970899","6":"140.813804","7":"114.661788","8":"75.919700","9":"1.412494e+02","10":"-21.73200260"},{"1":"LUX","2":"Luxembourg","3":"Europe","4":"196.371845","5":"31.324132","6":"19.103152","7":"85.101505","8":"72.787490","9":"8.093762e+01","10":"-9.38474351"},{"1":"PHL","2":"Philippines","3":"Asia","4":"70.636931","5":"73.550783","6":"69.732015","7":"76.362783","8":"72.785536","9":"7.261361e+01","10":"0.97923988"},{"1":"MEX","2":"Mexico","3":"North America","4":"117.989399","5":"107.040402","6":"82.176134","7":"73.327939","8":"71.246416","9":"9.035606e+01","10":"-12.95252432"},{"1":"ESP","2":"Spain","3":"Europe","4":"325.372422","5":"160.205535","6":"107.718582","7":"78.483714","8":"64.919367","9":"1.473399e+02","10":"-32.54581331"},{"1":"VNM","2":"Viet Nam","3":"Asia","4":"41.785058","5":"23.373668","6":"29.661138","7":"33.937507","8":"57.921194","9":"3.733571e+01","10":"10.80480808"},{"1":"SAU","2":"Saudi Arabia","3":"Asia","4":"80.122223","5":"88.898457","6":"78.507281","7":"72.782687","8":"54.602258","9":"7.498258e+01","10":"-9.21692090"},{"1":"POL","2":"Poland","3":"Europe","4":"212.086780","5":"126.794594","6":"118.784047","7":"96.011175","8":"53.039443","9":"1.213432e+02","10":"-26.28783349"},{"1":"SVN","2":"Slovenia","3":"Europe","4":"69.228463","5":"43.216048","6":"30.802840","7":"37.816612","8":"51.537571","9":"4.652031e+01","10":"-6.98101246"},{"1":"ARG","2":"Argentina","3":"South America","4":"119.735181","5":"104.399399","6":"90.530615","7":"65.469464","8":"51.074189","9":"8.624177e+01","10":"-19.51220692"},{"1":"THA","2":"Thailand","3":"Asia","4":"56.083260","5":"66.140800","6":"46.128347","7":"44.800702","8":"49.077063","9":"5.244603e+01","10":"-6.35370485"},{"1":"EGY","2":"Egypt","3":"Africa","4":"85.604356","5":"49.069215","6":"59.256857","7":"56.714262","8":"47.523292","9":"5.963360e+01","10":"-9.80749523"},{"1":"ZAF","2":"South Africa","3":"Africa","4":"132.325512","5":"97.664160","6":"89.753984","7":"64.720056","8":"47.111046","9":"8.631495e+01","10":"-21.94042196"},{"1":"RUS","2":"Russian Federation","3":"Europe","4":"95.163866","5":"73.495300","6":"64.740145","7":"45.416922","8":"43.133571","9":"6.438996e+01","10":"-18.64870314"},{"1":"ARE","2":"United Arab Emirates","3":"Asia","4":"75.953541","5":"84.879048","6":"57.604538","7":"71.115418","8":"38.046362","9":"6.551978e+01","10":"-14.44028117"},{"1":"LVA","2":"Latvia","3":"Europe","4":"14.819657","5":"25.391771","6":"28.701389","7":"31.712749","8":"36.465624","9":"2.741824e+01","10":"22.42304834"},{"1":"CZE","2":"Czechia","3":"Europe","4":"52.553442","5":"54.265156","6":"51.694172","7":"38.092552","8":"31.269917","9":"4.557505e+01","10":"-12.99644190"},{"1":"ROU","2":"Romania","3":"Europe","4":"111.305837","5":"73.280530","6":"60.796315","7":"45.381698","8":"30.027512","9":"6.415838e+01","10":"-26.65179403"},{"1":"NZL","2":"New Zealand","3":"Oceania","4":"35.506875","5":"33.205042","6":"37.676990","7":"45.387496","8":"29.262888","9":"3.620786e+01","10":"-0.74002402"},{"1":"HUN","2":"Hungary","3":"Europe","4":"29.215669","5":"10.007578","6":"1.950533","7":"12.768864","8":"29.001853","9":"1.658890e+01","10":"2.31617830"},{"1":"PAK","2":"Pakistan","3":"Asia","4":"35.462436","5":"31.418100","6":"23.700346","7":"25.990429","8":"28.216209","9":"2.895750e+01","10":"-6.26336203"},{"1":"SVK","2":"Slovakia","3":"Europe","4":"57.078940","5":"46.984088","6":"40.653590","7":"34.832573","8":"26.918315","9":"4.129350e+01","10":"-16.49396373"},{"1":"LKA","2":"Sri Lanka","3":"Asia","4":"15.110722","5":"13.331207","6":"19.822465","7":"22.563097","8":"24.401096","9":"1.904572e+01","10":"16.00527753"},{"1":"FIN","2":"Finland","3":"Europe","4":"31.184491","5":"31.604863","6":"40.894881","7":"35.648970","8":"23.423354","9":"3.255131e+01","10":"-4.41903919"},{"1":"PRT","2":"Portugal","3":"Europe","4":"2.202286","5":"2.062107","6":"17.061904","7":"13.431696","8":"18.869176","9":"1.072543e+01","10":"85.33515655"},{"1":"HKG","2":"China, Hong Kong SAR","3":"Asia","4":"20.403237","5":"13.522373","6":"12.963475","7":"15.689292","8":"18.591232","9":"1.623392e+01","10":"-0.37304363"},{"1":"IRN","2":"Iran","3":"Asia","4":"82.635836","5":"18.915318","6":"15.496630","7":"12.614211","8":"16.553632","9":"2.924313e+01","10":"-30.37749923"},{"1":"COL","2":"Colombia","3":"South America","4":"16.272944","5":"12.724306","6":"19.371050","7":"12.176907","8":"12.312678","9":"1.457158e+01","10":"-5.83975781"},{"1":"ISR","2":"Israel","3":"Asia","4":"18.366436","5":"25.664390","6":"17.297277","7":"20.242800","8":"12.092739","9":"1.873273e+01","10":"-10.17568339"},{"1":"AUT","2":"Austria","3":"Europe","4":"13.534179","5":"9.087205","6":"16.127900","7":"16.166593","8":"10.391839","9":"1.306154e+01","10":"0.47798490"},{"1":"PER","2":"Peru","3":"South America","4":"11.896478","5":"6.653812","6":"18.258150","7":"10.745445","8":"8.349847","9":"1.118075e+01","10":"-2.26110824"},{"1":"BGD","2":"Bangladesh","3":"Asia","4":"8.480936","5":"7.096938","6":"7.168296","7":"8.150553","8":"7.866885","9":"7.752722e+00","10":"-0.11887862"},{"1":"JOR","2":"Jordan","3":"Asia","4":"8.255299","5":"12.463423","6":"10.137795","7":"8.463772","8":"7.695452","9":"9.403148e+00","10":"-5.13785791"},{"1":"BGR","2":"Bulgaria","3":"Europe","4":"15.545879","5":"8.981256","6":"8.540173","7":"8.222929","8":"7.167084","9":"9.691464e+00","10":"-15.09869050"},{"1":"CHE","2":"Switzerland","3":"Europe","4":"4.733184","5":"5.172749","6":"5.194596","7":"6.299278","8":"7.120280","9":"5.704017e+00","10":"10.66892054"},{"1":"SWE","2":"Sweden","3":"Europe","4":"10.361111","5":"6.887550","6":"7.431790","7":"6.730208","8":"6.167837","9":"7.515699e+00","10":"-10.06231917"},{"1":"LBN","2":"Lebanon","3":"Asia","4":"3.976563","5":"4.993215","6":"7.243115","7":"6.953975","8":"6.085548","9":"5.850483e+00","10":"12.54952096"},{"1":"PNG","2":"Papua New Guinea","3":"Oceania","4":"8.433477","5":"7.702157","6":"5.709878","7":"5.062626","8":"5.950701","9":"6.571768e+00","10":"-10.56888598"},{"1":"LTU","2":"Lithuania","3":"Europe","4":"20.029186","5":"11.736349","6":"6.843297","7":"1.791954","8":"5.722863","9":"9.224730e+00","10":"-35.49856242"},{"1":"GRC","2":"Greece","3":"Europe","4":"4.521901","5":"3.815004","6":"4.417980","7":"3.829704","8":"5.631751","9":"4.443268e+00","10":"4.52772543"},{"1":"OMN","2":"Oman","3":"Asia","4":"3.195748","5":"2.873779","6":"4.757407","7":"3.092987","8":"5.579690","9":"3.899922e+00","10":"12.61596997"},{"1":"BLR","2":"Belarus","3":"Europe","4":"13.534338","5":"13.568465","6":"9.677319","7":"0.042772","8":"5.191276","9":"8.402834e+00","10":"-53.58799780"},{"1":"CHL","2":"Chile","3":"South America","4":"12.442940","5":"9.192750","6":"6.652007","7":"1.901544","8":"4.892089","9":"7.016266e+00","10":"-29.12707426"},{"1":"KEN","2":"Kenya","3":"Africa","4":"6.116889","5":"5.472033","6":"6.906023","7":"4.119691","8":"4.817446","9":"5.486416e+00","10":"-7.33220172"},{"1":"YEM","2":"Yemen","3":"Asia","4":"12.271555","5":"18.523670","6":"17.073423","7":"15.059775","8":"4.810964","9":"1.354788e+01","10":"-18.77763208"},{"1":"MMR","2":"Myanmar","3":"Asia","4":"6.200086","5":"5.152621","6":"5.799719","7":"7.712864","8":"4.748898","9":"5.922838e+00","10":"-1.29076797"},{"1":"NGA","2":"Nigeria","3":"Africa","4":"10.305225","5":"7.610973","6":"11.651281","7":"10.198823","8":"4.543184","9":"8.861897e+00","10":"-12.58789940"},{"1":"ECU","2":"Ecuador","3":"South America","4":"22.539978","5":"5.374280","6":"5.224259","7":"4.254030","8":"4.436144","9":"8.365738e+00","10":"-29.42377006"},{"1":"SRB","2":"Serbia","3":"Europe","4":"18.131098","5":"9.775695","6":"9.335928","7":"3.379191","8":"4.154909","9":"8.955364e+00","10":"-33.02788846"},{"1":"MAR","2":"Morocco","3":"Africa","4":"3.035493","5":"1.634211","6":"2.862838","7":"2.606649","8":"4.049568","9":"2.837752e+00","10":"10.99753510"},{"1":"QAT","2":"Qatar","3":"Asia","4":"2.287198","5":"2.933939","6":"2.823606","7":"3.603101","8":"3.953395","9":"3.120248e+00","10":"13.88219383"},{"1":"SDN","2":"Sudan","3":"Africa","4":"NA","5":"5.268998","6":"4.417043","7":"3.942655","8":"3.869716","9":"3.958291e+00","10":"7.85975146"},{"1":"IRQ","2":"Iraq","3":"Asia","4":"4.416608","5":"7.961285","6":"4.670202","7":"5.197241","8":"3.801200","9":"5.209307e+00","10":"-7.00805281"},{"1":"LBY","2":"Libya","3":"Africa","4":"2.511895","5":"10.581269","6":"9.811670","7":"6.818258","8":"3.773410","9":"6.699300e+00","10":"3.81499096"},{"1":"CRI","2":"Costa Rica","3":"North America","4":"11.953133","5":"3.016159","6":"4.142184","7":"2.202088","8":"3.252592","9":"4.913231e+00","10":"-25.30567425"},{"1":"DZA","2":"Algeria","3":"Africa","4":"4.274460","5":"6.154541","6":"2.808399","7":"2.214639","8":"2.903333","9":"3.671074e+00","10":"-16.43703409"},{"1":"NOR","2":"Norway","3":"Europe","4":"1.616336","5":"1.621928","6":"3.333476","7":"2.664401","8":"2.880352","9":"2.423299e+00","10":"17.96130962"},{"1":"KHM","2":"Cambodia","3":"Asia","4":"2.278364","5":"6.075453","6":"6.676353","7":"4.288655","8":"2.592273","9":"4.382220e+00","10":"-0.89723540"},{"1":"KWT","2":"Kuwait","3":"Asia","4":"3.212668","5":"2.267884","6":"3.621502","7":"4.521333","8":"2.576860","9":"3.240049e+00","10":"2.52022746"},{"1":"TLS","2":"Timor-Leste","3":"Asia","4":"3.004554","5":"3.764785","6":"4.457742","7":"3.460862","8":"2.565615","9":"3.450712e+00","10":"-3.92139147"},{"1":"PAN","2":"Panama","3":"North America","4":"4.911897","5":"4.406444","6":"2.027608","7":"1.746720","8":"2.249114","9":"3.068357e+00","10":"-22.02310330"},{"1":"PRY","2":"Paraguay","3":"South America","4":"2.694441","5":"2.013198","6":"2.542694","7":"2.238295","8":"1.956243","9":"2.288974e+00","10":"-5.20314967"},{"1":"IRL","2":"Ireland","3":"Europe","4":"10.695309","5":"6.850542","6":"3.364110","7":"1.291739","8":"1.932584","9":"4.826857e+00","10":"-39.89176267"},{"1":"GTM","2":"Guatemala","3":"North America","4":"1.158324","5":"0.934428","6":"1.204430","7":"1.038828","8":"1.805805","9":"1.228363e+00","10":"10.45056444"},{"1":"BRN","2":"Brunei Darussalam","3":"Asia","4":"2.367061","5":"2.447880","6":"2.658909","7":"2.641996","8":"1.786317","9":"2.380433e+00","10":"-4.75021162"},{"1":"ETH","2":"Ethiopia","3":"Africa","4":"1.939694","5":"1.126549","6":"0.994027","7":"0.526453","8":"1.733558","9":"1.264056e+00","10":"-9.38460609"},{"1":"BOL","2":"Bolivia (Plurinational State of)","3":"South America","4":"2.556072","5":"2.504470","6":"3.721831","7":"1.753972","8":"1.563201","9":"2.419909e+00","10":"-12.53807526"},{"1":"SLV","2":"El Salvador","3":"North America","4":"0.817290","5":"0.944910","6":"1.205070","7":"0.777271","8":"1.527978","9":"1.054504e+00","10":"11.13897450"},{"1":"EST","2":"Estonia","3":"Europe","4":"9.345214","5":"17.940108","6":"9.603095","7":"5.629883","8":"1.464489","9":"8.796558e+00","10":"-38.52666082"},{"1":"DOM","2":"Dominican Rep.","3":"North America","4":"1.082075","5":"1.236426","6":"0.997666","7":"1.001736","8":"1.458770","9":"1.155335e+00","10":"3.94519236"},{"1":"AFG","2":"Afghanistan","3":"Asia","4":"1.651073","5":"0.876843","6":"1.274020","7":"1.203523","8":"1.371035","9":"1.275299e+00","10":"-0.54887306"},{"1":"DNK","2":"Denmark","3":"Europe","4":"6.885211","5":"4.719724","6":"3.231947","7":"2.331159","8":"1.251990","9":"3.684006e+00","10":"-33.73224612"},{"1":"UKR","2":"Ukraine","3":"Europe","4":"4.398080","5":"2.569447","6":"1.573758","7":"1.269882","8":"1.174863","9":"2.197206e+00","10":"-28.42898262"},{"1":"URY","2":"Uruguay","3":"South America","4":"2.119807","5":"1.486824","6":"1.204569","7":"1.152431","8":"1.148567","9":"1.422440e+00","10":"-13.76023997"},{"1":"VEN","2":"Venezuela","3":"South America","4":"39.204888","5":"33.027747","6":"15.662485","7":"4.156278","8":"1.097490","9":"1.862978e+01","10":"-60.24473664"},{"1":"MUS","2":"Mauritius","3":"Africa","4":"2.140789","5":"2.116844","6":"1.393669","7":"1.163729","8":"0.909253","9":"1.544857e+00","10":"-20.63327207"},{"1":"GEO","2":"Georgia","3":"Asia","4":"2.640725","5":"2.545305","6":"1.796333","7":"1.702896","8":"0.895960","9":"1.916244e+00","10":"-22.61479841"},{"1":"GHA","2":"Ghana","3":"Africa","4":"1.340129","5":"1.369251","6":"1.331169","7":"1.643073","8":"0.860136","9":"1.308752e+00","10":"-6.80309647"},{"1":"SYR","2":"Syria","3":"Asia","4":"4.675047","5":"2.500892","6":"1.935213","7":"1.992881","8":"0.824595","9":"2.385726e+00","10":"-30.90771018"},{"1":"TUN","2":"Tunisia","3":"Africa","4":"0.250597","5":"0.539208","6":"0.935159","7":"0.934999","8":"0.796718","9":"6.913362e-01","10":"33.15921746"},{"1":"BHR","2":"Bahrain","3":"Asia","4":"0.796325","5":"0.830687","6":"1.105571","7":"1.259177","8":"0.769881","9":"9.523282e-01","10":"3.54558525"},{"1":"CIV","2":"C๔te d'Ivoire","3":"Africa","4":"0.243379","5":"0.486778","6":"0.084694","7":"0.416063","8":"0.701337","9":"3.864502e-01","10":"21.64984088"},{"1":"NIC","2":"Nicaragua","3":"North America","4":"0.598382","5":"0.728333","6":"0.904082","7":"0.429435","8":"0.674846","9":"6.670156e-01","10":"-2.83676267"},{"1":"HND","2":"Honduras","3":"North America","4":"1.143250","5":"1.443971","6":"0.860177","7":"0.917707","8":"0.627827","9":"9.985864e-01","10":"-15.22763233"},{"1":"NPL","2":"Nepal","3":"Asia","4":"0.379796","5":"0.238236","6":"0.429482","7":"0.588878","8":"0.613155","9":"4.499094e-01","10":"20.47745135"},{"1":"HRV","2":"Croatia","3":"Europe","4":"0.613286","5":"0.763148","6":"0.930158","7":"0.692201","8":"0.593809","9":"7.185204e-01","10":"-1.60815821"},{"1":"FJI","2":"Fiji","3":"Oceania","4":"0.668295","5":"0.695012","6":"0.702355","7":"0.597649","8":"0.560312","9":"6.447246e-01","10":"-4.90936846"},{"1":"TZA","2":"United Rep. of Tanzania","3":"Africa","4":"0.148740","5":"0.355404","6":"0.096314","7":"0.311249","8":"0.511985","9":"2.847384e-01","10":"26.35849872"},{"1":"HTI","2":"Haiti","3":"North America","4":"0.406194","5":"0.692335","6":"0.401465","7":"0.429062","8":"0.483759","9":"4.825630e-01","10":"-1.28128643"},{"1":"SUR","2":"Suriname","3":"South America","4":"0.181014","5":"0.204706","6":"0.501269","7":"0.477767","8":"0.441345","9":"3.612202e-01","10":"30.08336621"},{"1":"SEN","2":"Senegal","3":"Africa","4":"1.000483","5":"2.175778","6":"0.752198","7":"0.450623","8":"0.416501","9":"9.591166e-01","10":"-28.30297353"},{"1":"TTO","2":"Trinidad and Tobago","3":"North America","4":"0.182361","5":"0.190495","6":"0.197735","7":"0.199381","8":"0.408398","9":"2.356740e-01","10":"18.03487575"},{"1":"UGA","2":"Uganda","3":"Africa","4":"0.286054","5":"0.292208","6":"0.660271","7":"0.554500","8":"0.365180","9":"4.316426e-01","10":"11.95222688"},{"1":"AGO","2":"Angola","3":"Africa","4":"0.123382","5":"0.089402","6":"0.554535","7":"1.510511","8":"0.354891","9":"5.265442e-01","10":"63.88767789"},{"1":"CYP","2":"Cyprus","3":"Asia","4":"0.694987","5":"1.175006","6":"0.439372","7":"0.365874","8":"0.326275","9":"6.003028e-01","10":"-23.50191387"},{"1":"CMR","2":"Cameroon","3":"Africa","4":"0.751584","5":"0.158945","6":"0.214362","7":"0.196241","8":"0.315918","9":"3.274100e-01","10":"-14.12363429"},{"1":"DJI","2":"Djibouti","3":"Africa","4":"0.924318","5":"0.446595","6":"NA","7":"0.162858","8":"0.313074","9":"4.617113e-01","10":"-34.66630789"},{"1":"MNG","2":"Mongolia","3":"Asia","4":"0.039690","5":"NA","6":"0.269805","7":"0.242980","8":"0.272675","9":"2.062875e-01","10":"76.41736060"},{"1":"LAO","2":"Lao People's Dem. Rep.","3":"Asia","4":"0.845533","5":"1.309380","6":"0.667298","7":"0.508752","8":"0.271729","9":"7.205384e-01","10":"-27.49881110"},{"1":"COD","2":"Dem. Rep. of the Congo","3":"Africa","4":"NA","5":"0.175175","6":"0.309640","7":"0.292276","8":"0.261209","9":"2.595750e-01","10":"12.08523656"},{"1":"BIH","2":"Bosnia Herzegovina","3":"Europe","4":"0.177088","5":"0.113550","6":"0.177802","7":"0.274861","8":"0.255926","9":"1.998454e-01","10":"17.59196660"},{"1":"DMA","2":"Dominica","3":"North America","4":"0.353876","5":"0.150422","6":"1.788766","7":"0.777020","8":"0.255760","9":"6.651688e-01","10":"10.43541985"},{"1":"MLT","2":"Malta","3":"Europe","4":"0.039298","5":"0.056402","6":"0.116076","7":"0.087763","8":"0.252438","9":"1.103954e-01","10":"51.62071911"},{"1":"GIN","2":"Guinea","3":"Africa","4":"0.000937","5":"0.000991","6":"0.064929","7":"0.250159","8":"0.246786","9":"1.127604e-01","10":"430.06659216"},{"1":"NCL","2":"New Caledonia","3":"Oceania","4":"0.177620","5":"0.431158","6":"0.272881","7":"0.291116","8":"0.237140","9":"2.819830e-01","10":"1.86982325"},{"1":"MNE","2":"Montenegro","3":"Europe","4":"0.237268","5":"0.051244","6":"0.012507","7":"0.076089","8":"0.233083","9":"1.220382e-01","10":"3.66261766"},{"1":"MKD","2":"TFYR of Macedonia","3":"Europe","4":"0.368032","5":"0.269064","6":"0.418348","7":"0.331095","8":"0.231598","9":"3.236274e-01","10":"-6.93646451"},{"1":"LBR","2":"Liberia","3":"Africa","4":"0.090481","5":"0.000678","6":"0.062433","7":"0.120416","8":"0.220982","9":"9.899800e-02","10":"100.68058201"},{"1":"MDV","2":"Maldives","3":"Asia","4":"0.023519","5":"0.080407","6":"0.109353","7":"0.210583","8":"0.214952","9":"1.277628e-01","10":"71.39473331"},{"1":"MDG","2":"Madagascar","3":"Africa","4":"0.040688","5":"0.147124","6":"0.213241","7":"0.189165","8":"0.211191","9":"1.602818e-01","10":"42.54682181"},{"1":"KAZ","2":"Kazakhstan","3":"Asia","4":"0.206887","5":"0.576917","6":"1.511551","7":"0.569576","8":"0.208617","9":"6.147096e-01","10":"0.03849125"},{"1":"ARM","2":"Armenia","3":"Asia","4":"0.764615","5":"0.592436","6":"0.550280","7":"0.615525","8":"0.204214","9":"5.454140e-01","10":"-22.91161181"},{"1":"MDA","2":"Rep. of Moldova","3":"Europe","4":"0.106171","5":"0.277818","6":"0.342251","7":"0.216858","8":"0.200349","9":"2.286894e-01","10":"10.76377812"},{"1":"BRB","2":"Barbados","3":"North America","4":"0.093003","5":"0.131703","6":"0.163209","7":"0.113005","8":"0.190825","9":"1.383490e-01","10":"13.70455473"},{"1":"JAM","2":"Jamaica","3":"North America","4":"0.969886","5":"0.393870","6":"0.461810","7":"0.193391","8":"0.189391","9":"4.416696e-01","10":"-32.82060863"},{"1":"AZE","2":"Azerbaijan","3":"Asia","4":"0.263805","5":"0.136489","6":"0.098658","7":"0.053579","8":"0.173030","9":"1.451122e-01","10":"-16.29384906"},{"1":"RWA","2":"Rwanda","3":"Africa","4":"0.032064","5":"0.000081","6":"0.001563","7":"0.045126","8":"0.165390","9":"4.884480e-02","10":"161.27177244"},{"1":"MWI","2":"Malawi","3":"Africa","4":"0.213360","5":"0.139406","6":"0.232832","7":"0.139900","8":"0.164560","9":"1.780116e-01","10":"-5.02793523"},{"1":"SLB","2":"Solomon Isds","3":"Oceania","4":"0.006461","5":"0.001286","6":"NA","7":"0.039352","8":"0.160472","9":"5.189275e-02","10":"269.06464328"},{"1":"BEN","2":"Benin","3":"Africa","4":"0.011145","5":"0.009842","6":"0.246716","7":"0.402467","8":"0.156692","9":"1.653724e-01","10":"145.89972429"},{"1":"SLE","2":"Sierra Leone","3":"Africa","4":"NA","5":"0.003650","6":"0.047287","7":"0.113561","8":"0.152429","9":"7.923175e-02","10":"234.41147038"},{"1":"ALB","2":"Albania","3":"Europe","4":"0.353574","5":"0.002222","6":"0.138368","7":"0.439116","8":"0.143196","9":"2.152952e-01","10":"41.60338451"},{"1":"NAM","2":"Namibia","3":"Africa","4":"0.000131","5":"NA","6":"NA","7":"0.114792","8":"0.142505","9":"8.580933e-02","10":"3198.21834856"},{"1":"ISL","2":"Iceland","3":"Europe","4":"0.281804","5":"0.079474","6":"0.082216","7":"0.111347","8":"0.133881","9":"1.377444e-01","10":"-10.87496699"},{"1":"BLZ","2":"Belize","3":"North America","4":"NA","5":"0.046770","6":"0.053864","7":"0.133049","8":"0.133823","9":"9.187650e-02","10":"50.05149225"},{"1":"ZWE","2":"Zimbabwe","3":"Africa","4":"0.116736","5":"0.091404","6":"0.217151","7":"0.205935","8":"0.129836","9":"1.522124e-01","10":"10.79357092"},{"1":"GAB","2":"Gabon","3":"Africa","4":"NA","5":"0.181413","6":"0.155654","7":"0.154552","8":"0.106732","9":"1.495878e-01","10":"-14.77258680"},{"1":"NRU","2":"Nauru","3":"Oceania","4":"NA","5":"NA","6":"NA","7":"NA","8":"0.100464","9":"1.004640e-01","10":"NA"},{"1":"WSM","2":"Samoa","3":"Oceania","4":"0.104182","5":"0.044763","6":"0.081241","7":"0.057858","8":"0.097972","9":"7.720320e-02","10":"1.34592243"},{"1":"COG","2":"Congo","3":"Africa","4":"0.000681","5":"0.045212","6":"0.042306","7":"0.108218","8":"0.088055","9":"5.689440e-02","10":"188.55324347"},{"1":"MOZ","2":"Mozambique","3":"Africa","4":"0.056243","5":"0.013376","6":"0.133676","7":"0.096341","8":"0.085608","9":"7.704880e-02","10":"32.50664671"},{"1":"VUT","2":"Vanuatu","3":"Oceania","4":"0.245656","5":"0.093659","6":"0.126313","7":"0.065919","8":"0.080094","9":"1.223282e-01","10":"-22.83850546"},{"1":"ZMB","2":"Zambia","3":"Africa","4":"0.062629","5":"0.048595","6":"0.090811","7":"0.214257","8":"0.078482","9":"9.895480e-02","10":"21.34817808"},{"1":"BMU","2":"Bermuda","3":"North America","4":"0.066636","5":"0.021268","6":"0.037867","7":"0.024542","8":"0.072324","9":"4.452740e-02","10":"3.11765629"},{"1":"MRT","2":"Mauritania","3":"Africa","4":"0.040386","5":"NA","6":"NA","7":"0.032572","8":"0.071435","9":"4.813100e-02","10":"32.99646694"},{"1":"CYM","2":"Cayman Isds","3":"North America","4":"NA","5":"NA","6":"NA","7":"NA","8":"0.070223","9":"7.022300e-02","10":"NA"},{"1":"GRD","2":"Grenada","3":"North America","4":"0.007411","5":"0.002149","6":"0.000836","7":"0.000316","8":"0.066123","9":"1.536700e-02","10":"27.89106794"},{"1":"TGO","2":"Togo","3":"Africa","4":"0.021928","5":"0.196167","6":"0.345412","7":"0.224295","8":"0.065699","9":"1.707002e-01","10":"26.22091134"},{"1":"PSE","2":"State of Palestine","3":"Asia","4":"0.000188","5":"0.026142","6":"0.048191","7":"0.003197","8":"0.058376","9":"2.721880e-02","10":"155.36165209"},{"1":"PYF","2":"French Polynesia","3":"Oceania","4":"0.069920","5":"0.050683","6":"0.033337","7":"0.009936","8":"0.040662","9":"4.090760e-02","10":"-23.76535361"},{"1":"GMB","2":"Gambia","3":"Africa","4":"NA","5":"NA","6":"0.025315","7":"0.042800","8":"0.036155","9":"3.475667e-02","10":"19.50751532"},{"1":"CUB","2":"Cuba","3":"North America","4":"NA","5":"NA","6":"0.047174","7":"NA","8":"0.032870","9":"4.002200e-02","10":"-30.32178743"},{"1":"VCT","2":"Saint Vincent and the Grenadines","3":"North America","4":"0.035835","5":"0.000515","6":"0.000762","7":"0.026147","8":"0.026237","9":"1.789920e-02","10":"39.14987389"},{"1":"CUW","2":"Cura็ao","3":"North America","4":"0.000010","5":"0.000971","6":"0.000314","7":"0.000077","8":"0.025242","9":"5.322800e-03","10":"271.83640027"},{"1":"STP","2":"Sao Tome and Principe","3":"Africa","4":"NA","5":"NA","6":"0.013173","7":"0.010535","8":"0.023567","9":"1.575833e-02","10":"33.75493203"},{"1":"AND","2":"Andorra","3":"Europe","4":"NA","5":"NA","6":"NA","7":"0.000485","8":"0.020849","9":"1.066700e-02","10":"4198.76288660"},{"1":"TKM","2":"Turkmenistan","3":"Asia","4":"0.005042","5":"NA","6":"0.026555","7":"0.139542","8":"0.008237","9":"4.484400e-02","10":"36.77468749"},{"1":"BFA","2":"Burkina Faso","3":"Africa","4":"0.121205","5":"0.145854","6":"0.374949","7":"0.004202","8":"0.008171","9":"1.308762e-01","10":"-59.10175188"},{"1":"NER","2":"Niger","3":"Africa","4":"0.000084","5":"0.007765","6":"0.004378","7":"0.103777","8":"0.007113","9":"2.462340e-02","10":"214.88405513"},{"1":"ATG","2":"Antigua and Barbuda","3":"North America","4":"0.020072","5":"0.006434","6":"0.001910","7":"0.000923","8":"0.004299","9":"6.727600e-03","10":"-39.48996226"},{"1":"SYC","2":"Seychelles","3":"Africa","4":"0.013330","5":"0.017206","6":"0.011480","7":"0.031183","8":"0.003351","9":"1.531000e-02","10":"-19.48206035"},{"1":"COK","2":"Cook Isds","3":"Oceania","4":"0.000326","5":"NA","6":"NA","7":"0.004908","8":"0.002867","9":"2.700333e-03","10":"196.55486048"},{"1":"KGZ","2":"Kyrgyzstan","3":"Asia","4":"0.000095","5":"0.004078","6":"0.004086","7":"0.009630","8":"0.002768","9":"4.131400e-03","10":"113.89784182"},{"1":"COM","2":"Comoros","3":"Africa","4":"NA","5":"0.003966","6":"0.001317","7":"0.000789","8":"0.002644","9":"2.179000e-03","10":"-15.87564545"},{"1":"SWZ","2":"Swaziland","3":"Africa","4":"0.171600","5":"0.045801","6":"NA","7":"NA","8":"0.002289","9":"7.323000e-02","10":"-88.45047151"},{"1":"TON","2":"Tonga","3":"Oceania","4":"NA","5":"NA","6":"0.000423","7":"0.004144","8":"0.001649","9":"2.072000e-03","10":"97.44227394"},{"1":"GNQ","2":"Equatorial Guinea","3":"Africa","4":"NA","5":"NA","6":"0.094057","7":"0.028641","8":"0.001605","9":"4.143433e-02","10":"-86.93702917"},{"1":"KIR","2":"Kiribati","3":"Oceania","4":"NA","5":"0.000321","6":"0.006439","7":"0.002161","8":"0.001199","9":"2.530000e-03","10":"33.13059696"},{"1":"GUY","2":"Guyana","3":"South America","4":"0.017450","5":"0.133908","6":"0.000011","7":"0.011429","8":"0.000960","9":"3.275160e-02","10":"-56.22609095"},{"1":"GRL","2":"Greenland","3":"North America","4":"0.000474","5":"0.000531","6":"0.000504","7":"0.000894","8":"0.000915","9":"6.636000e-04","10":"20.15804406"},{"1":"KNA","2":"Saint Kitts and Nevis","3":"North America","4":"0.063463","5":"NA","6":"0.033608","7":"0.004599","8":"0.000325","9":"2.549875e-02","10":"-83.15655577"},{"1":"PLW","2":"Palau","3":"Oceania","4":"NA","5":"0.000641","6":"0.000069","7":"0.001306","8":"0.000282","9":"5.745000e-04","10":"4.88822410"},{"1":"GUM","2":"Guam","3":"Oceania","4":"0.151304","5":"0.142048","6":"0.079114","7":"0.039186","8":"0.000050","9":"8.234040e-02","10":"-82.30325064"},{"1":"TCA","2":"Turks and Caicos Isds","3":"North America","4":"NA","5":"NA","6":"NA","7":"0.002850","8":"0.000005","9":"1.427500e-03","10":"-99.82456140"},{"1":"ASM","2":"American Samoa","3":"Other","4":"0.574747","5":"0.021610","6":"0.020032","7":"NA","8":"NA","9":"2.054630e-01","10":"-81.33088206"},{"1":"BTN","2":"Bhutan","3":"Asia","4":"0.375401","5":"0.172482","6":"NA","7":"NA","8":"NA","9":"2.739415e-01","10":"-54.05393166"},{"1":"BDI","2":"Burundi","3":"Africa","4":"0.014081","5":"0.000039","6":"NA","7":"NA","8":"NA","9":"7.060000e-03","10":"-99.72303103"},{"1":"MAC","2":"China, Macao SAR","3":"Asia","4":"0.056120","5":"0.063182","6":"NA","7":"0.134437","8":"NA","9":"8.457967e-02","10":"54.77491532"},{"1":"MLI","2":"Mali","3":"Africa","4":"0.001328","5":"NA","6":"NA","7":"NA","8":"NA","9":"1.328000e-03","10":"NA"},{"1":"ABW","2":"Aruba","3":"North America","4":"0.070066","5":"0.036877","6":"NA","7":"NA","8":"NA","9":"5.347150e-02","10":"-47.36819570"},{"1":"NFK","2":"Norfolk Isds","3":"Oceania","4":"0.316915","5":"NA","6":"0.288600","7":"0.479950","8":"NA","9":"3.618217e-01","10":"23.06274562"},{"1":"LCA","2":"Saint Lucia","3":"North America","4":"0.000109","5":"0.000024","6":"0.000185","7":"NA","8":"NA","9":"1.060000e-04","10":"30.27845971"},{"1":"SDN","2":"Fmr Sudan","3":"Africa","4":"2.293044","5":"NA","6":"NA","7":"NA","8":"NA","9":"3.958291e+00","10":"7.85975146"},{"1":"UZB","2":"Uzbekistan","3":"Asia","4":"0.218347","5":"NA","6":"NA","7":"NA","8":"NA","9":"2.183470e-01","10":"NA"},{"1":"BWA","2":"Botswana","3":"Africa","4":"NA","5":"0.033886","6":"NA","7":"NA","8":"NA","9":"3.388600e-02","10":"NA"},{"1":"CPV","2":"Cabo Verde","3":"Africa","4":"NA","5":"0.000088","6":"NA","7":"NA","8":"NA","9":"8.800000e-05","10":"NA"},{"1":"CAF","2":"Central African Rep.","3":"Africa","4":"NA","5":"0.021246","6":"0.013750","7":"NA","8":"NA","9":"1.749800e-02","10":"-35.28193542"},{"1":"TCD","2":"Chad","3":"Africa","4":"NA","5":"0.013663","6":"0.021739","7":"0.018040","8":"NA","9":"1.781400e-02","10":"14.90666827"},{"1":"LSO","2":"Lesotho","3":"Africa","4":"NA","5":"0.049985","6":"NA","7":"NA","8":"NA","9":"4.998500e-02","10":"NA"},{"1":"WLF","2":"Wallis and Futuna Isds","3":"Oceania","4":"NA","5":"0.001088","6":"NA","7":"0.000042","8":"NA","9":"5.650000e-04","10":"-96.13970588"},{"1":"BHS","2":"Bahamas","3":"North America","4":"NA","5":"NA","6":"0.013153","7":"0.000146","8":"NA","9":"6.649500e-03","10":"-98.88998708"},{"1":"PRK","2":"Dem. People's Rep. of Korea","3":"Asia","4":"NA","5":"NA","6":"NA","7":"0.000147","8":"NA","9":"1.470000e-04","10":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step5: save to xlsx file: optional</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df_combine <span class="sc">|&gt;</span> writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output/ex_4-1_growth.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="question-2" class="level2">
+<h2 class="anchored" data-anchor-id="question-2">Question 2</h2>
+<p>Use <code>baci_extra_i</code> to make a report of RCA (continuous version) of every exporters of <code>Rubber</code> product from <code>2016-2020</code>.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Code</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Solution</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step1: prepare data using average of 2016-2020</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>baci_1620 <span class="ot">&lt;-</span> baci_extra_i <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">%in%</span> ...) <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">country =</span> ..., <span class="at">product =</span> ...) <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">value =</span> <span class="fu">mean</span>(..., <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># step2: compute balassa index continuous version</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>bi_dec <span class="ot">&lt;-</span> <span class="fu">balassa_index</span>(baci_1620, <span class="at">discrete =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>bi_dec[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ...]</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># step3: extract information only rubber product</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>rca_rubber <span class="ot">&lt;-</span> bi_dec[, ...] <span class="sc">|&gt;</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">i_iso3c =</span> <span class="dv">1</span>, <span class="at">rca =</span> <span class="dv">2</span>)<span class="sc">|&gt;</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(country_codes, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"i_iso3c"</span> <span class="ot">=</span> <span class="st">"iso3c"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(i_iso3c, country_name, region, rca) <span class="sc">|&gt;</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>rca)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co"># step4: save as excel file: optional</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>rca_rubber <span class="sc">|&gt;</span> writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output/ex_4-2_rca_rubber.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step1: prepare data using average of 2016-2020</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>baci_1620 <span class="ot">&lt;-</span> baci_extra_i <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">%in%</span> <span class="dv">2016</span><span class="sc">:</span><span class="dv">2020</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">country =</span> i_iso3c, <span class="at">product =</span> k) <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">value =</span> <span class="fu">mean</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'country'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step2: compute balassa index continuous version</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>bi_dec <span class="ot">&lt;-</span> <span class="fu">balassa_index</span>(baci_1620, <span class="at">discrete =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>bi_dec[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">40</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        ABW         AFG         AGO         AIA         ALB 
+0.136481150 0.014557772 0.007160591 0.256904481 0.183406394 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step3: extract information only rubber product</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>rca_rubber <span class="ot">&lt;-</span> bi_dec[, <span class="dv">40</span>] <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>() <span class="sc">|&gt;</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">i_iso3c =</span> <span class="dv">1</span>, <span class="at">rca =</span> <span class="dv">2</span>)<span class="sc">|&gt;</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(country_codes, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"i_iso3c"</span> <span class="ot">=</span> <span class="st">"i_iso3c"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(i_iso3c, i_name, i_region, rca) <span class="sc">|&gt;</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>rca)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co"># step4: save as excel file: optional</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>rca_rubber <span class="sc">|&gt;</span> writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output/ex_4-2_rca_rubber.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3</h2>
+<p>Use <code>gravity_18_nozeros</code> dataset to estimate gravity models and compare the results when using different distance measures.</p>
+<ul>
+<li>model 1: <code>dist</code> + <code>contig</code> + <code>rta</code> + <code>comlang_off</code></li>
+<li>model 2: <code>distw</code> + <code>contig</code> + <code>rta</code> + <code>comlang_off</code></li>
+</ul>
+<blockquote class="blockquote">
+<p>Dont forget to put variables in log (<code>tradeflow_baci</code> and <code>gdp</code>)</p>
+</blockquote>
+<p>Fill <code>...</code> in the code snippet.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Code</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Solution</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step1: estimate model 1</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fit_ols1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  ... <span class="sc">~</span> ...,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_18_nozeros</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols1)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># step2: estimate model 2</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>fit_ols2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  ... <span class="sc">~</span> ...,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_18_nozeros</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols2)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co"># step3: compare and save</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">list</span>(..., ...)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(mod)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># optional</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(mod, <span class="at">output =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output/ex_4-3_gravity_ols_table.docx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step1: estimate model 1</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>fit_ols1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(tradeflow_baci) <span class="sc">~</span> <span class="fu">log</span>(gdp_o) <span class="sc">+</span> <span class="fu">log</span>(gdp_d) <span class="sc">+</span> dist <span class="sc">+</span> contig <span class="sc">+</span> rta,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_18_nozeros</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(tradeflow_baci) ~ log(gdp_o) + log(gdp_d) + 
+    dist + contig + rta, data = gravity_18_nozeros)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-13.6540  -1.3196   0.1951   1.5515  14.6224 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.216e+01  2.131e-01 -150.97   &lt;2e-16 ***
+log(gdp_o)   1.291e+00  7.548e-03  171.07   &lt;2e-16 ***
+log(gdp_d)   9.675e-01  7.527e-03  128.53   &lt;2e-16 ***
+dist        -1.494e-04  4.034e-06  -37.03   &lt;2e-16 ***
+contig       2.298e+00  1.267e-01   18.13   &lt;2e-16 ***
+rta          1.383e+00  4.126e-02   33.51   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.566 on 23777 degrees of freedom
+Multiple R-squared:  0.6569,    Adjusted R-squared:  0.6569 
+F-statistic:  9106 on 5 and 23777 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step2: estimate model 2</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>fit_ols2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(tradeflow_baci) <span class="sc">~</span> <span class="fu">log</span>(gdp_o) <span class="sc">+</span> <span class="fu">log</span>(gdp_d) <span class="sc">+</span> distw <span class="sc">+</span> contig <span class="sc">+</span> rta,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gravity_18_nozeros</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(tradeflow_baci) ~ log(gdp_o) + log(gdp_d) + 
+    distw + contig + rta, data = gravity_18_nozeros)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-13.6913  -1.3164   0.1936   1.5482  14.6199 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.221e+01  2.129e-01 -151.32   &lt;2e-16 ***
+log(gdp_o)   1.293e+00  7.549e-03  171.26   &lt;2e-16 ***
+log(gdp_d)   9.690e-01  7.528e-03  128.72   &lt;2e-16 ***
+distw       -1.502e-04  4.049e-06  -37.10   &lt;2e-16 ***
+contig       2.301e+00  1.267e-01   18.16   &lt;2e-16 ***
+rta          1.377e+00  4.130e-02   33.34   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.565 on 23777 degrees of freedom
+Multiple R-squared:  0.657, Adjusted R-squared:  0.6569 
+F-statistic:  9108 on 5 and 23777 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># step3: compare and save</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">list</span>(fit_ols1, fit_ols2)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:center;"> Model 1 </th>
+   <th style="text-align:center;"> Model 2 </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> (Intercept) </td>
+   <td style="text-align:center;"> -32.164 </td>
+   <td style="text-align:center;"> -32.213 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.213) </td>
+   <td style="text-align:center;"> (0.213) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> log(gdp_o) </td>
+   <td style="text-align:center;"> 1.291 </td>
+   <td style="text-align:center;"> 1.293 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.008) </td>
+   <td style="text-align:center;"> (0.008) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> log(gdp_d) </td>
+   <td style="text-align:center;"> 0.967 </td>
+   <td style="text-align:center;"> 0.969 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.008) </td>
+   <td style="text-align:center;"> (0.008) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> dist </td>
+   <td style="text-align:center;"> -0.0001 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.000004) </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> contig </td>
+   <td style="text-align:center;"> 2.298 </td>
+   <td style="text-align:center;"> 2.301 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.127) </td>
+   <td style="text-align:center;"> (0.127) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> rta </td>
+   <td style="text-align:center;"> 1.383 </td>
+   <td style="text-align:center;"> 1.377 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.041) </td>
+   <td style="text-align:center;"> (0.041) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> distw </td>
+   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> -0.0002 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;box-shadow: 0px 1px">  </td>
+   <td style="text-align:center;box-shadow: 0px 1px">  </td>
+   <td style="text-align:center;box-shadow: 0px 1px"> (0.000004) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Num.Obs. </td>
+   <td style="text-align:center;"> 23783 </td>
+   <td style="text-align:center;"> 23783 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> R2 </td>
+   <td style="text-align:center;"> 0.657 </td>
+   <td style="text-align:center;"> 0.657 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> R2 Adj. </td>
+   <td style="text-align:center;"> 0.657 </td>
+   <td style="text-align:center;"> 0.657 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AIC </td>
+   <td style="text-align:center;"> 492847.5 </td>
+   <td style="text-align:center;"> 492843.2 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BIC </td>
+   <td style="text-align:center;"> 492904.0 </td>
+   <td style="text-align:center;"> 492899.8 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Log.Lik. </td>
+   <td style="text-align:center;"> -56151.445 </td>
+   <td style="text-align:center;"> -56149.314 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> F </td>
+   <td style="text-align:center;"> 9105.623 </td>
+   <td style="text-align:center;"> 9108.108 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> RMSE </td>
+   <td style="text-align:center;"> 2.57 </td>
+   <td style="text-align:center;"> 2.57 </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># optional</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(mod, <span class="at">output =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output/ex_4-3_gravity_ols_table.docx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

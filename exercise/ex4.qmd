@@ -1,33 +1,294 @@
-# Exercise2: Data Wrangling
+---
+title: "Excercise 4: Trade Analysis"
+author:
+  name: Piyayut Chitchumnong
+  affiliation: "[National Agricultural Big Data Center](https://nabc.go.th)"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    df-print: paged
+    fig-width: 10
+    fig-height: 6
+---
 
-Prerequisites
+## Load packages
 ```{r}
+#| warning: false
 library(tidyverse)
-library(readxl)
-library(writexl)
+library(economiccomplexity)
+library(gravity)
+library(modelsummary)
+library(flextable)
 ```
 
-Import `baci` data of year 2019 using `rds` file [link]() using `readRDS` function and save it to `baci_2019`.
+
+## Import data
+
+- `baci_extra`  which is a bilatteral trade  by product (HS 2 digit) from 2011-2020.
+- `baci_extra_i`  which is export by product (HS 2 digit) of exporting countries from 2011-2020.
+- `gravity` which is dataset for gravity model.
+
+You have two options to load data.
+> This could take a while to load
+
+**Option 1**: Import from internet.
+```{r}
+#| eval: false
+url_baci <- "https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/baci_extra.rds"
+baci_extra <- readRDS(gzcon(url(url_baci)))
+
+url_baci_i <- "https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/baci_extra_i.rds"
+baci_extra_i <- readRDS(gzcon(url(url_baci_i)))
+
+url_gravity <- "https://github.com/piyayut-ch/Workshop_URTA_2022/raw/main/data/gravity_0019.rds"
+gravity_0019 <- readRDS(gzcon(url(url_gravity)))
+
+country_codes <- baci_extra_i |> distinct(i, i_iso3c, i_name, i_region)
+product_codes <- baci_extra_i |> distinct(k, k_name, k_sector)
+# gzcon and url function are used to download data from github
+```
+
+**Option 2**: Import from your machine, if you open with the R project and have the file in folder data.
+```{r}
+#| cache: true
+path_baci <- here::here("data/baci_extra.rds")
+baci_extra <- readRDS(path_baci)
+
+path_baci_i <- here::here("data/baci_extra_i.rds")
+baci_extra_i <- readRDS(path_baci_i)
+
+path_gravity <- here::here("data/gravity_0019.rds")
+gravity_0019 <- readRDS(path_gravity)
+
+# additional data
+country_codes <- baci_extra_i |> distinct(i, i_iso3c, i_name, i_region)
+product_codes <- baci_extra_i |> distinct(k, k_name, k_sector)
+```
+
+Preview data
+```{r}
+baci_extra |> head()
+baci_extra_i |> head()
+gravity_0019 |> head()
+```
+
+Prepare data for gravity model.
+```{r}
+gravity_18_nozeros <- gravity_0019 |>
+  filter(year == 2018) |>
+  drop_na() |>
+  filter(tradeflow_baci != 0)
+gravity_18_nozeros |> head()
+```
+
+
+## Question 1
+Use `baci_extra` to make a report of `Rubber` export of `Indonesia` classified by `destinations` from `2011-2015`. Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+# step0: define growth function
+growth_ols <- function(vec) {
+  y <- vec
+  x <- seq_along(y)
+  result <- lm(log(y) ~ x)
+  (exp(coef(result))[['x']]) - 1
+}
+
+# step1: filter data of interest
+df <- baci_extra |>
+  filter(t %in% ..., i_iso3c == ..., k == ...)
+
+# step2: make a wider table where year represent years where we want to keep country code, name and region.
+df_wide <- df |>
+  pivot_wider(
+    c(..., ..., ...),
+    names_from = "...",
+    values_from = "..."
+  ) |>
+  arrange(desc(`2015`))
+df_wide
+
+# step3: compute summarize metrics where growth in 100%
+df_sum <- df |>
+  group_by(...) |>
+  summarize(
+    avg_1620 = ...,
+    growth_1620 = ...
+  )
+df_sum
+
+# step4: join two tables
+df_combine <- df_wide |>
+  left_join(df_sum)
+df_combine
+
+# step5: save to xlsx file: optional
+df_combine |> writexl::write_xlsx(here("output/ex_4-1_growth.xlsx"))
+```
+
+### Solution
 
 ```{r}
-baci_2019 <- readRDS()
+# step0: define growth function
+growth_ols <- function(vec) {
+  y <- vec
+  x <- seq_along(y)
+  result <- lm(log(y) ~ x)
+  (exp(coef(result))[['x']]) - 1
+}
+
+# step1: filter data of interest
+df <- baci_extra |>
+  filter(t %in% 2011:2015, i_iso3c == "IDN", k == "40")
+
+# step2: make a wider table where year represent years where we want to keep country code, name and region.
+df_wide <- df |>
+  pivot_wider(
+    c(j_iso3c, j_name, j_region),
+    names_from = "t",
+    values_from = "v"
+  ) |>
+  arrange(desc(`2015`))
+df_wide
+
+# step3: compute summarize metrics where growth in 100%
+df_sum <- df |>
+  group_by(j_iso3c) |>
+  summarize(
+    avg_1620 = mean(v, na.rm = TRUE),
+    growth_1620 = growth_ols(v) * 100
+  )
+df_sum
+
+# step4: join two tables
+df_combine <- df_wide |>
+  left_join(df_sum)
+df_combine
+
+# step5: save to xlsx file: optional
+df_combine |> writexl::write_xlsx(here::here("output/ex_4-1_growth.xlsx"))
+```
+:::
+
+## Question 2
+Use `baci_extra_i` to make a report of RCA (continuous version) of every exporters of `Rubber` product from `2016-2020`.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+# step1: prepare data using average of 2016-2020
+baci_1620 <- baci_extra_i |>
+  filter(t %in% ...) |>
+  group_by(country = ..., product = ...) |>
+  summarize(value = mean(..., na.rm = TRUE)) |> ungroup()
+
+# step2: compute balassa index continuous version
+bi_dec <- balassa_index(baci_1620, discrete = FALSE)
+bi_dec[1:5, ...]
+
+# step3: extract information only rubber product
+rca_rubber <- bi_dec[, ...] |>
+  as.data.frame() |>
+  rownames_to_column() |>
+  as_tibble() |>
+  select(i_iso3c = 1, rca = 2)|>
+  left_join(country_codes, by = c("i_iso3c" = "iso3c")) |>
+  select(i_iso3c, country_name, region, rca) |>
+  arrange(-rca)
+
+# step4: save as excel file: optional
+rca_rubber |> writexl::write_xlsx(here::here("output/ex_4-2_rca_rubber.xlsx"))
 ```
 
+### Solution
+```{r}
+# step1: prepare data using average of 2016-2020
+baci_1620 <- baci_extra_i |>
+  filter(t %in% 2016:2020) |>
+  group_by(country = i_iso3c, product = k) |>
+  summarize(value = mean(v, na.rm = TRUE)) |> ungroup()
 
-1. How many rows and columns of the `baci_2019`?
+# step2: compute balassa index continuous version
+bi_dec <- balassa_index(baci_1620, discrete = FALSE)
+bi_dec[1:5, 40]
 
-**Answer:**
-a. 
-b. 
-c. 
-d. 
+# step3: extract information only rubber product
+rca_rubber <- bi_dec[, 40] |>
+  as.data.frame() |>
+  rownames_to_column() |>
+  as_tibble() |>
+  select(i_iso3c = 1, rca = 2)|>
+  left_join(country_codes, by = c("i_iso3c" = "i_iso3c")) |>
+  select(i_iso3c, i_name, i_region, rca) |>
+  arrange(-rca)
 
-2. Filter
+# step4: save as excel file: optional
+rca_rubber |> writexl::write_xlsx(here::here("output/ex_4-2_rca_rubber.xlsx"))
+```
+:::
 
-3. Mutate
 
-4. Group by
 
-5. Pivot
+## Question 3
+Use `gravity_18_nozeros` dataset to estimate gravity models and compare the results when using different distance measures.
 
-6. Join
+- model 1: `dist` + `contig` + `rta` + `comlang_off`
+- model 2: `distw` + `contig` + `rta` + `comlang_off`
+
+> Dont forget to put variables in log (`tradeflow_baci` and `gdp`)
+
+Fill `...` in the code snippet.
+
+::: {.panel-tabset}
+### Code
+```{r}
+#| eval: false
+# step1: estimate model 1
+fit_ols1 <- lm(
+  ... ~ ...,
+  data = gravity_18_nozeros
+)
+summary(fit_ols1)
+
+# step2: estimate model 2
+fit_ols2 <- lm(
+  ... ~ ...,
+  data = gravity_18_nozeros
+)
+summary(fit_ols2)
+
+# step3: compare and save
+mod <- list(..., ...)
+modelsummary(mod)
+# optional
+modelsummary(mod, output = here::here("output/ex_4-3_gravity_ols_table.docx"))
+```
+
+### Solution
+```{r}
+# step1: estimate model 1
+fit_ols1 <- lm(
+  log(tradeflow_baci) ~ log(gdp_o) + log(gdp_d) + dist + contig + rta,
+  data = gravity_18_nozeros
+)
+summary(fit_ols1)
+
+# step2: estimate model 2
+fit_ols2 <- lm(
+  log(tradeflow_baci) ~ log(gdp_o) + log(gdp_d) + distw + contig + rta,
+  data = gravity_18_nozeros
+)
+summary(fit_ols2)
+
+# step3: compare and save
+mod <- list(fit_ols1, fit_ols2)
+modelsummary(mod)
+# optional
+modelsummary(mod, output = here::here("output/ex_4-3_gravity_ols_table.docx"))
+```
+:::
