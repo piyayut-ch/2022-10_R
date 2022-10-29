@@ -317,7 +317,7 @@ class(world)
 
 
 ## -----------------------------------------------------------------------------
-data_map <- baci_extra_i |> filter(t == 2020, k == "10")
+data_map <- baci_extra_i |> filter(t == 2020, k == "17")
 
 world_baci <- world |> 
   filter(continent != "Antarctica") |>

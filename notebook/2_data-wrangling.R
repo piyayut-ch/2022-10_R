@@ -231,7 +231,6 @@ baci_2019 |>
 ## # csv
 ## baci |> write_csv(here("output/baci.csv"))
 ## # excel
-## # baci |> write_xlsx(here("output/baci.xlsx")) # number of rows is too large
 ## country_data |> write_xlsx(here("output/country_data.xlsx"))
 ## # RDS
 ## baci |> saveRDS(here("output/baci.rds"))
@@ -261,6 +260,8 @@ baci_2019 <- readRDS(here("data/baci_hs92_2019_2digit.rds"))
 baci <- bind_rows(baci_2018, baci_2019)
 baci |> head()
 baci |> tail()
+
+# baci |> write_xlsx(here("output/baci.xlsx")) # number of rows is too large
 
 
 ## -----------------------------------------------------------------------------
